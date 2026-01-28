@@ -1,109 +1,68 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Linkedin, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { ROUTES } from '@/lib/constants/routes';
+import Link from 'next/link';
+import { Car, Facebook, Instagram, Twitter } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export const Footer = () => {
-    const { t } = useTranslation();
-    const currentYear = new Date().getFullYear();
-
+export function Footer() {
     return (
-        <footer className="bg-background border-t">
-            <div className="container mx-auto px-6 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-                    {/* Brand Section */}
-                    <div className="flex flex-col gap-4">
-                        <Link to={ROUTES.HOME} className="flex items-center gap-2 group w-fit">
-                            <img src="/atlascaucasus.png" alt={t('header.brand.name')} className="h-8 w-8 object-contain group-hover:scale-105 transition-transform" />
-                            <div className="flex flex-col">
-                                <h3 className="font-bold text-lg leading-none">{t('header.brand.name')}</h3>
-                                <span className="text-[10px] text-muted-foreground font-medium">{t('header.brand.slogan')}</span>
+        <footer className="bg-muted/30 border-t border-border pt-20 pb-12">
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                    {/* Brand */}
+                    <div className="space-y-6">
+                        <Link href="/" className="flex items-center gap-3">
+                            <div className="bg-primary text-primary-foreground p-2 rounded-xl" suppressHydrationWarning>
+                                <Car className="w-5 h-5" />
                             </div>
+                            <span className="text-xl font-black tracking-tight text-foreground">Auto Market</span>
                         </Link>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                            {t('header.footer.desc')}
+                        <p className="text-muted-foreground text-sm leading-relaxed max-w-xs font-medium">
+                            Your trusted partner for car auctions and logistics. Full service from bidding to delivery.
                         </p>
-                        <div className="flex items-center gap-4 mt-2">
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Facebook className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Instagram className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Twitter className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Linkedin className="h-5 w-5" />
-                            </a>
-                        </div>
                     </div>
 
-                    {/* Quick Links */}
-                    <div className="flex flex-col gap-4">
-                        <h4 className="font-semibold">{t('header.nav.explore')}</h4>
-                        <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
-                            <Link to={ROUTES.EXPLORE_TOURS} className="hover:text-primary transition-colors">
-                                {t('header.nav_menu.items.tour')}
-                            </Link>
-                            <Link to={ROUTES.EXPLORE_COMPANIES} className="hover:text-primary transition-colors">
-                                {t('header.nav_menu.items.companies')}
-                            </Link>
-                            <Link to={ROUTES.EXPLORE_GUIDES} className="hover:text-primary transition-colors">
-                                {t('header.nav_menu.items.guides')}
-                            </Link>
-                            <Link to={ROUTES.EXPLORE_DRIVERS} className="hover:text-primary transition-colors">
-                                {t('header.nav_menu.items.drivers')}
-                            </Link>
-                        </nav>
+                    {/* Links */}
+                    <div>
+                        <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Company</h4>
+                        <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+                            <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+                            <li><Link href="/contact" className="hover:text-primary transition-colors">Contacts</Link></li>
+                            <li><Link href="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
+                            <li><Link href="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+                        </ul>
                     </div>
 
-                    {/* Contact Info */}
-                    <div className="flex flex-col gap-4">
-                        <h4 className="font-semibold">{t('header.footer.contact_us')}</h4>
-                        <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-                            <div className="flex items-start gap-3">
-                                <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
-                                <span>123 Rustaveli Avenue,<br />Tbilisi, Georgia</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Phone className="h-4 w-4 shrink-0 text-primary" />
-                                <span>+995 555 123 456</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Mail className="h-4 w-4 shrink-0 text-primary" />
-                                <span>info@atlascaucasus.com</span>
-                            </div>
-                        </div>
+                    {/* Services */}
+                    <div>
+                        <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Services</h4>
+                        <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+                            <li><Link href="/catalog" className="hover:text-primary transition-colors">Catalog</Link></li>
+                            <li><Link href="/calculator" className="hover:text-primary transition-colors">Calculator</Link></li>
+                            <li><Link href="/tracking" className="hover:text-primary transition-colors">Tracking</Link></li>
+                            <li><Link href="/delivery" className="hover:text-primary transition-colors">Delivery</Link></li>
+                        </ul>
                     </div>
 
-                    {/* Newsletter */}
-                    <div className="flex flex-col gap-4">
-                        <h4 className="font-semibold">{t('header.footer.newsletter')}</h4>
-                        <p className="text-sm text-muted-foreground">
-                            {t('header.footer.newsletter_desc')}
-                        </p>
-                        <div className="flex flex-col gap-2">
-                            <Input placeholder={t('header.footer.enter_email')} type="email" />
-                            <Button className="w-full">{t('header.footer.subscribe')}</Button>
+                    {/* Contact */}
+                    <div>
+                        <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Social</h4>
+                        <div className="flex gap-3">
+                            <Link href="#" className="p-3 bg-background hover:bg-primary hover:text-primary-foreground rounded-full transition-all border border-border shadow-sm hover:shadow-md hover:-translate-y-1">
+                                <Facebook className="w-5 h-5" />
+                            </Link>
+                            <Link href="#" className="p-3 bg-background hover:bg-primary hover:text-primary-foreground rounded-full transition-all border border-border shadow-sm hover:shadow-md hover:-translate-y-1">
+                                <Instagram className="w-5 h-5" />
+                            </Link>
+                            <Link href="#" className="p-3 bg-background hover:bg-primary hover:text-primary-foreground rounded-full transition-all border border-border shadow-sm hover:shadow-md hover:-translate-y-1">
+                                <Twitter className="w-5 h-5" />
+                            </Link>
                         </div>
                     </div>
                 </div>
 
-                <Separator className="my-8" />
-
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-                    <p>© {currentYear} {t('header.brand.name')}. {t('header.footer.rights_reserved')}</p>
-                    <div className="flex items-center gap-6">
-                        <Link to="#" className="hover:text-foreground transition-colors">{t('header.footer.privacy_policy')}</Link>
-                        <Link to="#" className="hover:text-foreground transition-colors">{t('header.footer.terms_of_service')}</Link>
-                        <Link to="#" className="hover:text-foreground transition-colors">{t('header.footer.cookie_policy')}</Link>
-                    </div>
+                <div className="border-t border-border pt-8 text-center text-sm font-medium text-muted-foreground">
+                    <p suppressHydrationWarning>&copy; {new Date().getFullYear()} Auto Market LGC. All rights reserved.</p>
                 </div>
             </div>
         </footer>
     );
-};
+}

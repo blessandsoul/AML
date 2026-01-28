@@ -1,420 +1,138 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
-import { ROUTES } from '@/lib/constants/routes';
-import { Compass, Briefcase, Building2, Headset, ChevronDown, User, LogOut, Map as MapIcon, Hotel, Users, Car, LayoutDashboard, MessageSquare, Bell } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { NavMenu } from './NavMenu';
-import { ChatDrawer } from '@/features/chat/components/ChatDrawer';
-import { NotificationDrawer } from '@/features/notifications/components/NotificationDrawer';
-import { useChats } from '@/features/chat/hooks/useChats';
-import { useUnreadCount, notificationKeys } from '@/features/notifications/hooks/useNotifications';
-import { useWebSocket } from '@/context/WebSocketContext';
-import { MessageType } from '@/lib/websocket/websocket.types';
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
-import { useLoading } from '@/context/LoadingContext';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { colors } from '@/styles/colors';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Menu, Phone, User, Globe } from 'lucide-react';
+import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 
-import { openDrawer } from '@/features/chat/store/chatSlice';
-import { useAppDispatch } from '@/store/hooks';
+const NAV_ITEMS = [
+    { label: 'Home', href: '/' },
+    { label: 'Catalog', href: '/catalog' },
+    { label: 'Auctions', href: '/auctions' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+];
 
-export const Header = () => {
-    const { t, i18n } = useTranslation();
+export function Header() {
+    const [scrolled, setScrolled] = React.useState(false);
     const { scrollY } = useScroll();
-    const [hidden, setHidden] = useState(false);
-    const [isLangOpen, setIsLangOpen] = useState(false);
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-    const dispatch = useAppDispatch();
-    const langRef = useRef<HTMLDivElement>(null);
-    const userMenuRef = useRef<HTMLDivElement>(null);
-    const { isAuthenticated, user, logout } = useAuth();
-    const { subscribe } = useWebSocket();
-    const queryClient = useQueryClient();
-
-    const { data: chatsData } = useChats({}, { enabled: isAuthenticated });
-    const totalUnread = chatsData?.items.reduce((acc, chat) => acc + (chat.unreadCount || 0), 0) || 0;
-
-    const { data: unreadCountData } = useUnreadCount();
-    const notificationCount = unreadCountData?.count || 0;
-
-    // Subscribe to real-time notifications
-    useEffect(() => {
-        const unsubscribe = subscribe(MessageType.NOTIFICATION, () => {
-            // Invalidate and refetch notification count when new notification arrives
-            queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
-            queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-        });
-        return unsubscribe;
-    }, [subscribe, queryClient]);
+    const pathname = usePathname();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        const previous = scrollY.getPrevious() || 0;
-        if (latest > previous && latest > 150) {
-            setHidden(true);
-            setIsLangOpen(false);
-            setIsUserMenuOpen(false);
-        } else {
-            setHidden(false);
-        }
+        setScrolled(latest > 20);
     });
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (langRef.current && !langRef.current.contains(event.target as Node)) {
-                setIsLangOpen(false);
-            }
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-                setIsUserMenuOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const getFlagCode = (lang: string) => {
-        switch (lang) {
-            case 'ka': return 'ge';
-            case 'en': return 'gb';
-            case 'ru': return 'ru';
-            default: return 'ge';
-        }
-    };
-
-    const { startLoading, stopLoading } = useLoading();
-
-    const handleLanguageChange = (lang: string) => {
-        setIsLangOpen(false);
-        startLoading();
-        setTimeout(() => {
-            i18n.changeLanguage(lang);
-            setTimeout(() => {
-                stopLoading();
-            }, 300);
-        }, 500);
-    };
-
-    const handleLogout = () => {
-        setIsUserMenuOpen(false);
-        logout();
-    };
 
     return (
         <motion.header
-            variants={{
-                visible: { y: 0, opacity: 1 },
-                hidden: { y: -100, opacity: 0 },
-            }}
-            animate={hidden ? "hidden" : "visible"}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="fixed top-0 z-50 w-full pt-6 px-4 flex justify-center bg-transparent pointer-events-none"
+            className={cn(
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+                scrolled ? "py-3" : "py-6"
+            )}
         >
-            <div className="container mx-auto flex h-16 items-center justify-between rounded-2xl border bg-background backdrop-blur-md shadow-lg px-6 pointer-events-auto">
-
-                {/* Brand Section */}
-                <Link to={ROUTES.HOME} className="flex items-center gap-3 group">
-                    <img src="/atlascaucasus.png" alt={t('header.brand.name')} className="h-8 w-8 object-contain group-hover:scale-105 transition-transform" />
-                    <div className="flex flex-col h-8 justify-between">
-                        <h1 className="text-sm font-bold leading-none text-foreground tracking-tight" style={{ fontFamily: "'Noto Sans', sans-serif" }}>
-                            {t('header.brand.name')}
-                        </h1>
-                        <span className="text-[10px] text-muted-foreground font-medium text-nowrap">
-                            {t('header.brand.slogan')}
+            <div className="container mx-auto px-4">
+                <div
+                    className={cn(
+                        "relative flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-500",
+                        scrolled
+                            ? "bg-background/80 backdrop-blur-xl border border-border shadow-sm"
+                            : "bg-transparent border border-transparent"
+                    )}
+                >
+                    {/* Logo - Minimalist */}
+                    <Link href="/" className="flex items-center gap-2 z-20 group">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            A
+                        </div>
+                        <span className="text-xl font-bold text-foreground tracking-tight hidden md:block group-hover:text-primary transition-colors">
+                            AML
                         </span>
-                    </div>
-                </Link>
+                    </Link>
 
-                {/* Navigation */}
-                <nav className="hidden md:flex items-center gap-1">
-                    <NavMenu
-                        trigger={
-                            <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                                <Compass className="h-4 w-4" />
-                                <span>{t('header.nav.explore')}</span>
-                                <ChevronDown className="h-3 w-3 ml-0.5 opacity-50" />
-                            </Button>
-                        }
-                        items={[
-                            {
-                                title: t('header.nav_menu.items.tour'),
-                                description: t('header.nav_menu.explore.tour_desc'),
-                                href: ROUTES.EXPLORE_TOURS,
-                                icon: <MapIcon className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.companies'),
-                                description: t('header.nav_menu.explore.companies_subtitle'),
-                                href: ROUTES.EXPLORE_COMPANIES,
-                                icon: <Building2 className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.hotels'),
-                                description: t('header.nav_menu.explore.hotels_desc'),
-                                href: ROUTES.EXPLORE_TOURS, // Redirect hotels to tours for now
-                                icon: <Hotel className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.guides'),
-                                description: t('header.nav_menu.explore.guides_desc'),
-                                href: "/",
-                                icon: <Users className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.drivers'),
-                                description: t('header.nav_menu.explore.drivers_desc'),
-                                href: ROUTES.EXPLORE_DRIVERS,
-                                icon: <Car className="h-5 w-5" />
-                            }
-                        ]}
-                    />
+                    {/* Desktop Nav - Clean Typography */}
+                    <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+                        {NAV_ITEMS.map((item) => {
+                            const isActive = pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "relative px-5 py-2 text-sm font-bold transition-colors duration-300",
+                                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="nav-pill"
+                                            className="absolute inset-0 bg-primary/5 rounded-full"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                    <span className="relative z-10 uppercase tracking-wide text-xs">{item.label}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
 
-                    <NavMenu
-                        trigger={
-                            <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                                <Briefcase className="h-4 w-4" />
-                                <span>{t('header.nav.traveler')}</span>
-                                <ChevronDown className="h-3 w-3 ml-0.5 opacity-50" />
-                            </Button>
-                        }
-                        items={[
-                            {
-                                title: t('header.nav_menu.items.tour'),
-                                description: t('header.nav_menu.traveler.tour_desc'),
-                                href: ROUTES.EXPLORE_TOURS,
-                                icon: <MapIcon className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.hotels'),
-                                description: t('header.nav_menu.traveler.hotels_desc'),
-                                href: ROUTES.EXPLORE_TOURS, // Redirect hotels to tours for now
-                                icon: <Hotel className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.companies'),
-                                description: t('header.nav_menu.explore.companies_subtitle'),
-                                href: ROUTES.EXPLORE_COMPANIES,
-                                icon: <Building2 className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.guides'),
-                                description: t('header.nav_menu.traveler.guides_desc'),
-                                href: ROUTES.EXPLORE_GUIDES,
-                                icon: <Users className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.drivers'),
-                                description: t('header.nav_menu.traveler.drivers_desc'),
-                                href: ROUTES.EXPLORE_DRIVERS,
-                                icon: <Car className="h-5 w-5" />
-                            }
-                        ]}
-                    />
-
-                    <NavMenu
-                        trigger={
-                            <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                                <Building2 className="h-4 w-4" />
-                                <span>{t('header.nav.business')}</span>
-                                <ChevronDown className="h-3 w-3 ml-0.5 opacity-50" />
-                            </Button>
-                        }
-                        items={[
-                            {
-                                title: t('header.nav_menu.items.tour'),
-                                description: t('header.nav_menu.business.tour_desc'),
-                                href: ROUTES.EXPLORE_TOURS,
-                                icon: <MapIcon className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.hotels'),
-                                description: t('header.nav_menu.business.hotels_desc'),
-                                href: ROUTES.EXPLORE_TOURS, // Redirect hotels to tours for now
-                                icon: <Hotel className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.guides'),
-                                description: t('header.nav_menu.business.guides_desc'),
-                                href: ROUTES.EXPLORE_GUIDES,
-                                icon: <Users className="h-5 w-5" />
-                            },
-                            {
-                                title: t('header.nav_menu.items.drivers'),
-                                description: t('header.nav_menu.business.drivers_desc'),
-                                href: ROUTES.EXPLORE_DRIVERS,
-                                icon: <Car className="h-5 w-5" />
-                            }
-                        ]}
-                    />
-
-                    <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                        <Headset className="h-4 w-4" />
-                        <span>{t('header.nav.support')}</span>
-                    </Button>
-                </nav>
-
-                {/* Auth Section */}
-                <div className="flex items-center gap-2">
-                    {/* Language Selector */}
-                    <div className="relative" ref={langRef}>
-                        <Button
-                            variant="ghost"
-                            className="h-9 w-9 p-0 rounded-md"
-                            onClick={() => setIsLangOpen(!isLangOpen)}
-                        >
-                            <span className={`fi fis fi-${getFlagCode(i18n.language)} text-xl`} />
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 z-20">
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
+                            <Globe className="w-5 h-5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
+                            <User className="w-5 h-5" />
                         </Button>
 
-                        {isLangOpen && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.2 }}
-                                className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-12 bg-background rounded-md shadow-lg border overflow-hidden z-50 flex flex-col p-1 gap-1"
-                            >
-                                <button
-                                    onClick={() => handleLanguageChange('ka')}
-                                    className="w-full h-8 flex items-center justify-center hover:bg-muted rounded-sm transition-colors"
-                                    aria-label="Georgian"
-                                >
-                                    <span className="fi fis fi-ge text-lg" />
-                                </button>
-                                <button
-                                    onClick={() => handleLanguageChange('en')}
-                                    className="w-full h-8 flex items-center justify-center hover:bg-muted rounded-sm transition-colors"
-                                    aria-label="English"
-                                >
-                                    <span className="fi fis fi-gb text-lg" />
-                                </button>
-                                <button
-                                    onClick={() => handleLanguageChange('ru')}
-                                    className="w-full h-8 flex items-center justify-center hover:bg-muted rounded-sm transition-colors"
-                                    aria-label="Russian"
-                                >
-                                    <span className="fi fis fi-ru text-lg" />
-                                </button>
-                            </motion.div>
-                        )}
-                    </div>
+                        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-bold px-6 shadow-lg shadow-primary/20">
+                            <Phone className="w-4 h-4 mr-2" />
+                            <span className="hidden sm:inline">599 00 00 00</span>
+                        </Button>
 
-                    {/* Auth Buttons or User Menu */}
-                    {isAuthenticated ? (
-                        <>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="relative text-muted-foreground hover:text-foreground"
-                                onClick={() => dispatch(openDrawer())}
-                            >
-                                <MessageSquare className="h-5 w-5" />
-                                {totalUnread > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-white ring-2 ring-background">
-                                        {totalUnread > 99 ? '99+' : totalUnread}
-                                    </span>
-                                )}
-                            </Button>
-
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="relative text-muted-foreground hover:text-foreground"
-                                onClick={() => setIsNotificationsOpen(true)}
-                            >
-                                <Bell className="h-5 w-5" />
-                                {notificationCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-white ring-2 ring-background">
-                                        {notificationCount > 99 ? '99+' : notificationCount}
-                                    </span>
-                                )}
-                            </Button>
-
-                            <div className="relative" ref={userMenuRef}>
-                                <Button
-                                    variant="ghost"
-                                    className="h-9 w-9 p-0 rounded-full"
-                                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                >
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#22d3ee] text-white">
-                                        <User className="h-5 w-5" />
+                        {/* Mobile Menu */}
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="md:hidden text-foreground">
+                                    <Menu className="w-6 h-6" />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="bg-background border-border p-0 w-[300px]">
+                                <div className="flex flex-col h-full bg-background p-6">
+                                    <div className="flex items-center gap-2 mb-10">
+                                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-xl">A</div>
+                                        <span className="text-xl font-bold text-foreground">AML</span>
                                     </div>
-                                </Button>
 
-                                {isUserMenuOpen && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="absolute top-full right-0 mt-2 w-48 bg-background rounded-md shadow-lg border overflow-hidden z-50"
-                                    >
-                                        <div className="px-4 py-3 border-b">
-                                            <p className="text-sm font-medium text-foreground">
-                                                {user?.firstName} {user?.lastName}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground truncate">
-                                                {user?.email}
-                                            </p>
-                                        </div>
-                                        <div className="p-1">
+                                    <nav className="flex flex-col gap-2">
+                                        {NAV_ITEMS.map((item) => (
                                             <Link
-                                                to={ROUTES.DASHBOARD}
-                                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm transition-colors"
-                                                onClick={() => setIsUserMenuOpen(false)}
+                                                key={item.href}
+                                                href={item.href}
+                                                className="text-lg font-bold text-muted-foreground hover:text-foreground hover:pl-2 transition-all duration-300 py-3 border-b border-border/50 uppercase tracking-wide"
                                             >
-                                                <LayoutDashboard className="h-4 w-4" />
-                                                <span>{t('auth.dashboard')}</span>
+                                                {item.label}
                                             </Link>
-                                            <Link
-                                                to={ROUTES.PROFILE}
-                                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm transition-colors"
-                                                onClick={() => setIsUserMenuOpen(false)}
-                                            >
-                                                <User className="h-4 w-4" />
-                                                <span>{t('auth.profile')}</span>
-                                            </Link>
+                                        ))}
+                                    </nav>
 
-                                            {user?.roles?.includes('COMPANY') && (
-                                                <>
-                                                </>
-                                            )}
-                                            <button
-                                                onClick={handleLogout}
-                                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm transition-colors"
-                                            >
-                                                <LogOut className="h-4 w-4" />
-                                                <span>{t('auth.logout')}</span>
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <Link to={ROUTES.LOGIN}>
-                                <Button variant="ghost" className="font-semibold">
-                                    {t('auth.login')}
-                                </Button>
-                            </Link>
-                            <Link to={ROUTES.REGISTER}>
-                                <Button
-                                    className="font-semibold shadow-sm text-white hover:opacity-90"
-                                    style={{ backgroundColor: colors.secondary }}
-                                >
-                                    {t('auth.register')}
-                                </Button>
-                            </Link>
-                        </>
-                    )}
+                                    <div className="mt-auto space-y-4">
+                                        <Button className="w-full rounded-xl bg-primary text-primary-foreground h-12 text-lg font-bold shadow-lg shadow-primary/20">
+                                            <User className="w-5 h-5 mr-2" /> Cabinet
+                                        </Button>
+                                    </div>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
             </div>
-            <ChatDrawer />
-            <NotificationDrawer isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
-        </motion.header >
+        </motion.header>
     );
-};
+}
