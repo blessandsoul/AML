@@ -49,7 +49,7 @@ export function CarInfo({ car }: CarInfoProps) {
 
     const specs = [
         { icon: Calendar, label: 'წელი', value: car.year },
-        { icon: Gauge, label: 'გარბენი', value: `${car.mileage.toLocaleString()} mi` },
+        { icon: Gauge, label: 'გარბენი', value: `${car.mileage.toLocaleString('en-US')} mi` },
         { icon: Settings2, label: 'ძრავა', value: car.engine },
         { icon: Fuel, label: 'საწვავი', value: car.fuel },
         { icon: MapPin, label: 'ლოკაცია', value: car.location.split(',')[0] },
@@ -92,7 +92,7 @@ export function CarInfo({ car }: CarInfoProps) {
                     <div className="relative group cursor-pointer" onClick={handleUnlockPrice}>
                         <div className="flex items-baseline gap-2 blur-[6px] group-hover:blur-[4px] transition-all duration-300 opacity-50">
                             <span className="text-3xl font-black text-foreground">
-                                ${(total).toLocaleString()}
+                                ${(total).toLocaleString('en-US')}
                             </span>
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center gap-2">
@@ -131,7 +131,7 @@ export function CarInfo({ car }: CarInfoProps) {
                     </div>
                     {/* Profit Tag */}
                     <div className="bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold border border-emerald-500/20">
-                        პოტენციური მოგება: ${(car.price * 1.35 - (car.price + 500 + 1550)).toLocaleString()}
+                        პოტენციური მოგება: ${(car.price * 1.35 - (car.price + 500 + 1550)).toLocaleString('en-US')}
                     </div>
                 </div>
 
@@ -140,14 +140,14 @@ export function CarInfo({ car }: CarInfoProps) {
                     {/* Cost Segment */}
                     <div className="h-full bg-blue-500/10 flex flex-col justify-center px-4 relative group" style={{ width: '70%' }}>
                         <span className="text-[10px] uppercase font-bold text-blue-600 mb-0.5">თვითღირებულება</span>
-                        <span className="text-sm font-black text-foreground">${(car.price + 2050).toLocaleString()}</span>
+                        <span className="text-sm font-black text-foreground">${(car.price + 2050).toLocaleString('en-US')}</span>
                         <div className="absolute right-0 top-0 bottom-0 w-px bg-blue-500/20 border-r border-dashed border-blue-500" />
                     </div>
 
                     {/* Profit Segment */}
                     <div className="h-full bg-emerald-500/10 flex flex-col justify-center px-4 relative flex-1">
                         <span className="text-[10px] uppercase font-bold text-emerald-600 mb-0.5">მარჟა (~35%)</span>
-                        <span className="text-sm font-black text-foreground">${(car.price * 1.35).toLocaleString()}</span>
+                        <span className="text-sm font-black text-foreground">${(car.price * 1.35).toLocaleString('en-US')}</span>
                     </div>
                 </div>
 
@@ -157,14 +157,14 @@ export function CarInfo({ car }: CarInfoProps) {
                             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                             ლოტის ღირებულება
                         </span>
-                        <span className="font-mono font-medium">${car.price.toLocaleString()}</span>
+                        <span className="font-mono font-medium">${car.price.toLocaleString('en-US')}</span>
                     </div>
                     <div className="flex justify-between items-center bg-background p-2 rounded border border-border/50">
                         <span className="text-muted-foreground flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                             აუქციონი + ტრანსპორტირება
                         </span>
-                        <span className="font-mono font-medium">${(500 + 1550).toLocaleString()}</span>
+                        <span className="font-mono font-medium">${(500 + 1550).toLocaleString('en-US')}</span>
                     </div>
 
                     <Separator className="my-2" />

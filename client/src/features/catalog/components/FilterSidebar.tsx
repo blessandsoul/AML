@@ -93,6 +93,10 @@ export function FilterSidebar() {
                             <Checkbox id="manheim" />
                             <Label htmlFor="manheim">Manheim</Label>
                         </div>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="adesa" />
+                            <Label htmlFor="adesa">Adesa</Label>
+                        </div>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

@@ -22,7 +22,7 @@ export function HeroTitle() {
                     ამერიკის აუქციონებზე
                 </span>
                 <span className="text-muted-foreground font-bold tracking-tight text-sm md:text-lg lg:text-xl opacity-90 mt-2 max-w-2xl mx-auto">
-                    დაზოგე 30%-მდე შუამავლების გარეშე. სადილერო პირობები Copart, IAAI და Manheim-ზე.
+                    დაზოგე 30%-მდე შუამავლების გარეშე. სადილერო პირობები Copart, IAAI, Manheim და Adesa-ზე.
                 </span>
             </motion.h1>
 

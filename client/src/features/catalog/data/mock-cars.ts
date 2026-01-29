@@ -12,7 +12,7 @@ export interface Car {
     fuel: string;
     engine: string;
     location: string;
-    auction?: 'Copart' | 'IAAI' | 'Manheim' | 'ADESA';
+    auction?: 'Copart' | 'IAAI' | 'Manheim' | 'Adesa';
     status?: 'active' | 'sold' | 'reserved';
     lotNumber?: string;
 }

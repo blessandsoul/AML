@@ -223,9 +223,9 @@ export function QuickCalculator() {
                 {/* Mobile Tabs */}
                 <div className="flex md:hidden items-center justify-between bg-white/5 rounded-xl p-1 mb-6 border border-white/10">
                     {[
-                        { id: 'auction', icon: Gavel, label: 'აუქციონი' },
-                        { id: 'logistics', icon: Ship, label: 'ლოჯისტიკა' },
-                        { id: 'details', icon: FileText, label: 'დეტალები' }
+                        { id: 'auction', label: 'აუქციონი' },
+                        { id: 'logistics', label: 'ლოჯისტიკა' },
+                        { id: 'details', label: 'დეტალები' }
                     ].map((tab) => (
                         <button
                             key={tab.id}
@@ -245,7 +245,6 @@ export function QuickCalculator() {
                                 />
                             )}
                             <span className="relative z-10 flex items-center gap-1.5">
-                                <tab.icon className="w-3.5 h-3.5" />
                                 <span>{tab.label}</span>
                             </span>
                         </button>

@@ -44,7 +44,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                 className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-full"
             >
                 {/* Image Container */}
-                <Link href={`/catalog/${car.id}`} className="block relative aspect-[4/3] overflow-hidden bg-muted">
+                <Link href={`/catalog/${car.id}`} className="block relative aspect-[4/3] overflow-hidden bg-muted" suppressHydrationWarning>
                     <Image
                         src={car.image}
                         alt={car.title}
@@ -52,6 +52,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
                         priority={priority}
+                        suppressHydrationWarning
                     />
 
                     {/* PROFIT BADGE - The "Perekup" Hook */}
@@ -59,16 +60,8 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                         <div className="bg-emerald-500 text-white px-2 py-1 rounded-md flex items-center gap-1.5 shadow-lg animate-in fade-in zoom-in duration-300">
                             <span className="text-[10px] uppercase font-bold tracking-wide">მოგება:</span>
                             <span className="text-xs font-black font-mono tracking-wider">
-                                ${potentialProfit.toLocaleString()}
+                                ${potentialProfit.toLocaleString('en-US')}
                             </span>
-                        </div>
-                    </div>
-
-                    {/* Timer */}
-                    <div className="absolute top-3 right-3 z-10">
-                        <div className="bg-black/60 backdrop-blur-md text-white px-2 py-1 rounded-md flex items-center gap-1.5 border border-white/10 shadow-lg">
-                            <Timer className="w-3 h-3 text-red-400" />
-                            <span className="text-[10px] font-mono font-bold tracking-wider">23:04:12</span>
                         </div>
                     </div>
 
@@ -80,7 +73,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
                                 <span className="bg-white/20 p-1 rounded-sm"><Gauge className="w-3 h-3" /></span>
-                                <span>{car.mileage.toLocaleString()} mi</span>
+                                <span>{car.mileage.toLocaleString('en-US')} mi</span>
                             </div>
                             <div className="flex items-center gap-1">
                                 <span className="bg-white/20 p-1 rounded-sm"><Settings2 className="w-3 h-3" /></span>
@@ -110,7 +103,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                         <div className="flex items-center justify-between text-xs">
                             <span className="text-muted-foreground">საბაზრო ფასი:</span>
                             <span className="font-medium decoration-red-500/50 line-through decoration-1">
-                                ${estimatedMarketPrice.toLocaleString()}
+                                ${estimatedMarketPrice.toLocaleString('en-US')}
                             </span>
                         </div>
 
@@ -120,9 +113,8 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                             <span>შემოწმებული ისტორია</span>
                         </div>
 
-                        {/* Dealer Highlights (Fills the gap) */}
                         <div className="flex flex-wrap gap-2 pt-1">
-                            <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
+                            <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
                                 Run & Drive
                             </span>
                             <span className="bg-muted text-muted-foreground border border-border px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">

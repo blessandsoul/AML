@@ -3,8 +3,7 @@
 import { motion } from 'framer-motion';
 
 const BRANDS = [
-    "COPART", "IAAI", "MANHEIM", "ADESA", "IMPACT", "PIPELINE",
-    "COPART", "IAAI", "MANHEIM", "ADESA", "IMPACT", "PIPELINE"
+    "COPART", "IAAI", "MANHEIM", "ADESA"
 ];
 
 export function BrandMarquee() {

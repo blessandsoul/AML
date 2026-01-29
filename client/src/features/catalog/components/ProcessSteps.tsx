@@ -56,24 +56,15 @@ export function ProcessSteps() {
 
                 <div className="relative w-full">
                     {/* Connecting Line (Desktop) */}
-                    <div className="absolute top-[60px] left-[12.5%] w-[75%] h-px bg-border hidden md:block z-0" />
+
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
                         {STEPS.map((step, i) => (
                             <div key={i} className="group relative flex flex-col items-center text-center">
-                                {/* Step Number */}
-                                <div className="absolute top-0 -translate-y-12 text-8xl font-black text-foreground/[0.03] select-none pointer-events-none">
-                                    0{i + 1}
-                                </div>
-
                                 <div className="relative z-10 flex flex-col items-center w-full">
-                                    {/* Icon Bubble - Strict Primary Accent */}
-                                    <div className={cn(
-                                        "w-28 h-28 rounded-3xl flex items-center justify-center mb-8 relative transition-all duration-500 group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl bg-card border border-border",
-                                    )}>
-                                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary/10 text-primary">
-                                            <step.icon className="w-7 h-7" />
-                                        </div>
+                                    {/* Icon Bubble - Minimalist */}
+                                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 bg-primary/5 text-primary transition-colors hover:bg-primary/10">
+                                        <step.icon className="w-8 h-8" />
                                     </div>
 
                                     <h4 className="text-xl font-bold text-foreground mb-3 font-sans">
