@@ -33,7 +33,7 @@ export function StickyCTA() {
                     <Button
                         size="icon"
                         className="h-14 w-14 rounded-full bg-emerald-500 hover:bg-emerald-600 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300"
-                        title="Chat on WhatsApp"
+                        title="WhatsApp"
                     >
                         <MessageCircle className="w-7 h-7 text-white" />
                     </Button>
@@ -41,7 +41,7 @@ export function StickyCTA() {
                     <Button
                         size="icon"
                         className="h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300"
-                        title="Call Us"
+                        title="დაგვირეკეთ"
                     >
                         <Phone className="w-6 h-6 text-primary-foreground" />
                     </Button>

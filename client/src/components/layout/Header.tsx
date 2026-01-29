@@ -11,14 +11,16 @@ import {
     Sheet,
     SheetContent,
     SheetTrigger,
+    SheetHeader,
+    SheetTitle,
 } from '@/components/ui/sheet';
 
 const NAV_ITEMS = [
-    { label: 'Home', href: '/' },
-    { label: 'Catalog', href: '/catalog' },
-    { label: 'Auctions', href: '/auctions' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'მთავარი', href: '/' },
+    { label: 'კატალოგი', href: '/catalog' },
+    { label: 'აუქციონები', href: '/auctions' },
+    { label: 'ჩვენ შესახებ', href: '/about' },
+    { label: 'კონტაქტი', href: '/contact' },
 ];
 
 export function Header() {
@@ -91,9 +93,9 @@ export function Header() {
                             <User className="w-5 h-5" />
                         </Button>
 
-                        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-bold px-6 shadow-lg shadow-primary/20">
-                            <Phone className="w-4 h-4 mr-2" />
-                            <span className="hidden sm:inline">599 00 00 00</span>
+                        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-bold px-3 sm:px-6 shadow-lg shadow-primary/20">
+                            <Phone className="w-4 h-4 sm:mr-2" />
+                            <span className="text-xs sm:text-sm font-bold ml-2 sm:ml-0">599 00 00 00</span>
                         </Button>
 
                         {/* Mobile Menu */}
@@ -104,6 +106,9 @@ export function Header() {
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="bg-background border-border p-0 w-[300px]">
+                                <SheetHeader className="sr-only">
+                                    <SheetTitle>Mobile Menu</SheetTitle>
+                                </SheetHeader>
                                 <div className="flex flex-col h-full bg-background p-6">
                                     <div className="flex items-center gap-2 mb-10">
                                         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-xl">A</div>
@@ -124,7 +129,7 @@ export function Header() {
 
                                     <div className="mt-auto space-y-4">
                                         <Button className="w-full rounded-xl bg-primary text-primary-foreground h-12 text-lg font-bold shadow-lg shadow-primary/20">
-                                            <User className="w-5 h-5 mr-2" /> Cabinet
+                                            <User className="w-5 h-5 mr-2" /> კაბინეტი
                                         </Button>
                                     </div>
                                 </div>

@@ -4,9 +4,9 @@ import * as React from 'react';
 import Image from 'next/image';
 
 const TEAM = [
-    { name: "Giorgi M.", role: "Senior Broker", img: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400&q=80" },
-    { name: "Anna K.", role: "Logistics", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" },
-    { name: "David L.", role: "Inspection", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
+    { name: "გიორგი მ.", role: "უფროსი ბროკერი", img: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400&q=80" },
+    { name: "ანა კ.", role: "ლოჯისტიკა", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" },
+    { name: "დავით ლ.", role: "ინსპექტირება", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
 ];
 
 export function TeamTrust() {
@@ -14,7 +14,7 @@ export function TeamTrust() {
         <section className="bg-background py-20 border-t border-border">
             <div className="container mx-auto px-4 text-center">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-8">
-                    Real People, Real Support
+                    რეალური გუნდი, რეალური მხარდაჭერა
                 </p>
                 <div className="flex justify-center flex-wrap gap-8 md:gap-16">
                     {TEAM.map((member, i) => (

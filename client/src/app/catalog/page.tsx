@@ -26,87 +26,91 @@ import { Filter } from 'lucide-react';
 
 export default function CatalogPage() {
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="flex flex-col md:flex-row gap-8">
-                {/* Sidebar - Desktop */}
-                <aside className="hidden md:block w-64 flex-shrink-0">
-                    <div className="sticky top-24">
-                        <FilterSidebar />
-                    </div>
-                </aside>
-
-                <main className="flex-1">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                        <h1 className="text-3xl font-bold">Каталог авто</h1>
-
-                        <div className="flex items-center gap-4">
-                            {/* Mobile Filter */}
-                            <Sheet>
-                                <SheetTrigger asChild>
-                                    <Button variant="outline" className="md:hidden">
-                                        <Filter className="w-4 h-4 mr-2" />
-                                        Фильтры
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                                    <div className="py-6">
-                                        <FilterSidebar />
-                                    </div>
-                                </SheetContent>
-                            </Sheet>
-
-                            {/* Sorting */}
-                            <Select defaultValue="newest">
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Сортировка" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="newest">Сначала новые</SelectItem>
-                                    <SelectItem value="price-asc">Сначала дешевле</SelectItem>
-                                    <SelectItem value="price-desc">Сначала дороже</SelectItem>
-                                    <SelectItem value="year-desc">Сначала свежие</SelectItem>
-                                </SelectContent>
-                            </Select>
+        <div className="min-h-screen bg-background text-foreground">
+            <div className="container mx-auto px-4 pb-8 pt-24 md:pt-28">
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Sidebar - Desktop */}
+                    <aside className="hidden md:block w-64 flex-shrink-0">
+                        <div className="sticky top-24">
+                            <FilterSidebar />
                         </div>
-                    </div>
+                    </aside>
 
-                    {/* Results Info */}
-                    <div className="mb-6 text-muted-foreground">
-                        Найдено <span className="text-foreground font-medium">2,543</span> автомобиля
-                    </div>
+                    <main className="flex-1">
+                        {/* Header */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+                            <h1 className="text-2xl md:text-3xl font-bold self-start sm:self-auto">ავტომობილების კატალოგი</h1>
 
-                    {/* Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                        {[...MOCK_CARS, ...MOCK_CARS, ...MOCK_CARS].map((car, i) => (
-                            <CarCard key={`${car.id}-${i}`} car={car} />
-                        ))}
-                    </div>
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                                {/* Mobile Filter */}
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button variant="outline" className="md:hidden flex-1 h-10">
+                                            <Filter className="w-4 h-4 mr-2" />
+                                            ფილტრები
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-[85vw] sm:w-[350px] overflow-y-auto">
+                                        <div className="py-6">
+                                            <FilterSidebar />
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
 
-                    {/* Pagination */}
-                    <Pagination>
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious href="#" />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#" isActive>1</PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#">2</PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#">3</PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationNext href="#" />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                </main>
+                                {/* Sorting */}
+                                <div className="flex-1 sm:w-[180px] sm:flex-none">
+                                    <Select defaultValue="newest">
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="სორტირება" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="newest">ჯერ ახალი</SelectItem>
+                                            <SelectItem value="price-asc">ჯერ იაფი</SelectItem>
+                                            <SelectItem value="price-desc">ჯერ ძვირი</SelectItem>
+                                            <SelectItem value="year-desc">ჯერ ახალი წლით</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Results Info */}
+                        <div className="mb-6 text-muted-foreground">
+                            ნაპოვნია <span className="text-foreground font-medium">2,543</span> ავტომობილი
+                        </div>
+
+                        {/* Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            {[...MOCK_CARS, ...MOCK_CARS, ...MOCK_CARS].map((car, i) => (
+                                <CarCard key={`${car.id}-${i}`} car={car} index={i} />
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious href="#" />
+                                </PaginationItem>
+                                <PaginationItem>
+                                    <PaginationLink href="#" isActive>1</PaginationLink>
+                                </PaginationItem>
+                                <PaginationItem>
+                                    <PaginationLink href="#">2</PaginationLink>
+                                </PaginationItem>
+                                <PaginationItem>
+                                    <PaginationLink href="#">3</PaginationLink>
+                                </PaginationItem>
+                                <PaginationItem>
+                                    <PaginationEllipsis />
+                                </PaginationItem>
+                                <PaginationItem>
+                                    <PaginationNext href="#" />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </main>
+                </div>
             </div>
         </div>
     );

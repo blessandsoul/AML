@@ -10,20 +10,20 @@ import {
 
 const FAQS = [
     {
-        q: "Is the shipping insured?",
-        a: "Yes, every vehicle is fully insured during maritime transit. We provide a full photo report at every stage: auction, warehouse, and loading."
+        q: "არის თუ არა ტრანსპორტირება დაზღვეული?",
+        a: "დიახ, ყველა ავტომობილი სრულად დაზღვეულია საზღვაო გადაზიდვისას. ჩვენ გთავაზობთ სრულ ფოტო რეპორტს ყველა ეტაპზე: აუქციონი, საწყობი და ჩატვირთვა."
     },
     {
-        q: "What if the car has hidden damage?",
-        a: "We provide access to Carfax and AutoCheck. Our experts inspect the listing photos and seller rating to minimize risks before you bid."
+        q: "რა ხდება თუ მანქანას აქვს ფარული დაზიანება?",
+        a: "ჩვენ გთავაზობთ წვდომას Carfax-ზე და AutoCheck-ზე. ჩვენი ექსპერტები ამოწმებენ ფოტოებს და გამყიდველის რეიტინგს რისკების მინიმიზაციისთვის."
     },
     {
-        q: "How long does delivery take?",
-        a: "Typically 45-60 days from the US East Coast to Poti/Batumi. Times may vary depending on the auction location and shipping lines."
+        q: "რამდენი ხანი სჭირდება ჩამოყვანას?",
+        a: "ჩვეულებრივ 45-60 დღე ამერიკის აღმოსავლეთ სანაპიროდან ფოთამდე/ბათუმამდე."
     },
     {
-        q: "Can I participate in auctions myself?",
-        a: "Yes! We give you direct access to Copart and IAAI. You select, we advise and place the bid for you to ensure safety."
+        q: "შემიძლია თავად მივიღო მონაწილეობა აუქციონში?",
+        a: "დიახ! ჩვენ გაძლევთ პირდაპირ წვდომას Copart-ზე და IAAI-ზე. თქვენ ირჩევთ, ჩვენ გირჩევთ და ვდებთ ფსონს თქვენთვის უსაფრთხოების გარანტიით."
     }
 ];
 
@@ -33,10 +33,10 @@ export function MinimalFAQ() {
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h3 className="text-3xl font-black text-foreground tracking-tight mb-4">
-                        Common Questions
+                        ხშირად დასმული კითხვები
                     </h3>
                     <p className="text-muted-foreground font-medium">
-                        Everything you need to know before bidding.
+                        ყველაფერი რაც უნდა იცოდეთ აუქციონამდე.
                     </p>
                 </div>
 

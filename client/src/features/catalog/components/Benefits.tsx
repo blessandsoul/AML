@@ -9,23 +9,23 @@ export function Benefits() {
     const benefits = [
         {
             icon: ShieldCheck,
-            title: "Trusted Dealers",
-            description: "Access only to licensed and insured partner inventories.",
+            title: "სანდო დილერები",
+            description: "წვდომა მხოლოდ ლიცენზირებულ და დაზღვეულ ინვენტარზე.",
         },
         {
             icon: Globe,
-            title: "Global Logistics",
-            description: "Fast shipping from USA/Europe directly to Poti or Batumi.",
+            title: "გლობალური ლოჯისტიკა",
+            description: "სწრაფი ტრანსპორტირება ამერიკიდან და ევროპიდან ფოთამდე და ბათუმამდე.",
         },
         {
             icon: BadgeDollarSign,
-            title: "Wholesale Prices",
-            description: "No middlemen. Pay real auction price + fixed commission.",
+            title: "საბითუმო ფასები",
+            description: "შუამავლების გარეშე. იხდით რეალურ აუქციონის ფასს + ფიქსირებული საკომისიო.",
         },
         {
             icon: Zap,
-            title: "Instant Calc",
-            description: "Accurate customs and shipping costs for every lot.",
+            title: "მომენტალური კალკულატორი",
+            description: "ზუსტი ტრანსპორტირების და განბაჟების ხარჯები თითოეული ლოტისთვის.",
         }
     ];
 
@@ -33,10 +33,10 @@ export function Benefits() {
         <section className="bg-background py-32 border-t border-border">
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="text-center mb-20 space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Why Choose Us</h2>
+                    <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">რატომ ჩვენ</h2>
                     <h3 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
-                        Modern Standard <br className="md:hidden" />
-                        in Logistics
+                        თანამედროვე სტანდარტი <br className="md:hidden" />
+                        ლოჯისტიკაში
                     </h3>
                 </div>
 

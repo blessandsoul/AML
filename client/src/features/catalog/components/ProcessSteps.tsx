@@ -8,23 +8,23 @@ import { cn } from '@/lib/utils';
 const STEPS = [
     {
         icon: MousePointerClick,
-        title: "Selection",
-        desc: "Free access to closed auctions (Manheim, Adesa).",
+        title: "შერჩევა",
+        desc: "უფასო წვდომა დახურულ აუქციონებზე (Manheim, Adesa).",
     },
     {
         icon: Gavel,
-        title: "Bidding",
-        desc: "Professional strategy to win at the best price.",
+        title: "ვაჭრობა",
+        desc: "პროფესიონალური სტრატეგია საუკეთესო ფასად მოსაგებად.",
     },
     {
         icon: Ship,
-        title: "Logistics",
-        desc: "Insured shipping with full photo report.",
+        title: "ლოჯისტიკა",
+        desc: "დაზღვეული ტრანსპორტირება სრული ფოტო რეპორტით.",
     },
     {
         icon: Key,
-        title: "Delivery",
-        desc: "Customs clearance and key handover.",
+        title: "ჩაბარება",
+        desc: "განბაჟება და გასაღების გადმოცემა.",
     }
 ];
 
@@ -44,12 +44,12 @@ export function ProcessSteps() {
                 <motion.div style={{ y }} className="text-center mb-24 space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-border text-xs font-bold uppercase tracking-widest text-muted-foreground shadow-sm">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        How it works
+                        როგორ მუშაობს
                     </div>
                     <h3 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
-                        Simple Path to <br className="md:hidden" />
+                        მარტივი გზა <br className="md:hidden" />
                         <span className="text-primary">
-                            Your Dream Car
+                            თქვენს საოცნებო მანქანამდე
                         </span>
                     </h3>
                 </motion.div>

@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { CarCard } from './CarCard';
+import { HunterCard } from './HunterCard';
+import { SniperSearch } from './SniperSearch';
 import { MOCK_CARS } from '../data/mock-cars';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -25,13 +27,13 @@ export function FeaturedCars() {
                             <span className="w-2 h-2 rounded-full bg-primary/20 flex items-center justify-center">
                                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                             </span>
-                            <span>Premium Selections</span>
+                            <span>პრემიუმ კოლექცია</span>
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
-                            Featured Lots
+                            რჩეული ლოტები
                         </h2>
                         <p className="text-muted-foreground text-lg max-w-lg font-medium">
-                            Curated vehicles from top auctions. Verified condition and exclusive pricing.
+                            შერჩეული მანქანები ტოპ აუქციონებიდან. შემოწმებული მდგომარეობა და ექსკლუზიური ფასები.
                         </p>
                     </motion.div>
 
@@ -46,7 +48,7 @@ export function FeaturedCars() {
                             asChild
                         >
                             <Link href="/catalog">
-                                View All Cars
+                                ყველა მანქანა
                                 <ArrowRight className="w-4 h-4 ml-2" />
                             </Link>
                         </Button>
@@ -55,18 +57,27 @@ export function FeaturedCars() {
 
                 {/* Clean Grid Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-                    {MOCK_CARS.slice(0, 10).map((car, index) => (
-                        <CarCard key={car.id} car={car} index={index} priority={index < 5} />
-                    ))}
+                    {MOCK_CARS.slice(0, 10).map((car, index) => {
+                        // "Zombie" Strategy: Inject HunterCard as the 5th item (index 4)
+                        if (index === 4) {
+                            return <HunterCard key="hunter-card" />;
+                        }
+                        return <CarCard key={car.id} car={car} index={index} priority={index < 5} />;
+                    })}
                 </div>
 
                 <div className="mt-16 text-center md:hidden">
                     <Button variant="outline" className="w-full rounded-full h-12 border-border text-foreground" asChild>
                         <Link href="/catalog">
-                            View All Cars
+                            ყველა მანქანა
                         </Link>
                     </Button>
                 </div>
+            </div>
+
+            {/* Sniper Search Banner */}
+            <div className="mt-24">
+                <SniperSearch />
             </div>
         </section>
     );

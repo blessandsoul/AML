@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
+import { REAL_CAR_PHOTOS } from '../data/real-car-photos';
+
 const DELIVERIES = [
-    { model: "BMW X5 2023", city: "Tbilisi", savings: "$12,400", img: "https://images.unsplash.com/photo-1555215695-3004980adade?w=800&q=80" },
-    { model: "Toyota Camry", city: "Batumi", savings: "$4,200", img: "https://images.unsplash.com/photo-1621007947382-bb3c3968e3bb?w=800&q=80" },
-    { model: "Ford Mustang", city: "Kutaisi", savings: "$8,100", img: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80" },
-    { model: "Lexus RX350", city: "Poti", savings: "$6,500", img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80" },
+    { model: "BMW X5 M Comp", city: "თბილისი", savings: "$12,400", img: REAL_CAR_PHOTOS["5744497592"][0] },
+    { model: "Mercedes-AMG GT", city: "ბათუმი", savings: "$8,200", img: REAL_CAR_PHOTOS["5751385850"][0] },
+    { model: "Porsche 911 Turbo", city: "ქუთაისი", savings: "$15,100", img: REAL_CAR_PHOTOS["5748691586"][0] },
+    { model: "Audi RS Q8", city: "ფოთი", savings: "$9,500", img: REAL_CAR_PHOTOS["57388033352123"][0] },
 ];
 
 export function SocialProof() {
@@ -18,10 +20,10 @@ export function SocialProof() {
             <div className="container mx-auto px-4 mb-10 text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest mb-4">
                     <CheckCircle2 className="w-3 h-3" />
-                    Trusted by 2,500+ Clients
+                    2,500+ კმაყოფილი კლიენტი
                 </div>
                 <h3 className="text-3xl font-black text-foreground">
-                    Just Delivered
+                    ახლახანს ჩამოყვანილი
                 </h3>
             </div>
 
@@ -42,7 +44,7 @@ export function SocialProof() {
                                     <MapPin className="w-3 h-3" /> {item.city}
                                 </div>
                                 <div className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full w-fit">
-                                    Saved {item.savings}
+                                    დაზოგე {item.savings}
                                 </div>
                             </div>
                         </div>

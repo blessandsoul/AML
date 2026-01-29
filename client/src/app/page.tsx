@@ -5,7 +5,6 @@ import { BrandMarquee } from '@/features/catalog/components/BrandMarquee';
 import { Benefits } from '@/features/catalog/components/Benefits';
 import { SocialProof } from '@/features/catalog/components/SocialProof';
 import { ValueComparison } from '@/features/catalog/components/ValueComparison';
-import { QuickCalculator } from '@/features/catalog/components/QuickCalculator';
 import { MinimalFAQ } from '@/features/catalog/components/MinimalFAQ';
 import { TeamTrust } from '@/features/catalog/components/TeamTrust';
 import { StickyCTA } from '@/features/catalog/components/StickyCTA';
@@ -18,7 +17,6 @@ export default function Home() {
       <FeaturedCars />
       <ValueComparison />
       <ProcessSteps />
-      <QuickCalculator /> {/* Interaction Anchor */}
       <SocialProof />
       <MinimalFAQ /> {/* Reassurance Anchor */}
       <TeamTrust /> {/* Human Anchor */}

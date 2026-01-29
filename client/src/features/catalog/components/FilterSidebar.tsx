@@ -19,16 +19,16 @@ export function FilterSidebar() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">Фильтры</h3>
+                <h3 className="font-semibold text-lg">ფილტრები</h3>
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                    Сбросить
+                    გასუფთავება
                 </Button>
             </div>
 
             <Accordion type="multiple" defaultValue={['price', 'make', 'type']} className="w-full">
                 {/* Price Range */}
                 <AccordionItem value="price">
-                    <AccordionTrigger>Цена</AccordionTrigger>
+                    <AccordionTrigger>ფასი</AccordionTrigger>
                     <AccordionContent className="pt-4 px-1">
                         <Slider
                             defaultValue={[0, 100000]}
@@ -47,26 +47,26 @@ export function FilterSidebar() {
 
                 {/* Categories */}
                 <AccordionItem value="type">
-                    <AccordionTrigger>Тип транспорта</AccordionTrigger>
+                    <AccordionTrigger>ტრანსპორტის ტიპი</AccordionTrigger>
                     <AccordionContent className="space-y-2">
                         <div className="flex items-center space-x-2">
                             <Checkbox id="cars" checked />
-                            <Label htmlFor="cars">Легковые</Label>
+                            <Label htmlFor="cars">მსუბუქი</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="moto" />
-                            <Label htmlFor="moto">Мотоциклы</Label>
+                            <Label htmlFor="moto">მოტოციკლები</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="heavy" />
-                            <Label htmlFor="heavy">Спецтехника</Label>
+                            <Label htmlFor="heavy">სპეცტექნიკა</Label>
                         </div>
                     </AccordionContent>
                 </AccordionItem>
 
                 {/* Makes */}
                 <AccordionItem value="make">
-                    <AccordionTrigger>Марка</AccordionTrigger>
+                    <AccordionTrigger>მარკა</AccordionTrigger>
                     <AccordionContent className="space-y-2">
                         {['BMW', 'Mercedes-Benz', 'Toyota', 'Honda', 'Ford', 'Chevrolet'].map((make) => (
                             <div key={make} className="flex items-center space-x-2">
@@ -79,7 +79,7 @@ export function FilterSidebar() {
 
                 {/* Auctions */}
                 <AccordionItem value="auction">
-                    <AccordionTrigger>Аукцион</AccordionTrigger>
+                    <AccordionTrigger>აუქციონი</AccordionTrigger>
                     <AccordionContent className="space-y-2">
                         <div className="flex items-center space-x-2">
                             <Checkbox id="copart" />
@@ -97,7 +97,7 @@ export function FilterSidebar() {
                 </AccordionItem>
             </Accordion>
 
-            <Button className="w-full">Применить (124)</Button>
+            <Button className="w-full">ძებნა (124)</Button>
         </div>
     );
 }
