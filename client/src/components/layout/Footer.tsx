@@ -24,7 +24,7 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">კომპანია</h4>
                         <ul className="space-y-4 text-sm font-medium text-muted-foreground">
-                            <li><Link href="/about" className="hover:text-primary transition-colors">ჩვენ შესახებ</Link></li>
+                            <li><Link href="/about" className="hover:text-primary transition-colors">ჩვენს შესახებ</Link></li>
                             <li><Link href="/contact" className="hover:text-primary transition-colors">კონტაქტი</Link></li>
                             <li><Link href="/careers" className="hover:text-primary transition-colors">ვაკანსიები</Link></li>
                             <li><Link href="/blog" className="hover:text-primary transition-colors">ბლოგი</Link></li>
