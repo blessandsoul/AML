@@ -1,6 +1,6 @@
-# AutoImport Project Scaffold
+# AML - Auto Logistics Platform
 
-This scaffold was generated from the generic core of the "AtlasCaucasus" project. It contains the essential infrastructure for a modern web application without the tourism-specific domain logic.
+This project is built on the generic core infrastructure scaffold. It contains the essential foundation for a modern auto logistics and vehicle import/export management system.
 
 ## Included Features (Core)
 
@@ -34,12 +34,13 @@ This scaffold was generated from the generic core of the "AtlasCaucasus" project
     *   Server: `npm run dev`
     *   Client: `npm run dev`
 
-## What was removed?
-*   Tours, Guides, Drivers, Reviews, Inquiries modules.
-*   Tourism-specific pages and routes.
-*   Tourism-specific database tables.
+## What was removed from the original scaffold?
+*   Generic placeholder modules that don't apply to auto logistics.
+*   Template-specific pages and routes.
+*   Placeholder database tables not relevant to vehicle management.
 
-## Customization Next Steps
-1.  Rename "Companies" to "Dealers" if desired.
-2.  Create new modules for "Cars", "Auctions", "Shipping".
-3.  Update the header navigation in `client/src/components/layout/Header.tsx`.
+## Next Steps for AML Development
+1.  Configure "Companies" as Dealers/Importers/Brokers.
+2.  Create domain modules: "Vehicles", "Auctions", "Logistics", "Shipping".
+3.  Set up vehicle catalog and auction management features.
+4.  Update navigation in `client/src/components/layout/Header.tsx`.

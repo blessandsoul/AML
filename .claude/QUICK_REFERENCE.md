@@ -1,4 +1,4 @@
-# Tourism Server - Quick Reference for AI Assistants
+# AML Server - Quick Reference for AI Assistants
 
 **Read this first, then dive into specific rule files as needed.**
 
@@ -6,7 +6,7 @@
 
 ## 🎯 Project Overview
 
-**Tourism API server for Georgia** - High-traffic, production-ready backend for tour operators, hotels, and restaurants.
+**AML - Auto Logistics Platform** - Production-ready backend for vehicle import/export, auto auctions, and logistics management.
 
 ---
 
@@ -52,7 +52,7 @@ src/
 ```json
 {
   "success": true,
-  "message": "Tour created successfully",
+  "message": "Vehicle listing created successfully",
   "data": { ... }
 }
 ```
@@ -66,8 +66,8 @@ src/
 {
   "success": false,
   "error": {
-    "code": "TOUR_NOT_FOUND",
-    "message": "Tour not found"
+    "code": "VEHICLE_NOT_FOUND",
+    "message": "Vehicle not found"
   }
 }
 ```
@@ -160,12 +160,12 @@ updated_at: timestamp (auto-update)
 /api/v1/health          # Health check
 /api/v1/auth/*          # Authentication
 /api/v1/users/*         # User management
-/api/v1/companies/*     # Companies
-/api/v1/tours/*         # Tours
-/api/v1/hotels/*        # Hotels
-/api/v1/restaurants/*   # Restaurants
-/api/v1/bookings/*      # Bookings
-/api/v1/payments/*      # Payments
+/api/v1/companies/*     # Dealers/Importers
+/api/v1/vehicles/*      # Vehicle listings
+/api/v1/auctions/*      # Auction management
+/api/v1/shipments/*     # Logistics & shipping
+/api/v1/bookings/*      # Reservations
+/api/v1/payments/*      # Payment processing
 ```
 
 ---

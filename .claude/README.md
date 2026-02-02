@@ -1,6 +1,6 @@
-# Tourism Server - Claude Assistant Rules
+# AML Server - Claude Assistant Rules
 
-This directory contains project-specific rules and guidelines for Claude working on the Tourism Server project.
+This directory contains project-specific rules and guidelines for Claude working on the AML Auto Logistics project.
 
 ## 📁 Directory Structure
 

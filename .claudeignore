@@ -1,0 +1,15 @@
+# ===========================================
+# Claude Code - Ignore Rules
+# ===========================================
+# Only CORE.md will be auto-loaded
+# All other docs are loaded on demand
+
+# All detailed documentation (request when needed)
+.claude/docs/**
+
+# Commands are loaded only when invoked
+.claude/commands/**
+
+# Reference files
+.claude/QUICK_REFERENCE.md
+.claude/README.md
