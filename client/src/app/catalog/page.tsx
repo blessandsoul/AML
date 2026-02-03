@@ -23,11 +23,18 @@ import {
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Filter } from 'lucide-react';
+import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export default function CatalogPage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <div className="container mx-auto px-4 pb-8 pt-24 md:pt-28">
+            <div className="container mx-auto px-4 pb-8 pt-10 md:pt-8">
+                <Breadcrumbs
+                    items={[
+                        { label: 'მთავარი', href: '/' },
+                        { label: 'კატალოგი' },
+                    ]}
+                />
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* Sidebar - Desktop */}
                     <aside className="hidden md:block w-64 flex-shrink-0">

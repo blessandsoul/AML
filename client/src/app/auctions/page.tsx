@@ -60,7 +60,7 @@ export default function AuctionsPage() {
     const [showFilters, setShowFilters] = React.useState(false);
 
     return (
-        <div className="min-h-screen bg-background pb-20 pt-24">
+        <div className="min-h-screen bg-background pb-20 pt-10 md:pt-8">
             <LiveTicker />
             <AuctionFilters isOpen={showFilters} onClose={() => setShowFilters(false)} />
 

@@ -25,8 +25,8 @@ export function Footer() {
                         <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">კომპანია</h4>
                         <ul className="space-y-4 text-sm font-medium text-muted-foreground">
                             <li><Link href="/about" className="hover:text-primary transition-colors">ჩვენს შესახებ</Link></li>
+                            <li><Link href="/reviews" className="hover:text-primary transition-colors">მიმოხილვები</Link></li>
                             <li><Link href="/contact" className="hover:text-primary transition-colors">კონტაქტი</Link></li>
-                            <li><Link href="/careers" className="hover:text-primary transition-colors">ვაკანსიები</Link></li>
                             <li><Link href="/blog" className="hover:text-primary transition-colors">ბლოგი</Link></li>
                         </ul>
                     </div>
@@ -37,7 +37,7 @@ export function Footer() {
                         <ul className="space-y-4 text-sm font-medium text-muted-foreground">
                             <li><Link href="/catalog" className="hover:text-primary transition-colors">კატალოგი</Link></li>
                             <li><Link href="/calculator" className="hover:text-primary transition-colors">კალკულატორი</Link></li>
-                            <li><Link href="/tracking" className="hover:text-primary transition-colors">თრექინგი</Link></li>
+                            <li><Link href="/track" className="hover:text-primary transition-colors">თრექინგი</Link></li>
                             <li><Link href="/delivery" className="hover:text-primary transition-colors">ტრანსპორტირება</Link></li>
                         </ul>
                     </div>

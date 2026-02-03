@@ -23,6 +23,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,8 +38,14 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background pt-10 md:pt-8 pb-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto space-y-16">
+                <Breadcrumbs
+                    items={[
+                        { label: 'მთავარი', href: '/' },
+                        { label: 'კონტაქტი' },
+                    ]}
+                />
                 {/* Header Section */}
                 <div className="text-center space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">

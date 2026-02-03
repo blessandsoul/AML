@@ -3,11 +3,11 @@ import { FeaturedCars } from '@/features/catalog/components/FeaturedCars';
 import { ProcessSteps } from '@/features/catalog/components/ProcessSteps';
 import { BrandMarquee } from '@/features/catalog/components/BrandMarquee';
 import { Benefits } from '@/features/catalog/components/Benefits';
-import { SocialProof } from '@/features/catalog/components/SocialProof';
+import { ReviewsSection } from '@/features/reviews/components';
 import { ValueComparison } from '@/features/catalog/components/ValueComparison';
 import { MinimalFAQ } from '@/features/catalog/components/MinimalFAQ';
 import { TeamTrust } from '@/features/catalog/components/TeamTrust';
-import { StickyCTA } from '@/features/catalog/components/StickyCTA';
+import { BlogPreview } from '@/features/blog/components';
 
 export default function Home() {
   return (
@@ -17,11 +17,11 @@ export default function Home() {
       <FeaturedCars />
       <ValueComparison />
       <ProcessSteps />
-      <SocialProof />
+      <ReviewsSection />
       <MinimalFAQ /> {/* Reassurance Anchor */}
       <TeamTrust /> {/* Human Anchor */}
       <Benefits />
-      <StickyCTA />
+      <BlogPreview />
     </div>
   );
 }

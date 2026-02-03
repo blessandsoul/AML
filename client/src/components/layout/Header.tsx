@@ -22,7 +22,14 @@ import {
     Wallet,
     PlusCircle,
     MessageSquare,
-    ChevronRight
+    ChevronRight,
+    ChevronDown,
+    Package,
+    Star,
+    Calculator,
+    Truck,
+    Info,
+    Mail,
 } from 'lucide-react';
 import {
     Sheet,
@@ -37,6 +44,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     DropdownMenuSeparator,
+    DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FlagGE, FlagUS, FlagRU, FlagUA, FlagSA } from "@/components/ui/flags";
@@ -49,6 +57,17 @@ const NAV_ITEMS = [
     { label: 'კონტაქტი', href: '/contact' },
 ];
 
+const MORE_SERVICES = [
+    { label: 'კალკულატორი', href: '/calculator', icon: Calculator },
+    { label: 'თრექინგი', href: '/track', icon: Package },
+    { label: 'ტრანსპორტირება', href: '/delivery', icon: Truck },
+];
+
+const MORE_COMPANY = [
+    { label: 'ჩვენს შესახებ', href: '/about', icon: Info },
+    { label: 'კონტაქტი', href: '/contact', icon: Mail },
+];
+
 const LANGUAGES = [
     { code: 'GE', label: 'ქართული', icon: FlagGE },
     { code: 'EN', label: 'English', icon: FlagUS },
@@ -59,10 +78,16 @@ const LANGUAGES = [
 
 export function Header() {
     const [scrolled, setScrolled] = React.useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const { scrollY } = useScroll();
     const pathname = usePathname();
     const [viewMode, setViewMode] = React.useState<'user' | 'dealer'>('user');
     const [language, setLanguage] = React.useState('GE');
+
+    // Close mobile menu on route change
+    React.useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [pathname]);
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setScrolled(latest > 20);
@@ -120,6 +145,57 @@ export function Header() {
                                 </Link>
                             );
                         })}
+
+                        {/* More Dropdown */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className={cn(
+                                        "relative px-5 py-2 text-sm font-bold transition-colors duration-300 flex items-center gap-1 outline-none",
+                                        [...MORE_SERVICES, ...MORE_COMPANY].some(i => pathname === i.href)
+                                            ? "text-primary"
+                                            : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {[...MORE_SERVICES, ...MORE_COMPANY].some(i => pathname === i.href) && (
+                                        <motion.div
+                                            layoutId="nav-pill"
+                                            className="absolute inset-0 bg-primary/5 rounded-full"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                    <span className="relative z-10 uppercase tracking-wide text-xs">მეტი</span>
+                                    <ChevronDown className="relative z-10 w-3 h-3" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="center" className="w-55">
+                                <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider">სერვისები</DropdownMenuLabel>
+                                {MORE_SERVICES.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <Link key={item.href} href={item.href}>
+                                            <DropdownMenuItem className="cursor-pointer font-medium">
+                                                <Icon className="w-4 h-4 mr-2.5 text-muted-foreground" />
+                                                {item.label}
+                                            </DropdownMenuItem>
+                                        </Link>
+                                    );
+                                })}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider">კომპანია</DropdownMenuLabel>
+                                {MORE_COMPANY.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <Link key={item.href} href={item.href}>
+                                            <DropdownMenuItem className="cursor-pointer font-medium">
+                                                <Icon className="w-4 h-4 mr-2.5 text-muted-foreground" />
+                                                {item.label}
+                                            </DropdownMenuItem>
+                                        </Link>
+                                    );
+                                })}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </nav>
 
                     {/* Actions */}
@@ -220,6 +296,12 @@ export function Header() {
                                                     ჩემი შეკვეთები
                                                 </DropdownMenuItem>
                                             </Link>
+                                            <Link href="/track">
+                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                    <Package className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                    თრექინგი
+                                                </DropdownMenuItem>
+                                            </Link>
                                             <Link href="/profile/favorites">
                                                 <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
                                                     <Heart className="w-4 h-4 mr-3 text-muted-foreground" />
@@ -295,7 +377,7 @@ export function Header() {
                         </Button>
 
                         {/* Mobile Menu */}
-                        <Sheet>
+                        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                             <SheetTrigger asChild>
                                 <Button variant="ghost" size="icon" className="md:hidden text-foreground">
                                     <Menu className="w-6 h-6" />
@@ -305,15 +387,15 @@ export function Header() {
                                 <SheetHeader className="sr-only">
                                     <SheetTitle>Mobile Menu</SheetTitle>
                                 </SheetHeader>
-                                <div className="flex flex-col min-h-full bg-background p-6">
-                                    <div className="flex items-center gap-2 mb-8">
-                                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-xl">A</div>
-                                        <span className="text-xl font-bold text-foreground">AML</span>
+                                <div className="flex flex-col min-h-full bg-background p-4">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-black text-lg">A</div>
+                                        <span className="text-lg font-bold text-foreground">AML</span>
                                     </div>
 
                                     {/* User Info (Mobile) */}
-                                    <div className="mb-6 bg-muted/50 p-4 rounded-xl flex items-center gap-3">
-                                        <Avatar className="w-10 h-10">
+                                    <div className="mb-3 bg-muted/50 p-3 rounded-xl flex items-center gap-2">
+                                        <Avatar className="w-8 h-8">
                                             <AvatarImage src="https://github.com/shadcn.png" />
                                             <AvatarFallback>JD</AvatarFallback>
                                         </Avatar>
@@ -323,40 +405,80 @@ export function Header() {
                                         </div>
                                     </div>
 
-                                    <nav className="flex flex-col gap-2 mb-6">
+                                    <nav className="flex flex-col gap-1">
                                         {NAV_ITEMS.map((item) => (
                                             <Link
                                                 key={item.href}
                                                 href={item.href}
-                                                className="text-lg font-bold text-muted-foreground hover:text-foreground hover:pl-2 transition-all duration-300 py-3 border-b border-border/50 uppercase tracking-wide"
+                                                className="text-base font-bold text-muted-foreground hover:text-foreground hover:pl-2 transition-all duration-300 py-2 border-b border-border/50 uppercase tracking-wide"
                                             >
                                                 {item.label}
                                             </Link>
                                         ))}
+
+                                        {/* Services */}
+                                        <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-3 mb-1">სერვისები</div>
+                                        {MORE_SERVICES.map((item) => {
+                                            const Icon = item.icon;
+                                            return (
+                                                <Link
+                                                    key={item.href}
+                                                    href={item.href}
+                                                    className="flex items-center gap-2.5 text-sm font-bold text-muted-foreground hover:text-foreground hover:pl-2 transition-all duration-300 py-2 border-b border-border/50"
+                                                >
+                                                    <Icon className="w-4 h-4" />
+                                                    {item.label}
+                                                </Link>
+                                            );
+                                        })}
+
+                                        {/* Company */}
+                                        <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-3 mb-1">კომპანია</div>
+                                        {MORE_COMPANY.map((item) => {
+                                            const Icon = item.icon;
+                                            return (
+                                                <Link
+                                                    key={item.href}
+                                                    href={item.href}
+                                                    className="flex items-center gap-2.5 text-sm font-bold text-muted-foreground hover:text-foreground hover:pl-2 transition-all duration-300 py-2 border-b border-border/50"
+                                                >
+                                                    <Icon className="w-4 h-4" />
+                                                    {item.label}
+                                                </Link>
+                                            );
+                                        })}
                                     </nav>
 
-                                    {/* Dashboard Links (Mobile) */}
-                                    <div className="space-y-4">
+                                    {/* Dashboard Links + Logout (Mobile) - pushed to bottom */}
+                                    <div className="mt-auto pt-3 space-y-3">
                                         <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">კაბინეტი</div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Link href="/profile" className="flex flex-col items-center justify-center gap-2 bg-muted/30 hover:bg-muted p-3 rounded-xl transition-colors">
-                                                <User className="w-5 h-5 text-primary" />
+                                        <div className="grid grid-cols-3 gap-1.5">
+                                            <Link href="/profile" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <User className="w-4 h-4 text-primary" />
                                                 <span className="text-xs font-bold text-center">პროფილი</span>
                                             </Link>
-                                            <Link href="/profile/orders" className="flex flex-col items-center justify-center gap-2 bg-muted/30 hover:bg-muted p-3 rounded-xl transition-colors">
-                                                <ShoppingBag className="w-5 h-5 text-primary" />
+                                            <Link href="/profile/orders" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <ShoppingBag className="w-4 h-4 text-primary" />
                                                 <span className="text-xs font-bold text-center">შეკვეთები</span>
                                             </Link>
-                                            <Link href="/dealer/dashboard" className="flex flex-col items-center justify-center gap-2 bg-muted/30 hover:bg-muted p-3 rounded-xl transition-colors">
-                                                <LayoutDashboard className="w-5 h-5 text-primary" />
+                                            <Link href="/track" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <Package className="w-4 h-4 text-primary" />
+                                                <span className="text-xs font-bold text-center">თრექინგი</span>
+                                            </Link>
+                                            <Link href="/dealer/dashboard" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <LayoutDashboard className="w-4 h-4 text-primary" />
                                                 <span className="text-xs font-bold text-center">დაფა</span>
                                             </Link>
-                                            <Link href="/messages" className="flex flex-col items-center justify-center gap-2 bg-muted/30 hover:bg-muted p-3 rounded-xl transition-colors">
-                                                <MessageSquare className="w-5 h-5 text-primary" />
+                                            <Link href="/profile/favorites" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <Heart className="w-4 h-4 text-primary" />
+                                                <span className="text-xs font-bold text-center">ფავორიტები</span>
+                                            </Link>
+                                            <Link href="/messages" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                <MessageSquare className="w-4 h-4 text-primary" />
                                                 <span className="text-xs font-bold text-center">ჩატი</span>
                                             </Link>
                                         </div>
-                                        <Button variant="outline" className="w-full justify-between" asChild>
+                                        <Button variant="outline" size="sm" className="w-full justify-between" asChild>
                                             <Link href="/dealer/add-listing">
                                                 <span className="flex items-center gap-2">
                                                     <PlusCircle className="w-4 h-4" />
@@ -365,12 +487,8 @@ export function Header() {
                                                 <ChevronRight className="w-4 h-4 opacity-50" />
                                             </Link>
                                         </Button>
-                                    </div>
-
-
-                                    <div className="mt-auto pt-6 space-y-4">
-                                        <Button className="w-full rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-12 text-lg font-bold">
-                                            <LogOut className="w-5 h-5 mr-2" /> გასვლა
+                                        <Button className="w-full rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-10 text-base font-bold">
+                                            <LogOut className="w-4 h-4 mr-2" /> გასვლა
                                         </Button>
                                     </div>
                                 </div>
