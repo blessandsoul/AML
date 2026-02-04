@@ -4,9 +4,13 @@ import './globals.css';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/sonner"
-import { Agentation } from 'agentation';
 import { QueryProvider } from '@/providers/query-provider';
 import { ReduxProvider } from '@/providers/redux-provider';
+
+// Only import Agentation in development
+const Agentation = process.env.NODE_ENV === 'development'
+  ? require('agentation').Agentation
+  : () => null;
 
 const notoSansGeorgian = Noto_Sans_Georgian({ subsets: ['georgian'], variable: '--font-sans' });
 
