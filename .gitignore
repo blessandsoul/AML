@@ -8,4 +8,5 @@ dist
 build
 .next
 *.log
-.claude/**/*.md
+.claude
+.agent

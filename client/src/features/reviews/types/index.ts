@@ -1,52 +1,63 @@
-export interface Review {
-  id: string;
-  customer_name: string;
-  customer_city: string | null;
-  customer_avatar: string | null;
-  rating: number;
-  text: string;
-  car_make: string | null;
-  car_model: string | null;
-  car_year: number | null;
-  is_verified: boolean;
-  is_published: boolean;
-  photos: ReviewPhoto[];
-  created_at: string;
-  updated_at: string;
-}
-
 export interface ReviewPhoto {
   id: string;
   url: string;
-  alt_text: string | null;
-  sort_order: number;
+  altText: string | null;
+  sortOrder?: number;
+}
+
+export interface ReviewCar {
+  make: string;
+  model: string;
+  year: number;
+}
+
+export interface Review {
+  id: string;
+  customerName: string;
+  customerCity: string | null;
+  customerAvatar: string | null;
+  rating: number;
+  text: string;
+  car: ReviewCar | null;
+  isVerified: boolean;
+  isPublished: boolean;
+  photos: ReviewPhoto[];
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export type DealPhotoType = 'BEFORE' | 'AFTER';
 
-export interface CompletedDeal {
-  id: string;
-  car_make: string;
-  car_model: string;
-  car_year: number;
-  car_vin: string | null;
-  auction_price: number;
-  market_price: number;
-  savings: number;
-  delivery_city: string | null;
-  description: string | null;
-  is_published: boolean;
-  photos: CompletedDealPhoto[];
-  created_at: string;
-  updated_at: string;
-}
-
 export interface CompletedDealPhoto {
   id: string;
   url: string;
-  alt_text: string | null;
-  photo_type: DealPhotoType;
-  sort_order: number;
+  altText?: string | null;
+  photoType: DealPhotoType;
+  sortOrder?: number;
+}
+
+export interface DealCar {
+  make: string;
+  model: string;
+  year: number;
+}
+
+export interface DealPricing {
+  auctionPrice: number;
+  marketPrice: number;
+  savings: number;
+}
+
+export interface CompletedDeal {
+  id: string;
+  car: DealCar;
+  pricing: DealPricing;
+  deliveryCity: string | null;
+  description?: string | null;
+  isPublished: boolean;
+  photos: CompletedDealPhoto[];
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AggregateRating {
@@ -58,10 +69,50 @@ export interface ReviewFilters {
   page?: number;
   limit?: number;
   rating?: number;
-  is_verified?: boolean;
+  isVerified?: boolean;
 }
 
 export interface DealFilters {
   page?: number;
   limit?: number;
+}
+
+// For mutations
+export interface CreateReviewData {
+  customerName: string;
+  customerCity?: string;
+  rating: number;
+  text: string;
+  carMake?: string;
+  carModel?: string;
+  carYear?: number;
+}
+
+export interface UpdateReviewData {
+  customerName?: string;
+  customerCity?: string;
+  rating?: number;
+  text?: string;
+  isPublished?: boolean;
+}
+
+export interface CreateDealData {
+  carMake: string;
+  carModel: string;
+  carYear: number;
+  auctionPrice: number;
+  marketPrice: number;
+  deliveryCity?: string;
+  description?: string;
+}
+
+export interface UpdateDealData {
+  carMake?: string;
+  carModel?: string;
+  carYear?: number;
+  auctionPrice?: number;
+  marketPrice?: number;
+  deliveryCity?: string;
+  description?: string;
+  isPublished?: boolean;
 }

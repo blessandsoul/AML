@@ -13,11 +13,11 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
-  const initials = review.customer_name.charAt(0).toUpperCase();
+  const initials = review.customerName.charAt(0).toUpperCase();
 
   const carLabel =
-    review.car_make && review.car_model
-      ? `${review.car_year ?? ''} ${review.car_make} ${review.car_model}`.trim()
+    review.car?.make && review.car?.model
+      ? `${review.car.year ?? ''} ${review.car.make} ${review.car.model}`.trim()
       : null;
 
   return (

@@ -5,7 +5,8 @@ import { orderService } from '../services/order.service';
 import { orderKeys } from '../utils/order.keys';
 import { MOCK_ORDERS } from './useOrders';
 
-const USE_MOCK_DATA = true;
+// Use environment variable to toggle mock data
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 export function useTrackOrder(code: string) {
   return useQuery({

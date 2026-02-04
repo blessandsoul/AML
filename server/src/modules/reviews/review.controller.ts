@@ -1,110 +1,521 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { reviewService } from './review.service';
-import { successResponse, paginatedResponse } from '../../shared/helpers';
+import type { FastifyRequest, FastifyReply } from 'fastify';
+import { reviewService } from './review.service.js';
 import {
-  CreateReviewSchema,
-  UpdateReviewSchema,
-  ReviewFiltersSchema,
-  CreateDealSchema,
-  UpdateDealSchema,
-  DealFiltersSchema,
-} from './review.schemas';
+  getReviewsQuerySchema,
+  getAdminReviewsQuerySchema,
+  getDealsQuerySchema,
+  getAdminDealsQuerySchema,
+  idParamSchema,
+  createReviewSchema,
+  updateReviewSchema,
+  createCompletedDealSchema,
+  updateCompletedDealSchema,
+} from './review.schemas.js';
+import { successResponse, paginatedResponse } from '../../libs/response.js';
+import { ValidationError } from '../../libs/errors.js';
+import {
+  toReviewResponse,
+  toReviewListItemResponse,
+  toCompletedDealResponse,
+  toCompletedDealListItemResponse,
+  toAggregateRatingResponse,
+} from './review.types.js';
 
-type IdParams = { id: string };
-
+/**
+ * Review Controller - HTTP request handlers
+ */
 export const reviewController = {
-  // ===== PUBLIC ENDPOINTS =====
+  // ============================================
+  // PUBLIC - REVIEWS
+  // ============================================
 
-  async getPublishedReviews(request: FastifyRequest, reply: FastifyReply) {
-    const filters = ReviewFiltersSchema.parse(request.query);
-    const { items, totalItems } = await reviewService.findAllPublished(filters);
+  /**
+   * Get reviews (public - only published)
+   * GET /reviews
+   */
+  async getReviews(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = getReviewsQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const { page, limit, rating, is_verified } = parsed.data;
+
+    const result = await reviewService.getReviews({
+      page,
+      limit,
+      rating,
+      isVerified: is_verified,
+    });
 
     return reply.send(
-      paginatedResponse('Reviews retrieved successfully', items, filters.page, filters.limit, totalItems)
+      paginatedResponse(
+        'Reviews retrieved successfully',
+        result.items.map(toReviewListItemResponse),
+        page,
+        limit,
+        result.totalItems
+      )
     );
   },
 
-  async getAggregateRating(request: FastifyRequest, reply: FastifyReply) {
-    const data = await reviewService.getAggregateRating();
-    return reply.send(successResponse('Aggregate rating retrieved successfully', data));
-  },
-
-  async getPublishedDeals(request: FastifyRequest, reply: FastifyReply) {
-    const filters = DealFiltersSchema.parse(request.query);
-    const { items, totalItems } = await reviewService.findAllDealsPublished(filters);
+  /**
+   * Get aggregate rating (public)
+   * GET /reviews/aggregate
+   */
+  async getAggregateRating(
+    _request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const aggregate = await reviewService.getAggregateRating();
 
     return reply.send(
-      paginatedResponse('Completed deals retrieved successfully', items, filters.page, filters.limit, totalItems)
+      successResponse('Aggregate rating retrieved successfully', toAggregateRatingResponse(aggregate))
     );
   },
 
-  // ===== ADMIN REVIEW ENDPOINTS =====
+  // ============================================
+  // PUBLIC - COMPLETED DEALS
+  // ============================================
 
-  async getAllReviews(request: FastifyRequest, reply: FastifyReply) {
-    const filters = ReviewFiltersSchema.parse(request.query);
-    const { items, totalItems } = await reviewService.findAll(filters);
+  /**
+   * Get completed deals (public - only published)
+   * GET /reviews/deals
+   */
+  async getDeals(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = getDealsQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const { page, limit } = parsed.data;
+
+    const result = await reviewService.getDeals({ page, limit });
 
     return reply.send(
-      paginatedResponse('Reviews retrieved successfully', items, filters.page, filters.limit, totalItems)
+      paginatedResponse(
+        'Completed deals retrieved successfully',
+        result.items.map(toCompletedDealListItemResponse),
+        page,
+        limit,
+        result.totalItems
+      )
     );
   },
 
-  async getReviewById(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    const review = await reviewService.findById(request.params.id);
-    return reply.send(successResponse('Review retrieved successfully', review));
-  },
+  // ============================================
+  // ADMIN - REVIEWS
+  // ============================================
 
-  async createReview(request: FastifyRequest, reply: FastifyReply) {
-    const dto = CreateReviewSchema.parse(request.body);
-    const review = await reviewService.create(dto);
+  /**
+   * Get all reviews (admin - includes unpublished)
+   * GET /reviews/admin/reviews
+   */
+  async getAdminReviews(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = getAdminReviewsQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
 
-    return reply.status(201).send(successResponse('Review created successfully', review));
-  },
+    const { page, limit, rating, is_verified, is_published } = parsed.data;
 
-  async updateReview(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    const dto = UpdateReviewSchema.parse(request.body);
-    const review = await reviewService.update(request.params.id, dto);
-
-    return reply.send(successResponse('Review updated successfully', review));
-  },
-
-  async deleteReview(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    await reviewService.delete(request.params.id);
-    return reply.send(successResponse('Review deleted successfully', null));
-  },
-
-  // ===== ADMIN DEAL ENDPOINTS =====
-
-  async getAllDeals(request: FastifyRequest, reply: FastifyReply) {
-    const filters = DealFiltersSchema.parse(request.query);
-    const { items, totalItems } = await reviewService.findAllDeals(filters);
+    const result = await reviewService.getAdminReviews({
+      page,
+      limit,
+      rating,
+      isVerified: is_verified,
+      isPublished: is_published,
+    });
 
     return reply.send(
-      paginatedResponse('Completed deals retrieved successfully', items, filters.page, filters.limit, totalItems)
+      paginatedResponse(
+        'Reviews retrieved successfully',
+        result.items.map(toReviewListItemResponse),
+        page,
+        limit,
+        result.totalItems
+      )
     );
   },
 
-  async getDealById(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    const deal = await reviewService.findDealById(request.params.id);
-    return reply.send(successResponse('Completed deal retrieved successfully', deal));
+  /**
+   * Get review by ID (admin)
+   * GET /reviews/admin/reviews/:id
+   */
+  async getReviewById(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = idParamSchema.safeParse(request.params);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const review = await reviewService.getReviewById(parsed.data.id);
+
+    return reply.send(
+      successResponse('Review retrieved successfully', toReviewResponse(review))
+    );
   },
 
-  async createDeal(request: FastifyRequest, reply: FastifyReply) {
-    const dto = CreateDealSchema.parse(request.body);
-    const deal = await reviewService.createDeal(dto);
+  /**
+   * Create a new review (admin)
+   * POST /reviews/admin/reviews
+   */
+  async createReview(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = createReviewSchema.safeParse(request.body);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
 
-    return reply.status(201).send(successResponse('Completed deal created successfully', deal));
+    const {
+      customer_name,
+      customer_city,
+      customer_avatar,
+      rating,
+      text,
+      car_make,
+      car_model,
+      car_year,
+      is_verified,
+      is_published,
+      photos,
+    } = parsed.data;
+
+    const review = await reviewService.createReview({
+      customerName: customer_name,
+      customerCity: customer_city,
+      customerAvatar: customer_avatar,
+      rating,
+      text,
+      carMake: car_make,
+      carModel: car_model,
+      carYear: car_year,
+      isVerified: is_verified,
+      isPublished: is_published,
+      photos: photos?.map((p) => ({
+        url: p.url,
+        altText: p.alt_text,
+        sortOrder: p.sort_order,
+      })),
+    });
+
+    return reply.status(201).send(
+      successResponse('Review created successfully', toReviewResponse(review))
+    );
   },
 
-  async updateDeal(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    const dto = UpdateDealSchema.parse(request.body);
-    const deal = await reviewService.updateDeal(request.params.id, dto);
+  /**
+   * Update a review (admin)
+   * PATCH /reviews/admin/reviews/:id
+   */
+  async updateReview(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const paramsParsed = idParamSchema.safeParse(request.params);
+    if (!paramsParsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        paramsParsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
 
-    return reply.send(successResponse('Completed deal updated successfully', deal));
+    const bodyParsed = updateReviewSchema.safeParse(request.body);
+    if (!bodyParsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        bodyParsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const { id } = paramsParsed.data;
+    const {
+      customer_name,
+      customer_city,
+      customer_avatar,
+      rating,
+      text,
+      car_make,
+      car_model,
+      car_year,
+      is_verified,
+      is_published,
+      photos,
+    } = bodyParsed.data;
+
+    const review = await reviewService.updateReview(id, {
+      customerName: customer_name,
+      customerCity: customer_city,
+      customerAvatar: customer_avatar,
+      rating,
+      text,
+      carMake: car_make,
+      carModel: car_model,
+      carYear: car_year,
+      isVerified: is_verified,
+      isPublished: is_published,
+      photos: photos?.map((p) => ({
+        url: p.url,
+        altText: p.alt_text,
+        sortOrder: p.sort_order,
+      })),
+    });
+
+    return reply.send(
+      successResponse('Review updated successfully', toReviewResponse(review))
+    );
   },
 
-  async deleteDeal(request: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply) {
-    await reviewService.deleteDeal(request.params.id);
-    return reply.send(successResponse('Completed deal deleted successfully', null));
+  /**
+   * Delete a review (admin)
+   * DELETE /reviews/admin/reviews/:id
+   */
+  async deleteReview(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = idParamSchema.safeParse(request.params);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    await reviewService.deleteReview(parsed.data.id);
+
+    return reply.send(
+      successResponse('Review deleted successfully', null)
+    );
+  },
+
+  // ============================================
+  // ADMIN - COMPLETED DEALS
+  // ============================================
+
+  /**
+   * Get all completed deals (admin - includes unpublished)
+   * GET /reviews/admin/deals
+   */
+  async getAdminDeals(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = getAdminDealsQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const { page, limit, is_published } = parsed.data;
+
+    const result = await reviewService.getAdminDeals({
+      page,
+      limit,
+      isPublished: is_published,
+    });
+
+    return reply.send(
+      paginatedResponse(
+        'Completed deals retrieved successfully',
+        result.items.map(toCompletedDealListItemResponse),
+        page,
+        limit,
+        result.totalItems
+      )
+    );
+  },
+
+  /**
+   * Get completed deal by ID (admin)
+   * GET /reviews/admin/deals/:id
+   */
+  async getDealById(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = idParamSchema.safeParse(request.params);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const deal = await reviewService.getDealById(parsed.data.id);
+
+    return reply.send(
+      successResponse('Completed deal retrieved successfully', toCompletedDealResponse(deal))
+    );
+  },
+
+  /**
+   * Create a new completed deal (admin)
+   * POST /reviews/admin/deals
+   */
+  async createDeal(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = createCompletedDealSchema.safeParse(request.body);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const {
+      car_make,
+      car_model,
+      car_year,
+      car_vin,
+      auction_price,
+      market_price,
+      savings,
+      delivery_city,
+      description,
+      is_published,
+      photos,
+    } = parsed.data;
+
+    const deal = await reviewService.createDeal({
+      carMake: car_make,
+      carModel: car_model,
+      carYear: car_year,
+      carVin: car_vin,
+      auctionPrice: auction_price,
+      marketPrice: market_price,
+      savings,
+      deliveryCity: delivery_city,
+      description,
+      isPublished: is_published,
+      photos: photos?.map((p) => ({
+        url: p.url,
+        altText: p.alt_text,
+        photoType: p.photo_type,
+        sortOrder: p.sort_order,
+      })),
+    });
+
+    return reply.status(201).send(
+      successResponse('Completed deal created successfully', toCompletedDealResponse(deal))
+    );
+  },
+
+  /**
+   * Update a completed deal (admin)
+   * PATCH /reviews/admin/deals/:id
+   */
+  async updateDeal(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const paramsParsed = idParamSchema.safeParse(request.params);
+    if (!paramsParsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        paramsParsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const bodyParsed = updateCompletedDealSchema.safeParse(request.body);
+    if (!bodyParsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        bodyParsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    const { id } = paramsParsed.data;
+    const {
+      car_make,
+      car_model,
+      car_year,
+      car_vin,
+      auction_price,
+      market_price,
+      savings,
+      delivery_city,
+      description,
+      is_published,
+      photos,
+    } = bodyParsed.data;
+
+    const deal = await reviewService.updateDeal(id, {
+      carMake: car_make,
+      carModel: car_model,
+      carYear: car_year,
+      carVin: car_vin,
+      auctionPrice: auction_price,
+      marketPrice: market_price,
+      savings,
+      deliveryCity: delivery_city,
+      description,
+      isPublished: is_published,
+      photos: photos?.map((p) => ({
+        url: p.url,
+        altText: p.alt_text,
+        photoType: p.photo_type,
+        sortOrder: p.sort_order,
+      })),
+    });
+
+    return reply.send(
+      successResponse('Completed deal updated successfully', toCompletedDealResponse(deal))
+    );
+  },
+
+  /**
+   * Delete a completed deal (admin)
+   * DELETE /reviews/admin/deals/:id
+   */
+  async deleteDeal(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    const parsed = idParamSchema.safeParse(request.params);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Validation failed',
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      );
+    }
+
+    await reviewService.deleteDeal(parsed.data.id);
+
+    return reply.send(
+      successResponse('Completed deal deleted successfully', null)
+    );
   },
 };

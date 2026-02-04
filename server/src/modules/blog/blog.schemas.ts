@@ -1,52 +1,202 @@
 import { z } from 'zod';
+import { paginationSchema } from '../../libs/pagination.js';
 
-export const CreatePostSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(255),
+/**
+ * Helper to generate slug from title
+ */
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Slug validation schema
+ */
+const slugSchema = z
+  .string()
+  .min(1, 'Slug is required')
+  .max(200, 'Slug is too long')
+  .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens');
+
+/**
+ * Hex color validation schema
+ */
+const hexColorSchema = z
+  .string()
+  .regex(/^#[0-9A-Fa-f]{6}$/, 'Color must be a valid hex color (e.g., #FF5733)')
+  .optional()
+  .nullable();
+
+/**
+ * Blog post status enum
+ */
+const postStatusSchema = z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']);
+
+/**
+ * Blog reaction type enum
+ */
+const reactionTypeSchema = z.enum(['LIKE', 'LOVE', 'HELPFUL']);
+
+// ============================================
+// QUERY SCHEMAS
+// ============================================
+
+/**
+ * Get posts query parameters (public)
+ */
+export const getPostsQuerySchema = paginationSchema.extend({
+  category_id: z.string().uuid('Invalid category ID').optional(),
+  tag_slug: z.string().max(100).optional(),
+  search: z.string().max(200).trim().optional(),
+});
+
+export type GetPostsQuery = z.infer<typeof getPostsQuerySchema>;
+
+/**
+ * Get admin posts query parameters
+ */
+export const getAdminPostsQuerySchema = paginationSchema.extend({
+  status: postStatusSchema.optional(),
+  category_id: z.string().uuid('Invalid category ID').optional(),
+  search: z.string().max(200).trim().optional(),
+});
+
+export type GetAdminPostsQuery = z.infer<typeof getAdminPostsQuerySchema>;
+
+/**
+ * Slug parameter schema
+ */
+export const slugParamSchema = z.object({
+  slug: slugSchema,
+});
+
+export type SlugParam = z.infer<typeof slugParamSchema>;
+
+/**
+ * ID parameter schema
+ */
+export const idParamSchema = z.object({
+  id: z.string().uuid('Invalid ID format'),
+});
+
+export type IdParam = z.infer<typeof idParamSchema>;
+
+/**
+ * Post ID parameter schema
+ */
+export const postIdParamSchema = z.object({
+  postId: z.string().uuid('Invalid post ID format'),
+});
+
+export type PostIdParam = z.infer<typeof postIdParamSchema>;
+
+// ============================================
+// POST SCHEMAS
+// ============================================
+
+/**
+ * Create post body schema
+ */
+export const createPostSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(200, 'Title is too long')
+    .trim(),
+  slug: slugSchema.optional(),
   content: z.string().min(1, 'Content is required'),
-  excerpt: z.string().max(500).optional(),
-  featured_image: z.string().url().optional().or(z.literal('')),
-  author_name: z.string().min(1, 'Author name is required').max(100),
-  category_id: z.string().uuid().optional(),
-  tag_ids: z.array(z.string().uuid()).optional(),
-  status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
+  excerpt: z.string().max(500, 'Excerpt is too long').trim().optional().nullable(),
+  featured_image: z.string().url('Invalid image URL').optional().nullable(),
+  images: z.array(z.string().url('Invalid image URL')).max(20).optional().nullable(),
+  category_id: z.string().uuid('Invalid category ID').optional().nullable(),
+  tag_ids: z.array(z.string().uuid('Invalid tag ID')).max(10).optional(),
+  author_name: z
+    .string()
+    .min(1, 'Author name is required')
+    .max(100, 'Author name is too long')
+    .trim(),
+  author_bio: z.string().max(500, 'Author bio is too long').trim().optional().nullable(),
+  author_avatar: z.string().url('Invalid avatar URL').optional().nullable(),
+  reading_time: z.coerce.number().int().positive().max(1000).optional().nullable(),
 });
 
-export const UpdatePostSchema = z.object({
-  title: z.string().min(1).max(255).optional(),
-  content: z.string().min(1).optional(),
-  excerpt: z.string().max(500).optional().nullable(),
-  featured_image: z.string().url().optional().nullable().or(z.literal('')),
-  category_id: z.string().uuid().optional().nullable(),
-  tag_ids: z.array(z.string().uuid()).optional(),
+export type CreatePostBody = z.infer<typeof createPostSchema>;
+
+/**
+ * Update post body schema
+ */
+export const updatePostSchema = createPostSchema.partial();
+
+export type UpdatePostBody = z.infer<typeof updatePostSchema>;
+
+// ============================================
+// CATEGORY SCHEMAS
+// ============================================
+
+/**
+ * Create category body schema
+ */
+export const createCategorySchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name is too long')
+    .trim(),
+  slug: slugSchema.optional(),
+  description: z.string().max(500, 'Description is too long').trim().optional().nullable(),
+  color: hexColorSchema,
 });
 
-export const PostFiltersSchema = z.object({
-  page: z.coerce.number().min(1).default(1),
-  limit: z.coerce.number().min(1).max(100).default(10),
-  category_id: z.string().uuid().optional(),
-  tag_slug: z.string().optional(),
-  search: z.string().optional(),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+export type CreateCategoryBody = z.infer<typeof createCategorySchema>;
+
+/**
+ * Update category body schema
+ */
+export const updateCategorySchema = createCategorySchema.partial();
+
+export type UpdateCategoryBody = z.infer<typeof updateCategorySchema>;
+
+// ============================================
+// TAG SCHEMAS
+// ============================================
+
+/**
+ * Create tag body schema
+ */
+export const createTagSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(50, 'Name is too long')
+    .trim(),
+  slug: slugSchema.optional(),
 });
 
-export const CreateCategorySchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  description: z.string().max(500).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').optional(),
-});
+export type CreateTagBody = z.infer<typeof createTagSchema>;
 
-export const CreateTagSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50),
-});
+// ============================================
+// REACTION SCHEMAS
+// ============================================
 
-export const AddReactionSchema = z.object({
-  type: z.enum(['LIKE', 'LOVE', 'HELPFUL']),
+/**
+ * Add reaction body schema
+ */
+export const addReactionSchema = z.object({
+  type: reactionTypeSchema,
   session_id: z.string().min(1, 'Session ID is required').max(100),
 });
 
-export type CreatePostInput = z.infer<typeof CreatePostSchema>;
-export type UpdatePostInput = z.infer<typeof UpdatePostSchema>;
-export type PostFiltersInput = z.infer<typeof PostFiltersSchema>;
-export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>;
-export type CreateTagInput = z.infer<typeof CreateTagSchema>;
-export type AddReactionInput = z.infer<typeof AddReactionSchema>;
+export type AddReactionBody = z.infer<typeof addReactionSchema>;
+
+/**
+ * Remove reaction query schema
+ */
+export const removeReactionQuerySchema = z.object({
+  session_id: z.string().min(1, 'Session ID is required').max(100),
+});
+
+export type RemoveReactionQuery = z.infer<typeof removeReactionQuerySchema>;

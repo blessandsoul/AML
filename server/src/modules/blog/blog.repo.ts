@@ -1,305 +1,586 @@
-import { prisma } from '../../libs/prisma';
-import type { PostStatus, ReactionType } from '@prisma/client';
-import type { PostFilters, CreatePostDto, UpdatePostDto, CreateCategoryDto, CreateTagDto } from './blog.types';
+import { prisma } from '../../libs/prisma.js';
+import { calculateOffset } from '../../libs/pagination.js';
+import type { BlogPostStatus, BlogReactionType, Prisma } from '@prisma/client';
+import type {
+  BlogCategoryEntity,
+  BlogCategoryWithCount,
+  BlogTagEntity,
+  BlogTagWithCount,
+  BlogPostWithRelations,
+  BlogPostListItem,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+  CreateTagInput,
+  CreatePostInput,
+  UpdatePostInput,
+  PostQueryParams,
+  ReactionCounts,
+} from './blog.types.js';
 
+/**
+ * Selection for blog post list items
+ */
+const postListSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  excerpt: true,
+  featuredImage: true,
+  status: true,
+  authorName: true,
+  authorAvatar: true,
+  publishedAt: true,
+  viewCount: true,
+  readingTime: true,
+  createdAt: true,
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      color: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  },
+  _count: {
+    select: {
+      reactions: true,
+    },
+  },
+} as const;
+
+/**
+ * Selection for full blog post details
+ */
+const postDetailSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  content: true,
+  excerpt: true,
+  featuredImage: true,
+  images: true,
+  status: true,
+  authorName: true,
+  authorBio: true,
+  authorAvatar: true,
+  publishedAt: true,
+  viewCount: true,
+  readingTime: true,
+  categoryId: true,
+  authorId: true,
+  createdAt: true,
+  updatedAt: true,
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      color: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          createdAt: true,
+        },
+      },
+    },
+  },
+  _count: {
+    select: {
+      reactions: true,
+    },
+  },
+} as const;
+
+/**
+ * Blog Repository - Database operations for blog module
+ */
 export const blogRepo = {
-  // ===== POSTS =====
+  // ============================================
+  // POSTS
+  // ============================================
 
-  async findManyPublished(filters: PostFilters) {
-    const { page = 1, limit = 10, category_id, tag_slug, search } = filters;
-    const skip = (page - 1) * limit;
+  /**
+   * Find posts with pagination and filters
+   */
+  async findPosts(
+    params: PostQueryParams
+  ): Promise<{ items: BlogPostListItem[]; totalItems: number }> {
+    const { page, limit, status, categoryId, tagSlug, search } = params;
+    const offset = calculateOffset(page, limit);
 
-    const where: any = {
-      status: 'PUBLISHED',
-      published_at: { lte: new Date() },
-    };
+    // Build where clause
+    const where: Prisma.BlogPostWhereInput = {};
 
-    if (category_id) {
-      where.category_id = category_id;
+    // Status filter (default to PUBLISHED for public)
+    if (status) {
+      where.status = status;
     }
 
-    if (tag_slug) {
+    // Category filter
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    // Tag filter
+    if (tagSlug) {
       where.tags = {
         some: {
-          tag: { slug: tag_slug },
+          tag: {
+            slug: tagSlug,
+          },
         },
       };
     }
 
+    // Search filter
     if (search) {
       where.OR = [
         { title: { contains: search } },
         { excerpt: { contains: search } },
+        { content: { contains: search } },
       ];
     }
 
+    // Execute queries in parallel
     const [items, totalItems] = await Promise.all([
       prisma.blogPost.findMany({
         where,
-        skip,
+        select: postListSelect,
+        orderBy: { publishedAt: 'desc' },
+        skip: offset,
         take: limit,
-        orderBy: { published_at: 'desc' },
-        include: {
-          category: true,
-          tags: {
-            include: { tag: true },
-          },
-          _count: {
-            select: { reactions: true },
-          },
-        },
       }),
       prisma.blogPost.count({ where }),
     ]);
 
-    return { items, totalItems };
+    return { items: items as unknown as BlogPostListItem[], totalItems };
   },
 
-  async findMany(filters: PostFilters) {
-    const { page = 1, limit = 10, status } = filters;
-    const skip = (page - 1) * limit;
-
-    const where: any = {};
-    if (status) where.status = status;
-
-    const [items, totalItems] = await Promise.all([
-      prisma.blogPost.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { created_at: 'desc' },
-        include: {
-          category: true,
-          tags: { include: { tag: true } },
-          _count: { select: { reactions: true } },
-        },
-      }),
-      prisma.blogPost.count({ where }),
-    ]);
-
-    return { items, totalItems };
-  },
-
-  async findBySlug(slug: string) {
-    return prisma.blogPost.findUnique({
+  /**
+   * Find post by slug
+   */
+  async findPostBySlug(slug: string): Promise<BlogPostWithRelations | null> {
+    const post = await prisma.blogPost.findUnique({
       where: { slug },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
-        reactions: true,
-      },
+      select: postDetailSelect,
     });
+
+    return post as unknown as BlogPostWithRelations | null;
   },
 
-  async findById(id: string) {
-    return prisma.blogPost.findUnique({
+  /**
+   * Find post by ID
+   */
+  async findPostById(id: string): Promise<BlogPostWithRelations | null> {
+    const post = await prisma.blogPost.findUnique({
       where: { id },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
-      },
+      select: postDetailSelect,
     });
+
+    return post as unknown as BlogPostWithRelations | null;
   },
 
-  async create(data: CreatePostDto & { slug: string }) {
-    const { tag_ids, ...postData } = data;
+  /**
+   * Create a new post
+   */
+  async createPost(data: CreatePostInput): Promise<BlogPostWithRelations> {
+    const { tagIds, categoryId, images, authorId, ...restData } = data;
 
-    return prisma.blogPost.create({
+    const post = await prisma.blogPost.create({
       data: {
-        title: postData.title,
-        slug: postData.slug,
-        content: postData.content,
-        excerpt: postData.excerpt,
-        featured_image: postData.featured_image,
-        status: postData.status || 'DRAFT',
-        author_name: postData.author_name,
-        category_id: postData.category_id,
-        tags: tag_ids?.length
+        title: restData.title,
+        slug: restData.slug!,
+        content: restData.content,
+        excerpt: restData.excerpt,
+        featuredImage: restData.featuredImage,
+        images: images ?? undefined,
+        status: restData.status,
+        authorName: restData.authorName,
+        authorBio: restData.authorBio,
+        authorAvatar: restData.authorAvatar,
+        readingTime: restData.readingTime,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        author: authorId ? { connect: { id: authorId } } : undefined,
+        tags: tagIds?.length
           ? {
-              create: tag_ids.map((tag_id) => ({ tag_id })),
+              create: tagIds.map((tagId) => ({
+                tag: { connect: { id: tagId } },
+              })),
             }
           : undefined,
       },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
-      },
+      select: postDetailSelect,
     });
+
+    return post as unknown as BlogPostWithRelations;
   },
 
-  async update(id: string, data: UpdatePostDto & { slug?: string }) {
-    const { tag_ids, ...postData } = data;
+  /**
+   * Update a post
+   */
+  async updatePost(
+    id: string,
+    data: UpdatePostInput
+  ): Promise<BlogPostWithRelations> {
+    const { tagIds, ...postData } = data;
 
-    // If tag_ids provided, delete existing and create new
-    if (tag_ids !== undefined) {
-      await prisma.blogPostTag.deleteMany({ where: { post_id: id } });
+    // If tagIds provided, update tags relation
+    if (tagIds !== undefined) {
+      // Delete existing tags
+      await prisma.blogPostTag.deleteMany({
+        where: { postId: id },
+      });
+
+      // Create new tag relations
+      if (tagIds.length > 0) {
+        await prisma.blogPostTag.createMany({
+          data: tagIds.map((tagId) => ({
+            postId: id,
+            tagId,
+          })),
+        });
+      }
     }
 
-    return prisma.blogPost.update({
+    const post = await prisma.blogPost.update({
       where: { id },
       data: {
         ...postData,
-        tags: tag_ids?.length
-          ? {
-              create: tag_ids.map((tag_id) => ({ tag_id })),
-            }
-          : undefined,
+        images: postData.images ?? undefined,
       },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
-      },
+      select: postDetailSelect,
+    });
+
+    return post as unknown as BlogPostWithRelations;
+  },
+
+  /**
+   * Delete a post
+   */
+  async deletePost(id: string): Promise<void> {
+    await prisma.blogPost.delete({
+      where: { id },
     });
   },
 
-  async delete(id: string) {
-    return prisma.blogPost.delete({ where: { id } });
-  },
-
-  async updateStatus(id: string, status: PostStatus, published_at?: Date) {
-    return prisma.blogPost.update({
+  /**
+   * Increment view count
+   */
+  async incrementViewCount(id: string): Promise<void> {
+    await prisma.blogPost.update({
       where: { id },
       data: {
-        status,
-        published_at,
-      },
-      include: {
-        category: true,
-        tags: { include: { tag: true } },
+        viewCount: { increment: 1 },
       },
     });
   },
 
-  async incrementViewCount(id: string) {
-    return prisma.blogPost.update({
-      where: { id },
-      data: { view_count: { increment: 1 } },
-    });
-  },
+  /**
+   * Update post status
+   */
+  async updatePostStatus(
+    id: string,
+    status: BlogPostStatus
+  ): Promise<BlogPostWithRelations> {
+    const updateData: Parameters<typeof prisma.blogPost.update>[0]['data'] = {
+      status,
+    };
 
-  async slugExists(slug: string, excludeId?: string) {
-    const where: any = { slug };
-    if (excludeId) {
-      where.id = { not: excludeId };
+    // Set publishedAt when publishing
+    if (status === 'PUBLISHED') {
+      updateData.publishedAt = new Date();
     }
-    const count = await prisma.blogPost.count({ where });
-    return count > 0;
+
+    const post = await prisma.blogPost.update({
+      where: { id },
+      data: updateData,
+      select: postDetailSelect,
+    });
+
+    return post as unknown as BlogPostWithRelations;
   },
 
-  // ===== REACTIONS =====
-
-  async findReaction(post_id: string, session_id: string) {
-    return prisma.blogReaction.findUnique({
+  /**
+   * Check if slug is taken
+   */
+  async isSlugTaken(slug: string, excludeId?: string): Promise<boolean> {
+    const post = await prisma.blogPost.findFirst({
       where: {
-        post_id_session_id: { post_id, session_id },
+        slug,
+        ...(excludeId && { id: { not: excludeId } }),
       },
-    });
-  },
-
-  async createReaction(post_id: string, session_id: string, type: ReactionType) {
-    return prisma.blogReaction.create({
-      data: { post_id, session_id, type },
-    });
-  },
-
-  async updateReaction(post_id: string, session_id: string, type: ReactionType) {
-    return prisma.blogReaction.update({
-      where: {
-        post_id_session_id: { post_id, session_id },
-      },
-      data: { type },
-    });
-  },
-
-  async deleteReaction(post_id: string, session_id: string) {
-    return prisma.blogReaction.delete({
-      where: {
-        post_id_session_id: { post_id, session_id },
-      },
-    });
-  },
-
-  async getReactionCounts(post_id: string) {
-    const reactions = await prisma.blogReaction.groupBy({
-      by: ['type'],
-      where: { post_id },
-      _count: true,
+      select: { id: true },
     });
 
-    return reactions.reduce(
-      (acc, r) => {
-        acc[r.type] = r._count;
-        return acc;
-      },
-      { LIKE: 0, LOVE: 0, HELPFUL: 0 } as Record<ReactionType, number>
-    );
+    return post !== null;
   },
 
-  // ===== CATEGORIES =====
+  // ============================================
+  // CATEGORIES
+  // ============================================
 
-  async findAllCategories() {
-    return prisma.blogCategory.findMany({
-      orderBy: { name: 'asc' },
+  /**
+   * Find all categories with post counts
+   */
+  async findAllCategories(): Promise<BlogCategoryWithCount[]> {
+    const categories = await prisma.blogCategory.findMany({
       include: {
-        _count: { select: { posts: true } },
+        _count: {
+          select: { posts: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return categories;
+  },
+
+  /**
+   * Find category by ID
+   */
+  async findCategoryById(id: string): Promise<BlogCategoryEntity | null> {
+    return prisma.blogCategory.findUnique({
+      where: { id },
+    });
+  },
+
+  /**
+   * Find category by slug
+   */
+  async findCategoryBySlug(slug: string): Promise<BlogCategoryEntity | null> {
+    return prisma.blogCategory.findUnique({
+      where: { slug },
+    });
+  },
+
+  /**
+   * Create a category
+   */
+  async createCategory(data: CreateCategoryInput): Promise<BlogCategoryEntity> {
+    return prisma.blogCategory.create({
+      data: {
+        name: data.name,
+        slug: data.slug!,
+        description: data.description,
+        color: data.color,
       },
     });
   },
 
-  async findCategoryById(id: string) {
-    return prisma.blogCategory.findUnique({ where: { id } });
-  },
-
-  async categorySlugExists(slug: string, excludeId?: string) {
-    const where: any = { slug };
-    if (excludeId) where.id = { not: excludeId };
-    const count = await prisma.blogCategory.count({ where });
-    return count > 0;
-  },
-
-  async createCategory(data: CreateCategoryDto & { slug: string }) {
-    return prisma.blogCategory.create({
-      data,
-      include: { _count: { select: { posts: true } } },
-    });
-  },
-
-  async updateCategory(id: string, data: Partial<CreateCategoryDto> & { slug?: string }) {
+  /**
+   * Update a category
+   */
+  async updateCategory(
+    id: string,
+    data: UpdateCategoryInput
+  ): Promise<BlogCategoryEntity> {
     return prisma.blogCategory.update({
       where: { id },
       data,
-      include: { _count: { select: { posts: true } } },
     });
   },
 
-  async deleteCategory(id: string) {
-    return prisma.blogCategory.delete({ where: { id } });
+  /**
+   * Delete a category
+   */
+  async deleteCategory(id: string): Promise<void> {
+    await prisma.blogCategory.delete({
+      where: { id },
+    });
   },
 
-  // ===== TAGS =====
+  /**
+   * Check if category slug is taken
+   */
+  async isCategorySlugTaken(slug: string, excludeId?: string): Promise<boolean> {
+    const category = await prisma.blogCategory.findFirst({
+      where: {
+        slug,
+        ...(excludeId && { id: { not: excludeId } }),
+      },
+      select: { id: true },
+    });
 
-  async findAllTags() {
-    return prisma.blogTag.findMany({
-      orderBy: { name: 'asc' },
+    return category !== null;
+  },
+
+  // ============================================
+  // TAGS
+  // ============================================
+
+  /**
+   * Find all tags with post counts
+   */
+  async findAllTags(): Promise<BlogTagWithCount[]> {
+    const tags = await prisma.blogTag.findMany({
       include: {
-        _count: { select: { posts: true } },
+        _count: {
+          select: { posts: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return tags;
+  },
+
+  /**
+   * Find tag by ID
+   */
+  async findTagById(id: string): Promise<BlogTagEntity | null> {
+    return prisma.blogTag.findUnique({
+      where: { id },
+    });
+  },
+
+  /**
+   * Find tag by slug
+   */
+  async findTagBySlug(slug: string): Promise<BlogTagEntity | null> {
+    return prisma.blogTag.findUnique({
+      where: { slug },
+    });
+  },
+
+  /**
+   * Create a tag
+   */
+  async createTag(data: CreateTagInput): Promise<BlogTagEntity> {
+    return prisma.blogTag.create({
+      data: {
+        name: data.name,
+        slug: data.slug!,
       },
     });
   },
 
-  async tagSlugExists(slug: string) {
-    const count = await prisma.blogTag.count({ where: { slug } });
-    return count > 0;
-  },
-
-  async createTag(data: CreateTagDto & { slug: string }) {
-    return prisma.blogTag.create({
-      data,
-      include: { _count: { select: { posts: true } } },
+  /**
+   * Delete a tag
+   */
+  async deleteTag(id: string): Promise<void> {
+    await prisma.blogTag.delete({
+      where: { id },
     });
   },
 
-  async deleteTag(id: string) {
-    return prisma.blogTag.delete({ where: { id } });
+  /**
+   * Check if tag slug is taken
+   */
+  async isTagSlugTaken(slug: string): Promise<boolean> {
+    const tag = await prisma.blogTag.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+
+    return tag !== null;
+  },
+
+  // ============================================
+  // REACTIONS
+  // ============================================
+
+  /**
+   * Add or update a reaction
+   */
+  async addReaction(
+    postId: string,
+    sessionId: string,
+    type: BlogReactionType
+  ): Promise<{ action: 'created' | 'updated' }> {
+    // Check if user already has a reaction of this type
+    const existing = await prisma.blogReaction.findFirst({
+      where: { postId, sessionId },
+    });
+
+    if (existing) {
+      // Update existing reaction
+      await prisma.blogReaction.update({
+        where: { id: existing.id },
+        data: { type },
+      });
+      return { action: 'updated' };
+    }
+
+    // Create new reaction
+    await prisma.blogReaction.create({
+      data: {
+        postId,
+        sessionId,
+        type,
+      },
+    });
+
+    return { action: 'created' };
+  },
+
+  /**
+   * Remove a reaction
+   */
+  async removeReaction(postId: string, sessionId: string): Promise<boolean> {
+    const result = await prisma.blogReaction.deleteMany({
+      where: { postId, sessionId },
+    });
+
+    return result.count > 0;
+  },
+
+  /**
+   * Get reaction counts for a post
+   */
+  async getReactionCounts(postId: string): Promise<ReactionCounts> {
+    const counts = await prisma.blogReaction.groupBy({
+      by: ['type'],
+      where: { postId },
+      _count: true,
+    });
+
+    const result: ReactionCounts = {
+      LIKE: 0,
+      LOVE: 0,
+      HELPFUL: 0,
+      total: 0,
+    };
+
+    counts.forEach((item) => {
+      result[item.type] = item._count;
+      result.total += item._count;
+    });
+
+    return result;
+  },
+
+  /**
+   * Get user's reaction on a post
+   */
+  async getUserReaction(
+    postId: string,
+    sessionId: string
+  ): Promise<BlogReactionType | null> {
+    const reaction = await prisma.blogReaction.findFirst({
+      where: { postId, sessionId },
+      select: { type: true },
+    });
+
+    return reaction?.type ?? null;
   },
 };

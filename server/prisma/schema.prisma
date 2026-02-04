@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,225 +10,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ===== BLOG MODELS =====
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
 
-model BlogPost {
-  id              String         @id @default(uuid())
-  title           String         @db.VarChar(255)
-  slug            String         @unique @db.VarChar(255)
-  content         String         @db.Text
-  excerpt         String?        @db.VarChar(500)
-  featured_image  String?        @db.VarChar(500)
-  status          PostStatus     @default(DRAFT)
-  author_name     String         @db.VarChar(100)
-  published_at    DateTime?
-  view_count      Int            @default(0)
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
-  category_id     String?
-  category        BlogCategory?  @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  // Relations
+  refreshTokens RefreshToken[]
+  blogPosts     BlogPost[]
 
-  tags            BlogPostTag[]
-  reactions       BlogReaction[]
-
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-
-  @@index([slug])
-  @@index([status, published_at])
-  @@index([category_id])
-  @@map("blog_posts")
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+  @@map("users")
 }
 
-enum PostStatus {
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.VarChar(500)
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum BlogPostStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
 }
 
-model BlogCategory {
-  id          String     @id @default(uuid())
-  name        String     @db.VarChar(100)
-  slug        String     @unique @db.VarChar(100)
-  description String?    @db.VarChar(500)
-  color       String?    @db.VarChar(7)
-
-  posts       BlogPost[]
-
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-
-  @@map("blog_categories")
-}
-
-model BlogTag {
-  id         String        @id @default(uuid())
-  name       String        @db.VarChar(50)
-  slug       String        @unique @db.VarChar(50)
-
-  posts      BlogPostTag[]
-
-  created_at DateTime      @default(now())
-
-  @@map("blog_tags")
-}
-
-model BlogPostTag {
-  post_id String
-  tag_id  String
-
-  post    BlogPost @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  tag     BlogTag  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
-
-  @@id([post_id, tag_id])
-  @@map("blog_post_tags")
-}
-
-model BlogReaction {
-  id           String       @id @default(uuid())
-  type         ReactionType
-  session_id   String       @db.VarChar(100)
-
-  post_id      String
-  post         BlogPost     @relation(fields: [post_id], references: [id], onDelete: Cascade)
-
-  created_at   DateTime     @default(now())
-
-  @@unique([post_id, session_id])
-  @@index([post_id])
-  @@map("blog_reactions")
-}
-
-enum ReactionType {
+enum BlogReactionType {
   LIKE
   LOVE
   HELPFUL
-}
-
-// ===== REVIEW MODELS =====
-
-model Review {
-  id              String        @id @default(uuid())
-  customer_name   String        @db.VarChar(100)
-  customer_city   String?       @db.VarChar(100)
-  customer_avatar String?       @db.VarChar(500)
-  rating          Int           @db.TinyInt
-  text            String        @db.Text
-  car_make        String?       @db.VarChar(100)
-  car_model       String?       @db.VarChar(100)
-  car_year        Int?
-  is_verified     Boolean       @default(false)
-  is_published    Boolean       @default(true)
-  photos          ReviewPhoto[]
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
-
-  @@index([is_published, rating])
-  @@index([created_at])
-  @@map("reviews")
-}
-
-model ReviewPhoto {
-  id         String   @id @default(uuid())
-  url        String   @db.VarChar(500)
-  alt_text   String?  @db.VarChar(255)
-  sort_order Int      @default(0)
-  review_id  String
-  review     Review   @relation(fields: [review_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-
-  @@index([review_id])
-  @@map("review_photos")
-}
-
-model CompletedDeal {
-  id            String              @id @default(uuid())
-  car_make      String              @db.VarChar(100)
-  car_model     String              @db.VarChar(100)
-  car_year      Int
-  car_vin       String?             @db.VarChar(17)
-  auction_price Decimal             @db.Decimal(10, 2)
-  market_price  Decimal             @db.Decimal(10, 2)
-  savings       Decimal             @db.Decimal(10, 2)
-  delivery_city String?             @db.VarChar(100)
-  description   String?             @db.Text
-  is_published  Boolean             @default(true)
-  photos        CompletedDealPhoto[]
-  created_at    DateTime            @default(now())
-  updated_at    DateTime            @updatedAt
-
-  @@index([is_published, created_at])
-  @@map("completed_deals")
-}
-
-model CompletedDealPhoto {
-  id         String        @id @default(uuid())
-  url        String        @db.VarChar(500)
-  alt_text   String?       @db.VarChar(255)
-  photo_type DealPhotoType @default(AFTER)
-  sort_order Int           @default(0)
-  deal_id    String
-  deal       CompletedDeal @relation(fields: [deal_id], references: [id], onDelete: Cascade)
-  created_at DateTime      @default(now())
-
-  @@index([deal_id])
-  @@map("completed_deal_photos")
-}
-
-enum DealPhotoType {
-  BEFORE
-  AFTER
-}
-
-// ===== ORDER TRACKING MODELS =====
-
-model Order {
-  id               String              @id @default(uuid())
-  order_number     String              @unique @db.VarChar(20)
-  tracking_code    String              @unique @db.VarChar(50)
-  car_make         String              @db.VarChar(100)
-  car_model        String              @db.VarChar(100)
-  car_year         Int
-  car_vin          String?             @db.VarChar(17)
-  car_color        String?             @db.VarChar(50)
-  car_image        String?             @db.VarChar(500)
-  auction_price    Decimal?            @db.Decimal(10, 2)
-  shipping_cost    Decimal?            @db.Decimal(10, 2)
-  total_price      Decimal?            @db.Decimal(10, 2)
-  customer_name    String              @db.VarChar(100)
-  customer_phone   String?             @db.VarChar(20)
-  customer_email   String?             @db.VarChar(255)
-  status           OrderStatus         @default(WON)
-  current_stage    Int                 @default(1)
-  auction_source   String?             @db.VarChar(50)
-  lot_number       String?             @db.VarChar(50)
-  origin_port      String?             @db.VarChar(100)
-  destination_port String?             @db.VarChar(100)
-  vessel_name      String?             @db.VarChar(100)
-  estimated_arrival DateTime?
-  status_history   OrderStatusHistory[]
-  created_at       DateTime            @default(now())
-  updated_at       DateTime            @updatedAt
-
-  @@index([order_number])
-  @@index([tracking_code])
-  @@index([status, created_at])
-  @@index([customer_email])
-  @@map("orders")
-}
-
-model OrderStatusHistory {
-  id         String      @id @default(uuid())
-  status     OrderStatus
-  stage      Int
-  note       String?     @db.Text
-  location   String?     @db.VarChar(200)
-  changed_by String?     @db.VarChar(100)
-  order_id   String
-  order      Order       @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  created_at DateTime    @default(now())
-
-  @@index([order_id, created_at])
-  @@map("order_status_history")
 }
 
 enum OrderStatus {
@@ -234,4 +78,235 @@ enum OrderStatus {
   SHIPPING
   PORT
   DELIVERED
+}
+
+enum CompletedDealPhotoType {
+  BEFORE
+  AFTER
+}
+
+// ============================================
+// BLOG
+// ============================================
+
+model BlogCategory {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  color       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  posts BlogPost[]
+
+  @@map("blog_categories")
+}
+
+model BlogTag {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  posts BlogPostTag[]
+
+  @@map("blog_tags")
+}
+
+model BlogPost {
+  id            String         @id @default(uuid())
+  title         String
+  slug          String         @unique
+  content       String         @db.LongText
+  excerpt       String?        @db.Text
+  featuredImage String?        @map("featured_image")
+  images        Json?          // Array of image URLs
+  status        BlogPostStatus @default(DRAFT)
+  authorName    String         @map("author_name")
+  authorBio     String?        @db.Text @map("author_bio")
+  authorAvatar  String?        @map("author_avatar")
+  publishedAt   DateTime?      @map("published_at")
+  viewCount     Int            @default(0) @map("view_count")
+  readingTime   Int?           @map("reading_time") // in minutes
+  categoryId    String?        @map("category_id")
+  authorId      String?        @map("author_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  category  BlogCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  author    User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  tags      BlogPostTag[]
+  reactions BlogReaction[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([publishedAt])
+  @@index([slug])
+  @@map("blog_posts")
+}
+
+model BlogPostTag {
+  postId String @map("post_id")
+  tagId  String @map("tag_id")
+
+  // Relations
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("blog_post_tags")
+}
+
+model BlogReaction {
+  id        String           @id @default(uuid())
+  type      BlogReactionType
+  sessionId String           @map("session_id") // Anonymous user session
+  postId    String           @map("post_id")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, sessionId, type])
+  @@index([postId])
+  @@map("blog_reactions")
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique @map("order_number")
+  trackingCode    String      @unique @map("tracking_code")
+  carMake         String      @map("car_make")
+  carModel        String      @map("car_model")
+  carYear         Int         @map("car_year")
+  carVin          String?     @map("car_vin")
+  carColor        String?     @map("car_color")
+  carImage        String?     @map("car_image")
+  auctionPrice    Decimal?    @db.Decimal(12, 2) @map("auction_price")
+  shippingCost    Decimal?    @db.Decimal(12, 2) @map("shipping_cost")
+  totalPrice      Decimal?    @db.Decimal(12, 2) @map("total_price")
+  customerName    String      @map("customer_name")
+  customerPhone   String?     @map("customer_phone")
+  customerEmail   String?     @map("customer_email")
+  status          OrderStatus @default(WON)
+  currentStage    Int         @default(1) @map("current_stage")
+  auctionSource   String?     @map("auction_source")
+  lotNumber       String?     @map("lot_number")
+  originPort      String?     @map("origin_port")
+  destinationPort String?     @map("destination_port")
+  vesselName      String?     @map("vessel_name")
+  estimatedArrival DateTime?  @map("estimated_arrival")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  statusHistory OrderStatusHistory[]
+
+  @@index([status])
+  @@index([trackingCode])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(uuid())
+  status    OrderStatus
+  stage     Int
+  note      String?     @db.Text
+  location  String?
+  changedBy String?     @map("changed_by")
+  orderId   String      @map("order_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_status_history")
+}
+
+// ============================================
+// REVIEWS
+// ============================================
+
+model Review {
+  id             String   @id @default(uuid())
+  customerName   String   @map("customer_name")
+  customerCity   String?  @map("customer_city")
+  customerAvatar String?  @map("customer_avatar")
+  rating         Int      // 1-5
+  text           String   @db.Text
+  carMake        String?  @map("car_make")
+  carModel       String?  @map("car_model")
+  carYear        Int?     @map("car_year")
+  isVerified     Boolean  @default(false) @map("is_verified")
+  isPublished    Boolean  @default(true) @map("is_published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  photos ReviewPhoto[]
+
+  @@index([isPublished])
+  @@index([rating])
+  @@map("reviews")
+}
+
+model ReviewPhoto {
+  id        String @id @default(uuid())
+  url       String
+  altText   String? @map("alt_text")
+  sortOrder Int    @default(0) @map("sort_order")
+  reviewId  String @map("review_id")
+
+  // Relations
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_photos")
+}
+
+model CompletedDeal {
+  id           String   @id @default(uuid())
+  carMake      String   @map("car_make")
+  carModel     String   @map("car_model")
+  carYear      Int      @map("car_year")
+  carVin       String?  @map("car_vin")
+  auctionPrice Decimal  @db.Decimal(12, 2) @map("auction_price")
+  marketPrice  Decimal  @db.Decimal(12, 2) @map("market_price")
+  savings      Decimal  @db.Decimal(12, 2)
+  deliveryCity String?  @map("delivery_city")
+  description  String?  @db.Text
+  isPublished  Boolean  @default(true) @map("is_published")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  photos CompletedDealPhoto[]
+
+  @@index([isPublished])
+  @@map("completed_deals")
+}
+
+model CompletedDealPhoto {
+  id              String                 @id @default(uuid())
+  url             String
+  altText         String?                @map("alt_text")
+  photoType       CompletedDealPhotoType @default(AFTER) @map("photo_type")
+  sortOrder       Int                    @default(0) @map("sort_order")
+  completedDealId String                 @map("completed_deal_id")
+
+  // Relations
+  completedDeal CompletedDeal @relation(fields: [completedDealId], references: [id], onDelete: Cascade)
+
+  @@index([completedDealId])
+  @@map("completed_deal_photos")
 }

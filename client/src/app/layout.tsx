@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/sonner"
 import { Agentation } from 'agentation';
 import { QueryProvider } from '@/providers/query-provider';
+import { ReduxProvider } from '@/providers/redux-provider';
 
 const notoSansGeorgian = Noto_Sans_Georgian({ subsets: ['georgian'], variable: '--font-sans' });
 
@@ -129,10 +130,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <QueryProvider>
-          <MainLayout>{children}</MainLayout>
-          <Toaster />
-        </QueryProvider>
+        <ReduxProvider>
+          <QueryProvider>
+            <MainLayout>{children}</MainLayout>
+            <Toaster />
+          </QueryProvider>
+        </ReduxProvider>
         <Agentation />
       </body>
     </html>

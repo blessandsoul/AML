@@ -5,8 +5,8 @@ import { blogService } from '../services/blog.service';
 import { blogKeys } from '../utils/blog.keys';
 import { getMockPostBySlug, MOCK_POSTS } from '../data/mock-posts';
 
-// Set to true to use mock data (for development without backend)
-const USE_MOCK_DATA = true;
+// Use environment variable to toggle mock data
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 export function usePost(slug: string) {
   return useQuery({

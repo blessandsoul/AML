@@ -1,88 +1,313 @@
-import type { PostStatus, ReactionType } from '@prisma/client';
+import type { BlogPostStatus, BlogReactionType } from '@prisma/client';
 
-export type { PostStatus, ReactionType };
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string | null;
-  featured_image: string | null;
-  status: PostStatus;
-  author_name: string;
-  published_at: Date | null;
-  view_count: number;
-  category_id: string | null;
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface BlogCategory {
+/**
+ * Blog Category entity
+ */
+export interface BlogCategoryEntity {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   color: string | null;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface BlogTag {
+/**
+ * Blog Category with post count
+ */
+export interface BlogCategoryWithCount extends BlogCategoryEntity {
+  _count: {
+    posts: number;
+  };
+}
+
+/**
+ * Blog Tag entity
+ */
+export interface BlogTagEntity {
   id: string;
   name: string;
   slug: string;
-  created_at: Date;
+  createdAt: Date;
 }
 
-export interface BlogReaction {
+/**
+ * Blog Tag with post count
+ */
+export interface BlogTagWithCount extends BlogTagEntity {
+  _count: {
+    posts: number;
+  };
+}
+
+/**
+ * Blog Post entity (basic)
+ */
+export interface BlogPostEntity {
   id: string;
-  type: ReactionType;
-  session_id: string;
-  post_id: string;
-  created_at: Date;
-}
-
-export interface CreatePostDto {
   title: string;
+  slug: string;
   content: string;
-  excerpt?: string;
-  featured_image?: string;
-  author_name: string;
-  category_id?: string;
-  tag_ids?: string[];
-  status?: PostStatus;
+  excerpt: string | null;
+  featuredImage: string | null;
+  images: string[] | null;
+  status: BlogPostStatus;
+  authorName: string;
+  authorBio: string | null;
+  authorAvatar: string | null;
+  publishedAt: Date | null;
+  viewCount: number;
+  readingTime: number | null;
+  categoryId: string | null;
+  authorId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface UpdatePostDto {
+/**
+ * Blog Post with relations
+ */
+export interface BlogPostWithRelations extends BlogPostEntity {
+  category: BlogCategoryEntity | null;
+  tags: {
+    tag: BlogTagEntity;
+  }[];
+  _count: {
+    reactions: number;
+  };
+}
+
+/**
+ * Blog Post list item (optimized for list views)
+ */
+export interface BlogPostListItem {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  featuredImage: string | null;
+  status: BlogPostStatus;
+  authorName: string;
+  authorAvatar: string | null;
+  publishedAt: Date | null;
+  viewCount: number;
+  readingTime: number | null;
+  createdAt: Date;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+    color: string | null;
+  } | null;
+  tags: {
+    tag: {
+      id: string;
+      name: string;
+      slug: string;
+    };
+  }[];
+  _count: {
+    reactions: number;
+  };
+}
+
+/**
+ * Blog Reaction entity
+ */
+export interface BlogReactionEntity {
+  id: string;
+  type: BlogReactionType;
+  sessionId: string;
+  postId: string;
+  createdAt: Date;
+}
+
+/**
+ * Reaction counts by type
+ */
+export interface ReactionCounts {
+  LIKE: number;
+  LOVE: number;
+  HELPFUL: number;
+  total: number;
+}
+
+/**
+ * Input types for creating/updating
+ */
+export interface CreateCategoryInput {
+  name: string;
+  slug?: string;
+  description?: string | null;
+  color?: string | null;
+}
+
+export interface UpdateCategoryInput {
+  name?: string;
+  slug?: string;
+  description?: string | null;
+  color?: string | null;
+}
+
+export interface CreateTagInput {
+  name: string;
+  slug?: string;
+}
+
+export interface CreatePostInput {
+  title: string;
+  slug?: string;
+  content: string;
+  excerpt?: string | null;
+  featuredImage?: string | null;
+  images?: string[] | null;
+  status?: BlogPostStatus;
+  authorName: string;
+  authorBio?: string | null;
+  authorAvatar?: string | null;
+  readingTime?: number | null;
+  categoryId?: string | null;
+  authorId?: string | null;
+  tagIds?: string[];
+}
+
+export interface UpdatePostInput {
   title?: string;
+  slug?: string;
   content?: string;
   excerpt?: string | null;
-  featured_image?: string | null;
-  category_id?: string | null;
-  tag_ids?: string[];
+  featuredImage?: string | null;
+  images?: string[] | null;
+  status?: BlogPostStatus;
+  authorName?: string;
+  authorBio?: string | null;
+  authorAvatar?: string | null;
+  readingTime?: number | null;
+  categoryId?: string | null;
+  tagIds?: string[];
 }
 
-export interface PostFilters {
-  page?: number;
-  limit?: number;
-  category_id?: string;
-  tag_slug?: string;
+/**
+ * Query parameters for finding posts
+ */
+export interface PostQueryParams {
+  page: number;
+  limit: number;
+  status?: BlogPostStatus;
+  categoryId?: string;
+  tagSlug?: string;
   search?: string;
-  status?: PostStatus;
 }
 
-export interface CreateCategoryDto {
-  name: string;
-  description?: string;
-  color?: string;
+/**
+ * API Response transformers
+ */
+export function toPostResponse(post: BlogPostWithRelations) {
+  return {
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    content: post.content,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    images: post.images,
+    status: post.status,
+    author: {
+      name: post.authorName,
+      bio: post.authorBio,
+      avatar: post.authorAvatar,
+    },
+    publishedAt: post.publishedAt,
+    viewCount: post.viewCount,
+    readingTime: post.readingTime,
+    category: post.category
+      ? {
+          id: post.category.id,
+          name: post.category.name,
+          slug: post.category.slug,
+          color: post.category.color,
+        }
+      : null,
+    tags: post.tags.map((pt) => ({
+      id: pt.tag.id,
+      name: pt.tag.name,
+      slug: pt.tag.slug,
+    })),
+    reactionCount: post._count.reactions,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+  };
 }
 
-export interface CreateTagDto {
-  name: string;
+export function toPostListItemResponse(post: BlogPostListItem) {
+  return {
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    status: post.status,
+    author: {
+      name: post.authorName,
+      avatar: post.authorAvatar,
+    },
+    publishedAt: post.publishedAt,
+    viewCount: post.viewCount,
+    readingTime: post.readingTime,
+    category: post.category
+      ? {
+          id: post.category.id,
+          name: post.category.name,
+          slug: post.category.slug,
+          color: post.category.color,
+        }
+      : null,
+    tags: post.tags.map((pt) => ({
+      id: pt.tag.id,
+      name: pt.tag.name,
+      slug: pt.tag.slug,
+    })),
+    reactionCount: post._count.reactions,
+    createdAt: post.createdAt,
+  };
 }
 
-export interface AddReactionDto {
-  type: ReactionType;
-  session_id: string;
+export function toCategoryResponse(category: BlogCategoryWithCount | BlogCategoryEntity) {
+  const base = {
+    id: category.id,
+    name: category.name,
+    slug: category.slug,
+    description: category.description,
+    color: category.color,
+    createdAt: category.createdAt,
+    updatedAt: category.updatedAt,
+  };
+
+  if ('_count' in category) {
+    return {
+      ...base,
+      postCount: category._count.posts,
+    };
+  }
+
+  return base;
+}
+
+export function toTagResponse(tag: BlogTagWithCount | BlogTagEntity) {
+  const base = {
+    id: tag.id,
+    name: tag.name,
+    slug: tag.slug,
+    createdAt: tag.createdAt,
+  };
+
+  if ('_count' in tag) {
+    return {
+      ...base,
+      postCount: tag._count.posts,
+    };
+  }
+
+  return base;
 }

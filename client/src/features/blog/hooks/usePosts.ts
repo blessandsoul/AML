@@ -6,8 +6,8 @@ import { blogKeys } from '../utils/blog.keys';
 import { getMockPosts, MOCK_POSTS } from '../data/mock-posts';
 import type { PostFilters } from '../types';
 
-// Set to true to use mock data (for development without backend)
-const USE_MOCK_DATA = true;
+// Use environment variable to toggle mock data
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 export function usePosts(filters: PostFilters = {}) {
   return useQuery({

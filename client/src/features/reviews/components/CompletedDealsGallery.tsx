@@ -57,11 +57,11 @@ export function CompletedDealsGallery() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {deals.map((deal, index) => {
             const afterPhoto = deal.photos.find(
-              (p) => p.photo_type === 'AFTER'
+              (p) => p.photoType === 'AFTER'
             );
             const firstPhoto = deal.photos[0];
             const displayPhoto = afterPhoto ?? firstPhoto;
-            const carLabel = `${deal.car_year} ${deal.car_make} ${deal.car_model}`;
+            const carLabel = `${deal.car.year} ${deal.car.make} ${deal.car.model}`;
 
             return (
               <motion.div
@@ -77,7 +77,7 @@ export function CompletedDealsGallery() {
                   {displayPhoto ? (
                     <Image
                       src={displayPhoto.url}
-                      alt={displayPhoto.alt_text ?? carLabel}
+                      alt={displayPhoto.altText ?? carLabel}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -92,7 +92,7 @@ export function CompletedDealsGallery() {
                   <div className="absolute top-3 right-3 z-10">
                     <div className="px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-lg text-white text-xs font-bold bg-emerald-500">
                       <TrendingDown className="w-3 h-3" />
-                      დაზოგილი: {formatPrice(deal.savings)}
+                      დაზოგილი: {formatPrice(deal.pricing.savings)}
                     </div>
                   </div>
 
@@ -106,14 +106,14 @@ export function CompletedDealsGallery() {
                         <span className="bg-white/20 p-1 rounded-sm">
                           <Calendar className="w-3 h-3" />
                         </span>
-                        <span>{deal.car_year}</span>
+                        <span>{deal.car.year}</span>
                       </div>
-                      {deal.delivery_city && (
+                      {deal.deliveryCity && (
                         <div className="flex items-center gap-1">
                           <span className="bg-white/20 p-1 rounded-sm">
                             <MapPin className="w-3 h-3" />
                           </span>
-                          <span>{deal.delivery_city}</span>
+                          <span>{deal.deliveryCity}</span>
                         </div>
                       )}
                     </div>
@@ -124,7 +124,7 @@ export function CompletedDealsGallery() {
                 <div className="p-4 flex flex-col flex-1 gap-3">
                   <div className="space-y-1">
                     <h3 className="font-bold text-base leading-tight text-foreground line-clamp-2">
-                      {deal.car_make} {deal.car_model}
+                      {deal.car.make} {deal.car.model}
                     </h3>
                     {deal.description && (
                       <p className="text-xs text-muted-foreground/80 line-clamp-2 mt-2">
@@ -137,10 +137,10 @@ export function CompletedDealsGallery() {
                   <div className="mt-auto pt-3 border-t border-border border-dashed flex items-center justify-between">
                     <div className="flex items-baseline gap-2">
                       <span className="text-base font-bold text-foreground">
-                        {formatPrice(deal.auction_price)}
+                        {formatPrice(deal.pricing.auctionPrice)}
                       </span>
                       <span className="text-xs text-muted-foreground line-through">
-                        {formatPrice(deal.market_price)}
+                        {formatPrice(deal.pricing.marketPrice)}
                       </span>
                     </div>
                   </div>

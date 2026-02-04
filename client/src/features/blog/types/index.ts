@@ -7,8 +7,8 @@ export interface BlogCategory {
   slug: string;
   description: string | null;
   color: string | null;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   _count?: {
     posts: number;
   };
@@ -18,61 +18,65 @@ export interface BlogTag {
   id: string;
   name: string;
   slug: string;
-  created_at: string;
+  createdAt: string;
   _count?: {
     posts: number;
   };
 }
 
 export interface BlogPostTag {
-  post_id: string;
-  tag_id: string;
+  postId: string;
+  tagId: string;
   tag: BlogTag;
 }
 
 export interface BlogReaction {
   id: string;
   type: ReactionType;
-  session_id: string;
-  post_id: string;
-  created_at: string;
+  sessionId: string;
+  postId: string;
+  createdAt: string;
+}
+
+export interface BlogAuthor {
+  name: string;
+  avatar: string | null;
 }
 
 export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  content: string;
+  content?: string;
   excerpt: string | null;
-  featured_image: string | null;
-  images?: string[]; // Multiple images for gallery
+  featuredImage: string | null;
+  images?: string[];
   status: PostStatus;
-  author_name: string;
-  author_bio?: string; // Author description
-  author_avatar?: string; // Author image
-  published_at: string | null;
-  view_count: number;
-  reading_time?: number; // Calculated reading time in minutes
-  category_id: string | null;
+  author: BlogAuthor;
+  publishedAt: string | null;
+  viewCount: number;
+  readingTime?: number;
+  categoryId: string | null;
   category: BlogCategory | null;
-  tags: BlogPostTag[];
+  tags: BlogTag[];
   reactions?: BlogReaction[];
+  reactionCount?: number;
   reactionCounts?: Record<ReactionType, number>;
   _count?: {
     reactions: number;
   };
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreatePostRequest {
   title: string;
   content: string;
   excerpt?: string;
-  featured_image?: string;
-  author_name: string;
-  category_id?: string;
-  tag_ids?: string[];
+  featuredImage?: string;
+  authorName: string;
+  categoryId?: string;
+  tagIds?: string[];
   status?: PostStatus;
 }
 
@@ -80,16 +84,16 @@ export interface UpdatePostRequest {
   title?: string;
   content?: string;
   excerpt?: string | null;
-  featured_image?: string | null;
-  category_id?: string | null;
-  tag_ids?: string[];
+  featuredImage?: string | null;
+  categoryId?: string | null;
+  tagIds?: string[];
 }
 
 export interface PostFilters {
   page?: number;
   limit?: number;
-  category_id?: string;
-  tag_slug?: string;
+  categoryId?: string;
+  tagSlug?: string;
   search?: string;
   status?: PostStatus;
 }
@@ -106,5 +110,5 @@ export interface CreateTagRequest {
 
 export interface AddReactionRequest {
   type: ReactionType;
-  session_id: string;
+  sessionId: string;
 }

@@ -1,191 +1,368 @@
-import { prisma } from '../../libs/prisma';
-import type { OrderStatus } from '@prisma/client';
-import type { OrderFilters, CreateOrderDto, UpdateOrderDto } from './order.types';
+import { prisma } from '../../libs/prisma.js';
+import { calculateOffset } from '../../libs/pagination.js';
+import type { OrderStatus, Prisma } from '@prisma/client';
+import type {
+  OrderWithHistory,
+  OrderListItem,
+  CreateOrderInput,
+  UpdateOrderInput,
+  UpdateOrderStatusInput,
+  OrderQueryParams,
+} from './order.types.js';
+import { randomBytes } from 'crypto';
 
-const STATUS_TO_STAGE: Record<string, number> = {
-  WON: 1,
-  PAID: 2,
-  SHIPPING: 3,
-  PORT: 4,
-  DELIVERED: 5,
-};
+/**
+ * Selection for order list items
+ */
+const orderListSelect = {
+  id: true,
+  orderNumber: true,
+  trackingCode: true,
+  carMake: true,
+  carModel: true,
+  carYear: true,
+  carImage: true,
+  customerName: true,
+  status: true,
+  currentStage: true,
+  totalPrice: true,
+  estimatedArrival: true,
+  createdAt: true,
+} as const;
 
+/**
+ * Selection for full order details with history
+ */
+const orderDetailSelect = {
+  id: true,
+  orderNumber: true,
+  trackingCode: true,
+  carMake: true,
+  carModel: true,
+  carYear: true,
+  carVin: true,
+  carColor: true,
+  carImage: true,
+  auctionPrice: true,
+  shippingCost: true,
+  totalPrice: true,
+  customerName: true,
+  customerPhone: true,
+  customerEmail: true,
+  status: true,
+  currentStage: true,
+  auctionSource: true,
+  lotNumber: true,
+  originPort: true,
+  destinationPort: true,
+  vesselName: true,
+  estimatedArrival: true,
+  createdAt: true,
+  updatedAt: true,
+  statusHistory: {
+    select: {
+      id: true,
+      status: true,
+      stage: true,
+      note: true,
+      location: true,
+      changedBy: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: 'desc' as const,
+    },
+  },
+} as const;
+
+/**
+ * Generate unique order number (AML-YYYYMMDD-XXXX format)
+ */
+async function generateOrderNumber(): Promise<string> {
+  const date = new Date();
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+
+  // Get count of orders created today for sequential numbering
+  const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+  const count = await prisma.order.count({
+    where: {
+      createdAt: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+  });
+
+  const sequence = String(count + 1).padStart(4, '0');
+  return `AML-${dateStr}-${sequence}`;
+}
+
+/**
+ * Generate unique tracking code (8 character alphanumeric)
+ */
+async function generateTrackingCode(): Promise<string> {
+  let code: string;
+  let exists = true;
+
+  while (exists) {
+    // Generate random 8 character alphanumeric code
+    code = randomBytes(4).toString('hex').toUpperCase();
+
+    // Check if already exists
+    const existing = await prisma.order.findUnique({
+      where: { trackingCode: code },
+      select: { id: true },
+    });
+
+    exists = existing !== null;
+  }
+
+  return code!;
+}
+
+/**
+ * Get stage number for a status
+ */
+function getStageForStatus(status: OrderStatus): number {
+  const stageMap: Record<OrderStatus, number> = {
+    WON: 1,
+    PAID: 2,
+    SHIPPING: 3,
+    PORT: 4,
+    DELIVERED: 5,
+  };
+  return stageMap[status];
+}
+
+/**
+ * Order Repository - Database operations for orders module
+ */
 export const orderRepo = {
-  async findMany(filters: OrderFilters) {
-    const { page = 1, limit = 10, status, search } = filters;
-    const skip = (page - 1) * limit;
+  /**
+   * Find orders with pagination and filters
+   */
+  async findOrders(
+    params: OrderQueryParams
+  ): Promise<{ items: OrderListItem[]; totalItems: number }> {
+    const { page, limit, status, search } = params;
+    const offset = calculateOffset(page, limit);
 
-    const where: any = {};
+    // Build where clause
+    const where: Prisma.OrderWhereInput = {};
 
+    // Status filter
     if (status) {
       where.status = status;
     }
 
+    // Search filter (order number, tracking code, customer name, car details)
     if (search) {
       where.OR = [
-        { order_number: { contains: search } },
-        { car_vin: { contains: search } },
-        { customer_name: { contains: search } },
+        { orderNumber: { contains: search } },
+        { trackingCode: { contains: search } },
+        { customerName: { contains: search } },
+        { carMake: { contains: search } },
+        { carModel: { contains: search } },
+        { carVin: { contains: search } },
       ];
     }
 
+    // Execute queries in parallel
     const [items, totalItems] = await Promise.all([
       prisma.order.findMany({
         where,
-        skip,
+        select: orderListSelect,
+        orderBy: { createdAt: 'desc' },
+        skip: offset,
         take: limit,
-        orderBy: { created_at: 'desc' },
-        include: {
-          status_history: {
-            orderBy: { created_at: 'desc' },
-          },
-        },
       }),
       prisma.order.count({ where }),
     ]);
 
-    return { items, totalItems };
+    return { items: items as unknown as OrderListItem[], totalItems };
   },
 
-  async findById(id: string) {
-    return prisma.order.findUnique({
+  /**
+   * Find order by ID
+   */
+  async findOrderById(id: string): Promise<OrderWithHistory | null> {
+    const order = await prisma.order.findUnique({
       where: { id },
-      include: {
-        status_history: {
-          orderBy: { created_at: 'desc' },
-        },
-      },
+      select: orderDetailSelect,
     });
+
+    return order as unknown as OrderWithHistory | null;
   },
 
-  async findByTrackingCode(code: string) {
-    return prisma.order.findUnique({
-      where: { tracking_code: code },
-      include: {
-        status_history: {
-          orderBy: { created_at: 'desc' },
-        },
-      },
+  /**
+   * Find order by tracking code
+   */
+  async findOrderByTrackingCode(code: string): Promise<OrderWithHistory | null> {
+    const order = await prisma.order.findUnique({
+      where: { trackingCode: code.toUpperCase() },
+      select: orderDetailSelect,
     });
+
+    return order as unknown as OrderWithHistory | null;
   },
 
-  async create(data: CreateOrderDto, orderNumber: string, trackingCode: string) {
-    const status = data.status || 'WON';
-    const stage = STATUS_TO_STAGE[status] || 1;
+  /**
+   * Find order by order number
+   */
+  async findOrderByOrderNumber(orderNumber: string): Promise<OrderWithHistory | null> {
+    const order = await prisma.order.findUnique({
+      where: { orderNumber },
+      select: orderDetailSelect,
+    });
 
-    return prisma.order.create({
+    return order as unknown as OrderWithHistory | null;
+  },
+
+  /**
+   * Create a new order
+   */
+  async createOrder(data: CreateOrderInput): Promise<OrderWithHistory> {
+    const [orderNumber, trackingCode] = await Promise.all([
+      generateOrderNumber(),
+      generateTrackingCode(),
+    ]);
+
+    const order = await prisma.order.create({
       data: {
-        order_number: orderNumber,
-        tracking_code: trackingCode,
-        car_make: data.car_make,
-        car_model: data.car_model,
-        car_year: data.car_year,
-        car_vin: data.car_vin,
-        car_color: data.car_color,
-        car_image: data.car_image,
-        auction_price: data.auction_price,
-        shipping_cost: data.shipping_cost,
-        total_price: data.total_price,
-        customer_name: data.customer_name,
-        customer_phone: data.customer_phone,
-        customer_email: data.customer_email,
-        status,
-        current_stage: stage,
-        auction_source: data.auction_source,
-        lot_number: data.lot_number,
-        origin_port: data.origin_port,
-        destination_port: data.destination_port,
-        vessel_name: data.vessel_name,
-        estimated_arrival: data.estimated_arrival ? new Date(data.estimated_arrival) : undefined,
-        status_history: {
+        orderNumber,
+        trackingCode,
+        carMake: data.carMake,
+        carModel: data.carModel,
+        carYear: data.carYear,
+        carVin: data.carVin,
+        carColor: data.carColor,
+        carImage: data.carImage,
+        auctionPrice: data.auctionPrice,
+        shippingCost: data.shippingCost,
+        totalPrice: data.totalPrice,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        customerEmail: data.customerEmail,
+        auctionSource: data.auctionSource,
+        lotNumber: data.lotNumber,
+        originPort: data.originPort,
+        destinationPort: data.destinationPort,
+        vesselName: data.vesselName,
+        estimatedArrival: data.estimatedArrival,
+        status: 'WON',
+        currentStage: 1,
+        // Create initial status history entry
+        statusHistory: {
           create: {
-            status,
-            stage,
-            note: 'Order created',
+            status: 'WON',
+            stage: 1,
+            note: 'Order created - won at auction',
           },
         },
       },
-      include: {
-        status_history: {
-          orderBy: { created_at: 'desc' },
-        },
-      },
+      select: orderDetailSelect,
     });
+
+    return order as unknown as OrderWithHistory;
   },
 
-  async update(id: string, data: UpdateOrderDto) {
-    return prisma.order.update({
-      where: { id },
-      data: {
-        ...data,
-        estimated_arrival: data.estimated_arrival !== undefined
-          ? data.estimated_arrival
-            ? new Date(data.estimated_arrival)
-            : null
-          : undefined,
-      },
-      include: {
-        status_history: {
-          orderBy: { created_at: 'desc' },
-        },
-      },
-    });
-  },
-
-  async updateStatus(
+  /**
+   * Update an order
+   */
+  async updateOrder(
     id: string,
-    status: OrderStatus,
-    stage: number,
-    note?: string,
-    location?: string,
-    changed_by?: string
-  ) {
-    return prisma.order.update({
+    data: UpdateOrderInput
+  ): Promise<OrderWithHistory> {
+    const order = await prisma.order.update({
       where: { id },
       data: {
-        status,
-        current_stage: stage,
-        status_history: {
+        carMake: data.carMake,
+        carModel: data.carModel,
+        carYear: data.carYear,
+        carVin: data.carVin,
+        carColor: data.carColor,
+        carImage: data.carImage,
+        auctionPrice: data.auctionPrice,
+        shippingCost: data.shippingCost,
+        totalPrice: data.totalPrice,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        customerEmail: data.customerEmail,
+        auctionSource: data.auctionSource,
+        lotNumber: data.lotNumber,
+        originPort: data.originPort,
+        destinationPort: data.destinationPort,
+        vesselName: data.vesselName,
+        estimatedArrival: data.estimatedArrival,
+      },
+      select: orderDetailSelect,
+    });
+
+    return order as unknown as OrderWithHistory;
+  },
+
+  /**
+   * Update order status and add history entry
+   */
+  async updateOrderStatus(
+    id: string,
+    data: UpdateOrderStatusInput
+  ): Promise<OrderWithHistory> {
+    const newStage = getStageForStatus(data.status);
+
+    const order = await prisma.order.update({
+      where: { id },
+      data: {
+        status: data.status,
+        currentStage: newStage,
+        statusHistory: {
           create: {
-            status,
-            stage,
-            note,
-            location,
-            changed_by,
+            status: data.status,
+            stage: newStage,
+            note: data.note,
+            location: data.location,
+            changedBy: data.changedBy,
           },
         },
       },
-      include: {
-        status_history: {
-          orderBy: { created_at: 'desc' },
-        },
-      },
+      select: orderDetailSelect,
+    });
+
+    return order as unknown as OrderWithHistory;
+  },
+
+  /**
+   * Delete an order
+   */
+  async deleteOrder(id: string): Promise<void> {
+    await prisma.order.delete({
+      where: { id },
     });
   },
 
-  async delete(id: string) {
-    return prisma.order.delete({ where: { id } });
-  },
-
-  async getNextOrderNumber(): Promise<string> {
-    const year = new Date().getFullYear();
-    const prefix = `ORD-${year}-`;
-
-    const lastOrder = await prisma.order.findFirst({
-      where: {
-        order_number: { startsWith: prefix },
-      },
-      orderBy: { order_number: 'desc' },
-      select: { order_number: true },
+  /**
+   * Check if order number is taken
+   */
+  async isOrderNumberTaken(orderNumber: string): Promise<boolean> {
+    const order = await prisma.order.findUnique({
+      where: { orderNumber },
+      select: { id: true },
     });
 
-    if (!lastOrder) {
-      return `${prefix}001`;
-    }
+    return order !== null;
+  },
 
-    const lastNumber = parseInt(lastOrder.order_number.replace(prefix, ''), 10);
-    const nextNumber = (lastNumber + 1).toString().padStart(3, '0');
+  /**
+   * Check if tracking code is taken
+   */
+  async isTrackingCodeTaken(code: string): Promise<boolean> {
+    const order = await prisma.order.findUnique({
+      where: { trackingCode: code },
+      select: { id: true },
+    });
 
-    return `${prefix}${nextNumber}`;
+    return order !== null;
   },
 };

@@ -2,7 +2,7 @@ import { apiClient } from '@/lib/api/axios.config';
 import type { ApiResponse, PaginatedResponse } from '@/lib/api/api.types';
 import type { Order, OrderFilters } from '../types';
 
-const BASE_URL = '/api/v1/orders';
+const BASE_URL = '/orders';
 
 class OrderService {
   // ===== PUBLIC =====
