@@ -8,6 +8,7 @@ import { errorHandler } from './plugins/error-handler';
 import { blogRoutes } from './modules/blog';
 import { reviewRoutes } from './modules/reviews';
 import { orderRoutes } from './modules/orders';
+import { aiRoutes } from './modules/ai';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ fastify.get('/health', async () => {
 fastify.register(blogRoutes, { prefix: '/api/v1/blog' });
 fastify.register(reviewRoutes, { prefix: '/api/v1/reviews' });
 fastify.register(orderRoutes, { prefix: '/api/v1/orders' });
+fastify.register(aiRoutes, { prefix: '/api/v1/ai' });
 
 const start = async () => {
   try {

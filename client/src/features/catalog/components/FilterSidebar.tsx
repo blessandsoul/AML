@@ -83,7 +83,7 @@ export function FilterSidebar() {
                     <AccordionContent className="space-y-2">
                         <div className="flex items-center space-x-2">
                             <Checkbox id="copart" />
-                            <Label htmlFor="copart">Copart</Label>
+                            <Label htmlFor="copart">კოპარტი</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="iaai" />
@@ -91,11 +91,11 @@ export function FilterSidebar() {
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="manheim" />
-                            <Label htmlFor="manheim">Manheim</Label>
+                            <Label htmlFor="manheim">მანჰეიმი</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="adesa" />
-                            <Label htmlFor="adesa">Adesa</Label>
+                            <Label htmlFor="adesa">ადესა</Label>
                         </div>
                     </AccordionContent>
                 </AccordionItem>

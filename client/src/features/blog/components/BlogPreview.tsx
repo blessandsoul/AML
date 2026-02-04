@@ -14,10 +14,10 @@ export function BlogPreview() {
   const posts = data?.items || [];
 
   return (
-    <section className="bg-background py-32 border-t border-border">
+    <section className="bg-background py-14 md:py-32 border-t border-border">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-16 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}

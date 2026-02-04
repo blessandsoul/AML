@@ -29,7 +29,7 @@ const FAQS = [
 
 export function MinimalFAQ() {
     return (
-        <section className="bg-muted/30 py-24 border-t border-border">
+        <section className="bg-muted/30 py-12 md:py-24 border-t border-border">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h3 className="text-3xl font-black text-foreground tracking-tight mb-4">

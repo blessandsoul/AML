@@ -50,7 +50,7 @@ export function HunterCard({ index = 0 }: HunterCardProps) {
                         <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
 
-                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest flex items-center gap-2 opacity-70">
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest flex items-center gap-2 opacity-70" suppressHydrationWarning>
                         <Target className="w-3 h-3" />
                         დახურულ აუქციონზე წვდომა
                     </div>

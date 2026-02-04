@@ -34,6 +34,8 @@ export function SearchIsland() {
             transition={{ delay: 0.3, duration: 0.8, type: "spring", bounce: 0.2 }}
             className="w-full relative group"
             onMouseMove={handleMouseMove}
+            suppressHydrationWarning
+            style={{ opacity: 0 }}
         >
             {/* Spotlight Gradient Background */}
             <motion.div

@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 
 export function ValueComparison() {
     return (
-        <section className="bg-muted/30 py-24 border-y border-border">
+        <section className="bg-muted/30 py-12 md:py-24 border-y border-border">
             <div className="container mx-auto px-4 max-w-6xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
 
                     {/* Text Side */}
                     <div className="space-y-6">

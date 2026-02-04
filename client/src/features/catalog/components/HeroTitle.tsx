@@ -14,6 +14,8 @@ export function HeroTitle() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
+                suppressHydrationWarning
+                style={{ opacity: 0 }}
             >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600 dark:to-blue-400">
                     პირდაპირი წვდომა
@@ -31,6 +33,8 @@ export function HeroTitle() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
                 className="flex flex-col items-center gap-3 mb-4"
+                suppressHydrationWarning
+                style={{ opacity: 0 }}
             >
                 {/* Phone Number Display */}
                 <div className="flex items-center gap-2 px-6 py-2 rounded-full bg-white/50 dark:bg-black/20 border border-border/50 backdrop-blur-sm shadow-sm md:shadow-md">

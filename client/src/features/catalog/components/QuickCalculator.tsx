@@ -8,6 +8,7 @@ import {
     FileText,
     ArrowRight,
     CheckCircle2,
+    Calculator,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,17 +32,88 @@ import {
     FUEL_TYPES,
     INSURANCE_OPTIONS
 } from '../constants/calculator-data';
+import { compute, fmt, type CalcResult } from '../utils/calculator';
+
+type Currency = 'USD' | 'GEL';
+const USD_TO_GEL_RATE = 2.7;
+const GEL_TO_USD_RATE = 1 / USD_TO_GEL_RATE;
+
+function ResultItem({ label, value, currency, highlight = false }: {
+    label: string;
+    value: number;
+    currency: Currency;
+    highlight?: boolean;
+}) {
+    const displayValue = currency === 'GEL' ? Math.round(value * USD_TO_GEL_RATE) : value;
+    const symbol = currency === 'GEL' ? '₾' : '$';
+
+    return (
+        <div className={cn(
+            "rounded-xl p-2 md:p-2.5 text-center",
+            highlight
+                ? "bg-emerald-500/10 border border-emerald-500/20"
+                : "bg-white/5 border border-white/10"
+        )}>
+            <p className="text-[9px] md:text-[10px] font-bold uppercase text-muted-foreground truncate">
+                {label}
+            </p>
+            <p className={cn(
+                "text-sm md:text-base font-bold font-mono mt-0.5",
+                highlight ? "text-emerald-500" : "text-foreground"
+            )}>
+                {symbol}{fmt(displayValue)}
+            </p>
+        </div>
+    );
+}
 
 export function QuickCalculator() {
     const [isCalculating, setIsCalculating] = React.useState(false);
     const [activeTab, setActiveTab] = React.useState<'auction' | 'logistics' | 'details'>('auction');
 
-    // Mock handlers
-    const handleCalculate = async () => {
+    // Form state
+    const [auctionType, setAuctionType] = React.useState('');
+    const [vehicleType, setVehicleType] = React.useState('');
+    const [price, setPrice] = React.useState('');
+    const [currency, setCurrency] = React.useState<Currency>('USD');
+    const [logisticsAuction, setLogisticsAuction] = React.useState('');
+    const [usaCity, setUsaCity] = React.useState('');
+    const [destinationPort, setDestinationPort] = React.useState('');
+    const [vehicleCategory, setVehicleCategory] = React.useState('');
+    const [fuelType, setFuelType] = React.useState('');
+    const [insurance, setInsurance] = React.useState('');
+
+    // Results state
+    const [result, setResult] = React.useState<CalcResult | null>(null);
+    const [showResults, setShowResults] = React.useState(false);
+
+    const handleCalculate = () => {
+        const priceNum = parseFloat(price) || 0;
+        if (priceNum <= 0) return;
+
         setIsCalculating(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsCalculating(false);
+
+        const priceInUsd = currency === 'GEL'
+            ? Math.round(priceNum * GEL_TO_USD_RATE)
+            : priceNum;
+
+        // Small delay for UX feedback
+        setTimeout(() => {
+            const computed = compute(
+                priceInUsd,
+                destinationPort || 'POTI',
+                vehicleCategory || 'Sedan',
+                fuelType || 'Gasoline',
+                insurance || 'No',
+            );
+
+            setResult(computed);
+            setShowResults(true);
+            setIsCalculating(false);
+        }, 300);
     };
+
+    const currencySymbol = currency === 'GEL' ? '₾' : '$';
 
     // Components for columns to ensure reusability
     const AuctionColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
@@ -57,7 +129,7 @@ export function QuickCalculator() {
             <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
-                    <Select>
+                    <Select value={auctionType} onValueChange={setAuctionType}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -71,7 +143,7 @@ export function QuickCalculator() {
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ტიპი</Label>
-                    <Select>
+                    <Select value={vehicleType} onValueChange={setVehicleType}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -84,13 +156,22 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ფასი ($)</Label>
-                    <div className="relative w-full">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-[10px] md:text-xs">$</span>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ფასი</Label>
+                    <div className="relative w-full flex">
+                        <button
+                            type="button"
+                            onClick={() => setCurrency(prev => prev === 'USD' ? 'GEL' : 'USD')}
+                            className="flex items-center justify-center h-9 md:h-10 w-9 md:w-11 shrink-0 rounded-l-md border border-r-0 border-input/50 bg-primary/10 hover:bg-primary/20 transition-colors text-sm md:text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            title="ვალუტის შეცვლა"
+                        >
+                            {currencySymbol}
+                        </button>
                         <Input
                             type="number"
                             placeholder="0"
-                            className="w-full pl-6 h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 font-mono font-bold text-center md:text-left px-3"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            className="w-full rounded-l-none h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 font-mono font-bold text-center md:text-left px-3"
                         />
                     </div>
                 </div>
@@ -110,7 +191,7 @@ export function QuickCalculator() {
             <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
-                    <Select>
+                    <Select value={logisticsAuction} onValueChange={setLogisticsAuction}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -124,7 +205,7 @@ export function QuickCalculator() {
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ქალაქი</Label>
-                    <Select>
+                    <Select value={usaCity} onValueChange={setUsaCity}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -138,7 +219,7 @@ export function QuickCalculator() {
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">პორტი</Label>
-                    <Select>
+                    <Select value={destinationPort} onValueChange={setDestinationPort}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -165,7 +246,7 @@ export function QuickCalculator() {
             <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ტრანსპორტი</Label>
-                    <Select>
+                    <Select value={vehicleCategory} onValueChange={setVehicleCategory}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -179,7 +260,7 @@ export function QuickCalculator() {
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ძრავა</Label>
-                    <Select>
+                    <Select value={fuelType} onValueChange={setFuelType}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -193,7 +274,7 @@ export function QuickCalculator() {
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">დაზღვევა</Label>
-                    <Select>
+                    <Select value={insurance} onValueChange={setInsurance}>
                         <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
@@ -214,7 +295,9 @@ export function QuickCalculator() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="w-full relative bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl overflow-hidden mt-2"
+            className="w-full relative bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl overflow-hidden"
+            suppressHydrationWarning
+            style={{ opacity: 0 }}
         >
             {/* Glass Shine Effect */}
             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none" />
@@ -241,6 +324,7 @@ export function QuickCalculator() {
                                 <motion.div
                                     layoutId="activeTab"
                                     className="absolute inset-0 bg-primary rounded-lg shadow-sm"
+                                    initial={false}
                                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                 />
                             )}
@@ -301,6 +385,100 @@ export function QuickCalculator() {
                     <DetailsColumn />
                 </div>
 
+                {/* Calculate Button */}
+                <div className="mt-3 md:mt-4">
+                    <Button
+                        onClick={handleCalculate}
+                        disabled={isCalculating || !price}
+                        className="w-full h-10 md:h-12 text-sm md:text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+                        size="lg"
+                    >
+                        {isCalculating ? (
+                            <div className="flex items-center gap-2">
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                >
+                                    <Calculator className="w-4 h-4" />
+                                </motion.div>
+                                <span>იანგარიშება...</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <Calculator className="w-4 h-4" />
+                                <span>გამოთვლა</span>
+                            </div>
+                        )}
+                    </Button>
+                </div>
+
+                {/* Results Display */}
+                <AnimatePresence>
+                    {showResults && result && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.4, ease: 'easeInOut' }}
+                            className="mt-3 overflow-hidden"
+                        >
+                            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-3 md:p-4 space-y-3">
+                                {/* Total - Hero number */}
+                                <div className="text-center py-2">
+                                    <p className="text-[10px] md:text-xs font-bold uppercase text-muted-foreground tracking-wider mb-1">
+                                        სულ საქართველოში
+                                    </p>
+                                    <motion.p
+                                        key={result.total}
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        className="text-2xl md:text-3xl font-black text-primary font-mono"
+                                    >
+                                        {currency === 'GEL' ? '₾' : '$'}
+                                        {fmt(currency === 'GEL' ? Math.round(result.total * USD_TO_GEL_RATE) : result.total)}
+                                    </motion.p>
+                                </div>
+
+                                {/* Breakdown grid */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                    <ResultItem
+                                        label="საკომისიო"
+                                        value={result.auctionFee}
+                                        currency={currency}
+                                    />
+                                    <ResultItem
+                                        label="ტრანსპორტირება"
+                                        value={result.usaDelivery + result.seaShipping}
+                                        currency={currency}
+                                    />
+                                    <ResultItem
+                                        label="განბაჟება"
+                                        value={result.customsDuty}
+                                        currency={currency}
+                                    />
+                                    <ResultItem
+                                        label="დაზოგავთ"
+                                        value={result.savings}
+                                        currency={currency}
+                                        highlight
+                                    />
+                                </div>
+
+                                {/* Link to full calculator */}
+                                <div className="text-center pt-1">
+                                    <a
+                                        href="/calculator"
+                                        className="text-[10px] md:text-xs text-primary hover:underline font-medium inline-flex items-center gap-1"
+                                    >
+                                        სრული კალკულაცია
+                                        <ArrowRight className="w-3 h-3" />
+                                    </a>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Carfax & CTA Section */}
                 <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-border/50 relative">
                     <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-2 flex flex-col md:flex-row items-center gap-2 border border-blue-100 dark:border-blue-900/50">
@@ -316,19 +494,13 @@ export function QuickCalculator() {
                             </div>
                         </div>
                         <Button
-                            onClick={handleCalculate}
-                            disabled={isCalculating}
                             size="sm"
                             className="w-full md:w-auto h-8 md:h-9 px-4 text-xs font-bold rounded-md shadow-sm"
                         >
-                            {isCalculating ? (
-                                <span>...</span>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <span>შემოწმება</span>
-                                    <ArrowRight className="w-3 h-3" />
-                                </div>
-                            )}
+                            <div className="flex items-center gap-2">
+                                <span>შემოწმება</span>
+                                <ArrowRight className="w-3 h-3" />
+                            </div>
                         </Button>
                     </div>
 

@@ -38,10 +38,10 @@ export function ProcessSteps() {
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
     return (
-        <section ref={containerRef} className="bg-muted/30 py-32 relative overflow-hidden">
+        <section ref={containerRef} className="bg-muted/30 py-14 md:py-32 relative overflow-hidden">
 
             <div className="container mx-auto px-4 relative z-10 w-full max-w-7xl">
-                <motion.div style={{ y }} className="text-center mb-24 space-y-4">
+                <motion.div style={{ y }} className="text-center mb-10 md:mb-24 space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-border text-xs font-bold uppercase tracking-widest text-muted-foreground shadow-sm">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                         როგორ მუშაობს

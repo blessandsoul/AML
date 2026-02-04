@@ -95,7 +95,7 @@ export default function BlogPostPage() {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Auto Market LGC',
+      name: 'Auto Market Logistic',
       logo: {
         '@type': 'ImageObject',
         url: 'https://automarket.ge/logo.png',

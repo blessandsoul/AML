@@ -30,9 +30,9 @@ export function Benefits() {
     ];
 
     return (
-        <section className="bg-background py-32 border-t border-border">
+        <section className="bg-background py-14 md:py-32 border-t border-border">
             <div className="container mx-auto px-4 max-w-7xl">
-                <div className="text-center mb-20 space-y-4">
+                <div className="text-center mb-10 md:mb-20 space-y-4">
                     <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">რატომ ჩვენ</h2>
                     <h3 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
                         თანამედროვე სტანდარტი <br className="md:hidden" />

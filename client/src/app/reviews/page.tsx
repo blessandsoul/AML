@@ -18,7 +18,7 @@ export default function ReviewsPage() {
     ? {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
-        name: 'Auto Market LGC',
+        name: 'Auto Market Logistic',
         '@id': baseUrl,
         aggregateRating: {
           '@type': 'AggregateRating',

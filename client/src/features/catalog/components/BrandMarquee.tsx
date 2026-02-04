@@ -30,14 +30,25 @@ export function BrandMarquee() {
                         className="flex gap-16 md:gap-32 whitespace-nowrap shrink-0 pr-16 md:pr-32"
                         aria-hidden={copy === 1}
                     >
-                        {MARQUEE_ITEMS.map((brand, i) => (
-                            <div key={`${copy}-${i}`} className="flex items-center gap-4 group cursor-default opacity-40 hover:opacity-100 transition-opacity duration-300">
-                                <span className="text-3xl md:text-4xl font-black tracking-tighter text-foreground font-sans">
-                                    {brand}
-                                </span>
-                                <div className="w-2 h-2 rounded-full bg-primary" />
-                            </div>
-                        ))}
+                        {MARQUEE_ITEMS.map((brand, i) => {
+                            const color = {
+                                "COPART": "#1254FF",
+                                "IAAI": "#D81E05",
+                                "MANHEIM": "#003468",
+                                "ADESA": "#46B8DA"
+                            }[brand] || "currentColor";
+
+                            return (
+                                <div key={`${copy}-${i}`} className="flex items-center gap-16 md:gap-32 group cursor-default opacity-60 hover:opacity-100 transition-opacity duration-300">
+                                    <span
+                                        className="text-3xl md:text-4xl font-black tracking-tighter font-sans"
+                                        style={{ color }}
+                                    >
+                                        {brand}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </motion.div>
                 ))}
             </div>

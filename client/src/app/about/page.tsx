@@ -41,7 +41,7 @@ export default function AboutPage() {
         {
             year: "2012",
             title: "დასაწყისი",
-            description: "კომპანია “Auto Market LLC” დაარსდა და საფუძველი ჩაეყარა წარმატებულ საქმიანობას ავტო იმპორტის სფეროში.",
+            description: "კომპანია \"Auto Market Logistic\" დაარსდა და საფუძველი ჩაეყარა წარმატებულ საქმიანობას ავტო იმპორტის სფეროში.",
             icon: <Building2 className="w-6 h-6 text-primary" />,
         },
         {
@@ -124,7 +124,7 @@ export default function AboutPage() {
                 >
                     <Image
                         src="/about-hero.png"
-                        alt="Auto Market LLC Team"
+                        alt="Auto Market Logistic Team"
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                         priority
@@ -158,7 +158,7 @@ export default function AboutPage() {
             {/* Why Us / Values (New) */}
             <div className="max-w-6xl mx-auto mb-32">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">რატომ Auto Market LLC?</h2>
+                    <h2 className="text-3xl font-bold mb-4">რატომ Auto Market Logistic?</h2>
                     <p className="text-muted-foreground">ჩვენ ვქმნით სანდოობისა და ხარისხის ახალ სტანდარტს</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">

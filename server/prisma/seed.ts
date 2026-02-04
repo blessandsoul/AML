@@ -189,7 +189,7 @@ async function main() {
       slug: 'new-service-premium-shipping-from-europe',
       content: `
 <h2>გაფართოებული სერვისი</h2>
-<p>სიამოვნებით გაცნობებთ, რომ Auto Market LGC იწყებს პრემიუმ ავტომობილების ტრანსპორტირებას ევროპიდან.</p>
+<p>სიამოვნებით გაცნობებთ, რომ Auto Market Logistic იწყებს პრემიუმ ავტომობილების ტრანსპორტირებას ევროპიდან.</p>
 
 <h2>რას მოიცავს სერვისი?</h2>
 <ul>
@@ -202,10 +202,10 @@ async function main() {
 <h2>პირობები</h2>
 <p>გერმანია, ნიდერლანდები, ბელგია - 2-3 კვირა. იტალია, საფრანგეთი - 3-4 კვირა.</p>
       `,
-      excerpt: 'Auto Market LGC იწყებს ევროპიდან პრემიუმ ავტომობილების ტრანსპორტირებას. გაიგეთ მეტი ახალი სერვისის შესახებ.',
+      excerpt: 'Auto Market Logistic იწყებს ევროპიდან პრემიუმ ავტომობილების ტრანსპორტირებას. გაიგეთ მეტი ახალი სერვისის შესახებ.',
       featured_image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&q=80',
       status: PostStatus.PUBLISHED,
-      author_name: 'Auto Market LGC',
+      author_name: 'Auto Market Logistic',
       category_slug: 'news',
       tag_slugs: ['delivery'],
       view_count: 1123,

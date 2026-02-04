@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Auto Market LGC',
+        name: 'Auto Market Logistic',
         short_name: 'AML',
         description: 'პრემიუმ ავტო იმპორტი ამერიკიდან და ევროპიდან. სრული სერვისი: შერჩევა, შეძენა, ტრანსპორტირება.',
         start_url: '/',

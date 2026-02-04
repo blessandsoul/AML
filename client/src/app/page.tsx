@@ -12,7 +12,9 @@ import { BlogPreview } from '@/features/blog/components';
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background relative">
-      <Hero />
+      <div className="flex flex-col min-h-[calc(100dvh-3.25rem)] md:min-h-[calc(100dvh-5rem)]">
+        <Hero />
+      </div>
       <BrandMarquee />
       <FeaturedCars />
       <ValueComparison />

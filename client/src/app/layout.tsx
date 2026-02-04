@@ -12,8 +12,8 @@ const notoSansGeorgian = Noto_Sans_Georgian({ subsets: ['georgian'], variable: '
 export const metadata: Metadata = {
   metadataBase: new URL('https://automarket.ge'),
   title: {
-    default: 'Auto Market LGC - ავტო იმპორტი ამერიკიდან და ევროპიდან',
-    template: '%s | Auto Market LGC'
+    default: 'Auto Market Logistic - ავტო იმპორტი ამერიკიდან და ევროპიდან',
+    template: '%s | Auto Market Logistic'
   },
   description: 'სრული სერვისი: ავტომობილების შერჩევა, შეძენა აუქციონებზე (Copart, IAAI), ტრანსპორტირება და დაზღვევა. დაზოგეთ 30%-მდე ჩვენთან ერთად.',
   keywords: ['ავტო იმპორტი', 'მანქანები ამერიკიდან', 'copart ge', 'iaai ge', 'manheim', 'ავტო აუქციონი', 'ტრანსპორტირება'],
@@ -25,10 +25,10 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Auto Market LGC - ავტო იმპორტი გარანტიით',
+    title: 'Auto Market Logistic - ავტო იმპორტი გარანტიით',
     description: 'შეიძინეთ სასურველი ავტომობილი ამერიკასა და ევროპაში დილერის ფასად. სრული ისტორია, დაზღვევა და ტრანსპორტირება.',
     url: 'https://automarket.ge',
-    siteName: 'Auto Market LGC',
+    siteName: 'Auto Market Logistic',
     locale: 'ka_GE',
     type: 'website',
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: 'https://automarket.ge/og-image.jpg', // Ensure this image exists eventually
         width: 1200,
         height: 630,
-        alt: 'Auto Market LGC Hero Image',
+        alt: 'Auto Market Logistic Hero Image',
       },
     ],
   },
@@ -66,7 +66,7 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "Organization",
-        "name": "Auto Market LGC",
+        "name": "Auto Market Logistic",
         "url": "https://automarket.ge",
         "logo": "https://automarket.ge/logo.png",
         "sameAs": [
@@ -84,7 +84,7 @@ export default function RootLayout({
       },
       {
         "@type": "LocalBusiness",
-        "name": "Auto Market LGC - Tbilisi",
+        "name": "Auto Market Logistic - Tbilisi",
         "image": "https://automarket.ge/office-tbilisi.jpg",
         "telephone": "+995322054244",
         "address": {

@@ -42,6 +42,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-full"
+                suppressHydrationWarning
             >
                 {/* Image Container */}
                 <Link href={`/catalog/${car.id}`} className="block relative aspect-[4/3] overflow-hidden bg-muted" suppressHydrationWarning>

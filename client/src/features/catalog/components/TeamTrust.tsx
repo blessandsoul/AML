@@ -11,7 +11,7 @@ const TEAM = [
 
 export function TeamTrust() {
     return (
-        <section className="bg-background py-20 border-t border-border">
+        <section className="bg-background py-10 md:py-20 border-t border-border">
             <div className="container mx-auto px-4 text-center">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-8">
                     რეალური გუნდი, რეალური მხარდაჭერა

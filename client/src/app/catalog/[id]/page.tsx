@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     return {
-        title: `${car.title} - შეიძინეთ Auto Market LGC-ში`,
-        description: `${car.title} - ${car.year} წელი, ${car.mileage.toLocaleString()} კმ, ${car.engine}. ფასი $${car.price.toLocaleString()}. შეიძინეთ Auto Market LGC-ში.`,
+        title: `${car.title} - შეიძინეთ Auto Market Logistic-ში`,
+        description: `${car.title} - ${car.year} წელი, ${car.mileage.toLocaleString()} კმ, ${car.engine}. ფასი $${car.price.toLocaleString()}. შეიძინეთ Auto Market Logistic-ში.`,
         openGraph: {
             title: car.title,
             description: `${car.year} ${car.title} - $${car.price.toLocaleString()}`,
@@ -70,7 +70,7 @@ export default async function CarDetailsPage({ params }: PageProps) {
             availability: 'https://schema.org/InStock',
             seller: {
                 '@type': 'Organization',
-                name: 'Auto Market LGC',
+                name: 'Auto Market Logistic',
             },
         },
     };

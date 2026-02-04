@@ -6,9 +6,9 @@ import { QuickCalculator } from './QuickCalculator';
 
 export function Hero() {
     return (
-        <section className="relative w-full min-h-[calc(100vh-6rem)] overflow-hidden flex flex-col items-center bg-background">
+        <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center bg-background">
             {/* Main Content */}
-            <div className="container relative z-10 px-4 flex flex-col items-center justify-center max-w-5xl mx-auto flex-1 gap-2 md:gap-4 pt-8 pb-4 h-full">
+            <div className="container relative z-10 px-4 flex flex-col items-center justify-center max-w-5xl mx-auto flex-1 gap-1 md:gap-2 pt-4 md:pt-6 pb-2 md:pb-3 h-full">
                 <HeroTitle />
                 <QuickCalculator />
             </div>

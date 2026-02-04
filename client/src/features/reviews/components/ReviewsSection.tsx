@@ -4,24 +4,38 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
+import Autoplay from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from '@/components/ui/carousel';
 import { useAggregateRating, useReviews } from '../hooks';
 import { StarRating } from './StarRating';
 import { ReviewCard } from './ReviewCard';
 
+const REVIEWS_LIMIT = { limit: 6 };
+
 export function ReviewsSection() {
+  const [api, setApi] = React.useState<CarouselApi>();
   const { data: aggregate, isLoading: isAggregateLoading } =
     useAggregateRating();
-  const { data: reviewsData, isLoading: isReviewsLoading } = useReviews({
-    limit: 6,
-  });
+  const { data: reviewsData, isLoading: isReviewsLoading } = useReviews(REVIEWS_LIMIT);
 
   const reviews = reviewsData?.items ?? [];
 
+  React.useEffect(() => {
+    if (!api) return;
+    api.plugins().autoplay?.play();
+  }, [api]);
+
   return (
-    <section className="bg-background py-20 border-t border-border overflow-hidden">
+    <section className="bg-background py-12 md:py-20 border-t border-border overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -29,9 +43,14 @@ export function ReviewsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
+          suppressHydrationWarning
+          style={{ opacity: 0 }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest mb-4">
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest mb-4"
+            suppressHydrationWarning
+          >
             <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
             კლიენტების შეფასებები
           </div>
@@ -50,6 +69,8 @@ export function ReviewsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
+          suppressHydrationWarning
+          style={{ opacity: 0 }}
         >
           {isAggregateLoading ? (
             <div className="flex items-center gap-4">
@@ -74,9 +95,9 @@ export function ReviewsSection() {
           ) : null}
         </motion.div>
 
-        {/* Scrollable Reviews Row */}
+        {/* Auto-scrolling Reviews Carousel */}
         {isReviewsLoading ? (
-          <div className="flex gap-6 overflow-hidden pb-4">
+          <div className="flex gap-6 overflow-hidden pb-4" suppressHydrationWarning>
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="min-w-[320px] flex-shrink-0">
                 <div className="bg-card border border-border rounded-xl p-6 space-y-4">
@@ -95,16 +116,25 @@ export function ReviewsSection() {
             ))}
           </div>
         ) : (
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent snap-x snap-mandatory">
-            {reviews.map((review, index) => (
-              <div
-                key={review.id}
-                className="min-w-[320px] max-w-[380px] flex-shrink-0 snap-start"
-              >
-                <ReviewCard review={review} index={index} />
-              </div>
-            ))}
-          </div>
+          <Carousel
+            opts={{ loop: true, align: 'start' }}
+            plugins={[Autoplay({ delay: 4000 })]}
+            setApi={setApi}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {reviews.map((review, index) => (
+                <CarouselItem
+                  key={review.id}
+                  className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
+                >
+                  <ReviewCard review={review} index={index} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
+          </Carousel>
         )}
 
         {/* View All Button */}
@@ -114,6 +144,8 @@ export function ReviewsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.3 }}
           className="text-center mt-10"
+          suppressHydrationWarning
+          style={{ opacity: 0 }}
         >
           <Button
             variant="outline"

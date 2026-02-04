@@ -13,10 +13,10 @@ import { cn } from '@/lib/utils';
 
 export function FeaturedCars() {
     return (
-        <section className="bg-background py-24 relative overflow-hidden">
+        <section className="bg-background py-12 md:py-24 relative overflow-hidden">
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-16 gap-6">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -76,7 +76,7 @@ export function FeaturedCars() {
             </div>
 
             {/* Sniper Search Banner */}
-            <div className="mt-24">
+            <div className="mt-12 md:mt-24">
                 <SniperSearch />
             </div>
         </section>
