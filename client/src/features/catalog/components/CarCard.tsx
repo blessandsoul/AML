@@ -27,6 +27,9 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
     const landedCost = car.price + 2050; // Auction + Shipping (approx)
     const potentialProfit = estimatedMarketPrice - landedCost;
 
+    // Show price for some vehicles, hide for others (based on index for demo)
+    const showPrice = index % 3 !== 0; // Every 3rd vehicle hides price
+
     const handleUnlockPrice = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -129,20 +132,33 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
 
                     {/* Main Call To Action */}
                     <div className="mt-auto pt-2 grid grid-cols-[1fr_auto] gap-3 items-end">
-                        <div
-                            className="flex flex-col cursor-pointer group/price"
-                            onClick={handleUnlockPrice}
-                        >
-                            <span className="text-[10px] text-muted-foreground font-bold tracking-tight uppercase mb-0.5">
-                                ფასი ფოთამდე
-                            </span>
-                            <div className="flex items-center gap-2 bg-primary/5 px-2 py-1 rounded-lg border border-primary/10 group-hover/price:bg-primary/10 transition-colors">
-                                <Lock className="w-3.5 h-3.5 text-primary" />
-                                <span className="text-sm font-black text-primary tracking-tight">
-                                    გაიგე ფასი
+                        {showPrice ? (
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-muted-foreground font-bold tracking-tight uppercase mb-0.5">
+                                    ფასი ფოთამდე
                                 </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl font-black text-foreground tracking-tight">
+                                        ${landedCost.toLocaleString('en-US')}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div
+                                className="flex flex-col cursor-pointer group/price"
+                                onClick={handleUnlockPrice}
+                            >
+                                <span className="text-[10px] text-muted-foreground font-bold tracking-tight uppercase mb-0.5">
+                                    ფასი ფოთამდე
+                                </span>
+                                <div className="flex items-center gap-2 bg-primary/5 px-2 py-1 rounded-lg border border-primary/10 group-hover/price:bg-primary/10 transition-colors">
+                                    <Lock className="w-3.5 h-3.5 text-primary" />
+                                    <span className="text-sm font-black text-primary tracking-tight">
+                                        გაიგე ფასი
+                                    </span>
+                                </div>
+                            </div>
+                        )}
 
                         <Button
                             size="icon"

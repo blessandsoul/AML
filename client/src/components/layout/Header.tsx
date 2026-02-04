@@ -121,8 +121,8 @@ export function Header() {
                 >
                     {/* Logo - Minimalist */}
                     <Link href="/" className="flex items-center gap-2 z-20 group">
-                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
-                            A
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-sm shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            AML
                         </div>
                         <span className="text-xl font-bold text-foreground tracking-tight hidden md:block group-hover:text-primary transition-colors">
                             Auto Market Logistic
@@ -391,7 +391,7 @@ export function Header() {
                                     <Menu className="w-6 h-6" />
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="right" className="bg-background border-border p-0 w-[300px] overflow-y-auto">
+                            <SheetContent side="right" className="bg-background border-border p-0 w-[300px] overflow-y-auto" showCloseButton={false}>
                                 <SheetHeader className="sr-only">
                                     <SheetTitle>Mobile Menu</SheetTitle>
                                 </SheetHeader>
@@ -499,11 +499,22 @@ export function Header() {
                                             </Button>
                                         </div>
                                     ) : (
-                                        <div className="mt-auto pt-3">
-                                            <Link href="/track" className="flex items-center gap-2.5 text-sm font-bold text-muted-foreground hover:text-foreground py-2 border-b border-border/50 mb-3">
-                                                <Package className="w-4 h-4" />
-                                                თრექინგი
-                                            </Link>
+                                        <div className="pt-3 space-y-3">
+                                            <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">სერვისები</div>
+                                            <div className="grid grid-cols-3 gap-1.5">
+                                                <Link href="/track" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <Package className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">თრექინგი</span>
+                                                </Link>
+                                                <Link href="/calculator" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <Wallet className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">კალკულატორი</span>
+                                                </Link>
+                                                <Link href="/contact" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <Mail className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">კონტაქტი</span>
+                                                </Link>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
