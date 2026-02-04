@@ -5,7 +5,8 @@ import { reviewService } from '../services/review.service';
 import { reviewKeys } from '../utils/review.keys';
 import type { ReviewFilters } from '../types';
 
-const USE_MOCK_DATA = true;
+// Use environment variable to toggle mock data
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 const MOCK_REVIEWS = [
   {

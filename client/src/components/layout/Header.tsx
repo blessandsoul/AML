@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import {
     Menu,
     Phone,
@@ -30,6 +31,7 @@ import {
     Truck,
     Info,
     Mail,
+    LogIn,
 } from 'lucide-react';
 import {
     Sheet,
@@ -83,6 +85,20 @@ export function Header() {
     const pathname = usePathname();
     const [viewMode, setViewMode] = React.useState<'user' | 'dealer'>('user');
     const [language, setLanguage] = React.useState('GE');
+    const { user, isAuthenticated, logout } = useAuth();
+
+    // Get user initials for avatar fallback
+    const userInitials = React.useMemo(() => {
+        if (!user) return 'U';
+        const first = user.firstName?.[0] || '';
+        const last = user.lastName?.[0] || '';
+        return (first + last).toUpperCase() || user.email[0].toUpperCase();
+    }, [user]);
+
+    const handleLogout = React.useCallback(async () => {
+        await logout();
+        setMobileMenuOpen(false);
+    }, [logout]);
 
     // Close mobile menu on route change
     React.useEffect(() => {
@@ -225,151 +241,170 @@ export function Header() {
                         </DropdownMenu>
 
                         {/* User Profile Menu */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
-                                    <User className="w-5 h-5" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-96 p-0 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl">
-                                <div className="p-6 bg-gradient-to-b from-muted/50 to-background border-b border-border relative">
-                                    <div className="absolute top-6 right-6 flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                                        <Wallet className="w-3 h-3" />
-                                        <span>₾ 12,450.00</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="w-12 h-12 border-2 border-background shadow-sm">
-                                            <AvatarImage src="https://github.com/shadcn.png" />
-                                            <AvatarFallback>JD</AvatarFallback>
+                        {isAuthenticated && user ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
+                                        <Avatar className="w-8 h-8">
+                                            <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
                                         </Avatar>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-lg leading-none">John Doe</span>
-                                            <span className="text-xs text-muted-foreground mt-1">john@example.com</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-96 p-0 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl">
+                                    <div className="p-6 bg-gradient-to-b from-muted/50 to-background border-b border-border relative">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar className="w-12 h-12 border-2 border-background shadow-sm">
+                                                <AvatarFallback>{userInitials}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-lg leading-none">
+                                                    {user.firstName && user.lastName
+                                                        ? `${user.firstName} ${user.lastName}`
+                                                        : user.email.split('@')[0]}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground mt-1">{user.email}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* View Mode Toggle */}
+                                        <div className="mt-4 p-1 bg-muted/80 rounded-lg flex relative">
+                                            <motion.div
+                                                className="absolute top-1 bottom-1 bg-background rounded-md shadow-sm z-0"
+                                                animate={{
+                                                    left: viewMode === 'user' ? '4px' : '50%',
+                                                    width: 'calc(50% - 6px)',
+                                                    x: viewMode === 'dealer' ? 2 : 0
+                                                }}
+                                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                            />
+                                            <button
+                                                onClick={() => setViewMode('user')}
+                                                className={cn(
+                                                    "flex-1 relative z-10 flex items-center justify-center gap-2 py-2 text-sm font-bold transition-colors duration-200",
+                                                    viewMode === 'user' ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
+                                                )}
+                                            >
+                                                <User className="w-4 h-4" />
+                                                მომხმარებელი
+                                            </button>
+                                            <button
+                                                onClick={() => setViewMode('dealer')}
+                                                className={cn(
+                                                    "flex-1 relative z-10 flex items-center justify-center gap-2 py-2 text-sm font-bold transition-colors duration-200",
+                                                    viewMode === 'dealer' ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
+                                                )}
+                                            >
+                                                <LayoutDashboard className="w-4 h-4" />
+                                                დილერი
+                                            </button>
                                         </div>
                                     </div>
-
-                                    {/* View Mode Toggle */}
-                                    <div className="mt-4 p-1 bg-muted/80 rounded-lg flex relative">
-                                        <motion.div
-                                            className="absolute top-1 bottom-1 bg-background rounded-md shadow-sm z-0"
-                                            animate={{
-                                                left: viewMode === 'user' ? '4px' : '50%',
-                                                width: 'calc(50% - 6px)',
-                                                x: viewMode === 'dealer' ? 2 : 0
-                                            }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                        />
-                                        <button
-                                            onClick={() => setViewMode('user')}
-                                            className={cn(
-                                                "flex-1 relative z-10 flex items-center justify-center gap-2 py-2 text-sm font-bold transition-colors duration-200",
-                                                viewMode === 'user' ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
-                                            )}
+                                    <div className="p-2">
+                                        {viewMode === 'user' ? (
+                                            <>
+                                                <Link href="/profile">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <User className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ჩემი პროფილი
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/profile/orders">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <ShoppingBag className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ჩემი შეკვეთები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/track">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <Package className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        თრექინგი
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/profile/favorites">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <Heart className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ფავორიტები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/messages">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <MessageSquare className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        შეტყობინებები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Link href="/dealer/dashboard">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <LayoutDashboard className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        მართვის პანელი
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/dealer/add-listing">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <PlusCircle className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        განცხადების დამატება
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/dealer/bids">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <Gavel className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ჩემი ბიდები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/dealer/listings">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <Car className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ჩემი განცხადებები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/dealer/invoices">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <FileText className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        ინვოისები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href="/messages">
+                                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                        <MessageSquare className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                        შეტყობინებები
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                            </>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <Link href="/settings">
+                                            <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
+                                                <Settings className="w-4 h-4 mr-3 text-muted-foreground" />
+                                                პარამეტრები
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <DropdownMenuItem
+                                            onClick={handleLogout}
+                                            className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted text-destructive hover:text-destructive focus:text-destructive focus:bg-destructive/10"
                                         >
-                                            <User className="w-4 h-4" />
-                                            მომხმარებელი
-                                        </button>
-                                        <button
-                                            onClick={() => setViewMode('dealer')}
-                                            className={cn(
-                                                "flex-1 relative z-10 flex items-center justify-center gap-2 py-2 text-sm font-bold transition-colors duration-200",
-                                                viewMode === 'dealer' ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
-                                            )}
-                                        >
-                                            <LayoutDashboard className="w-4 h-4" />
-                                            დილერი
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="p-2">
-                                    {viewMode === 'user' ? (
-                                        <>
-                                            <Link href="/profile">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <User className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ჩემი პროფილი
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/profile/orders">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <ShoppingBag className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ჩემი შეკვეთები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/track">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <Package className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    თრექინგი
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/profile/favorites">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <Heart className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ფავორიტები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/messages">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <MessageSquare className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    შეტყობინებები
-                                                    <span className="ml-auto bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-full">2</span>
-                                                </DropdownMenuItem>
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Link href="/dealer/dashboard">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <LayoutDashboard className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    მართვის პანელი
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/dealer/add-listing">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <PlusCircle className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    განცხადების დამატება
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/dealer/bids">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <Gavel className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ჩემი ბიდები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/dealer/listings">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <Car className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ჩემი განცხადებები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/dealer/invoices">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <FileText className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    ინვოისები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                            <Link href="/messages">
-                                                <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                                    <MessageSquare className="w-4 h-4 mr-3 text-muted-foreground" />
-                                                    შეტყობინებები
-                                                </DropdownMenuItem>
-                                            </Link>
-                                        </>
-                                    )}
-                                    <DropdownMenuSeparator />
-                                    <Link href="/settings">
-                                        <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted">
-                                            <Settings className="w-4 h-4 mr-3 text-muted-foreground" />
-                                            პარამეტრები
+                                            <LogOut className="w-4 h-4 mr-3" />
+                                            გასვლა
                                         </DropdownMenuItem>
+                                    </div>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className="hidden sm:flex items-center gap-2">
+                                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
+                                    <Link href="/login">
+                                        <LogIn className="w-4 h-4 mr-2" />
+                                        შესვლა
                                     </Link>
-                                    <DropdownMenuItem className="p-3 font-medium cursor-pointer rounded-lg hover:bg-muted text-destructive hover:text-destructive focus:text-destructive focus:bg-destructive/10">
-                                        <LogOut className="w-4 h-4 mr-3" />
-                                        გასვლა
-                                    </DropdownMenuItem>
-                                </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                </Button>
+                                <Button size="sm" asChild>
+                                    <Link href="/register">
+                                        რეგისტრაცია
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
 
                         <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-bold px-3 sm:px-6 shadow-lg shadow-primary/20">
                             <Phone className="w-4 h-4 sm:mr-2" />
@@ -394,16 +429,30 @@ export function Header() {
                                     </div>
 
                                     {/* User Info (Mobile) */}
-                                    <div className="mb-3 bg-muted/50 p-3 rounded-xl flex items-center gap-2">
-                                        <Avatar className="w-8 h-8">
-                                            <AvatarImage src="https://github.com/shadcn.png" />
-                                            <AvatarFallback>JD</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <div className="font-bold text-sm">John Doe</div>
-                                            <div className="text-xs text-muted-foreground">john@example.com</div>
+                                    {isAuthenticated && user ? (
+                                        <div className="mb-3 bg-muted/50 p-3 rounded-xl flex items-center gap-2">
+                                            <Avatar className="w-8 h-8">
+                                                <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <div className="font-bold text-sm">
+                                                    {user.firstName && user.lastName
+                                                        ? `${user.firstName} ${user.lastName}`
+                                                        : user.email.split('@')[0]}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">{user.email}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="mb-3 flex gap-2">
+                                            <Button variant="outline" size="sm" className="flex-1" asChild>
+                                                <Link href="/login">შესვლა</Link>
+                                            </Button>
+                                            <Button size="sm" className="flex-1" asChild>
+                                                <Link href="/register">რეგისტრაცია</Link>
+                                            </Button>
+                                        </div>
+                                    )}
 
                                     <nav className="flex flex-col gap-1">
                                         {NAV_ITEMS.map((item) => (
@@ -450,47 +499,59 @@ export function Header() {
                                     </nav>
 
                                     {/* Dashboard Links + Logout (Mobile) - pushed to bottom */}
-                                    <div className="mt-auto pt-3 space-y-3">
-                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">კაბინეტი</div>
-                                        <div className="grid grid-cols-3 gap-1.5">
-                                            <Link href="/profile" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <User className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">პროფილი</span>
-                                            </Link>
-                                            <Link href="/profile/orders" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <ShoppingBag className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">შეკვეთები</span>
-                                            </Link>
-                                            <Link href="/track" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <Package className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">თრექინგი</span>
-                                            </Link>
-                                            <Link href="/dealer/dashboard" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <LayoutDashboard className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">დაფა</span>
-                                            </Link>
-                                            <Link href="/profile/favorites" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <Heart className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">ფავორიტები</span>
-                                            </Link>
-                                            <Link href="/messages" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
-                                                <MessageSquare className="w-4 h-4 text-primary" />
-                                                <span className="text-xs font-bold text-center">ჩატი</span>
+                                    {isAuthenticated && user ? (
+                                        <div className="mt-auto pt-3 space-y-3">
+                                            <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">კაბინეტი</div>
+                                            <div className="grid grid-cols-3 gap-1.5">
+                                                <Link href="/profile" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <User className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">პროფილი</span>
+                                                </Link>
+                                                <Link href="/profile/orders" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <ShoppingBag className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">შეკვეთები</span>
+                                                </Link>
+                                                <Link href="/track" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <Package className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">თრექინგი</span>
+                                                </Link>
+                                                <Link href="/dealer/dashboard" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <LayoutDashboard className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">დაფა</span>
+                                                </Link>
+                                                <Link href="/profile/favorites" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <Heart className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">ფავორიტები</span>
+                                                </Link>
+                                                <Link href="/messages" className="flex flex-col items-center justify-center gap-1 bg-muted/30 hover:bg-muted p-2 rounded-lg transition-colors">
+                                                    <MessageSquare className="w-4 h-4 text-primary" />
+                                                    <span className="text-xs font-bold text-center">ჩატი</span>
+                                                </Link>
+                                            </div>
+                                            <Button variant="outline" size="sm" className="w-full justify-between" asChild>
+                                                <Link href="/dealer/add-listing">
+                                                    <span className="flex items-center gap-2">
+                                                        <PlusCircle className="w-4 h-4" />
+                                                        განცხადების დამატება
+                                                    </span>
+                                                    <ChevronRight className="w-4 h-4 opacity-50" />
+                                                </Link>
+                                            </Button>
+                                            <Button
+                                                onClick={handleLogout}
+                                                className="w-full rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-10 text-base font-bold"
+                                            >
+                                                <LogOut className="w-4 h-4 mr-2" /> გასვლა
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-auto pt-3">
+                                            <Link href="/track" className="flex items-center gap-2.5 text-sm font-bold text-muted-foreground hover:text-foreground py-2 border-b border-border/50 mb-3">
+                                                <Package className="w-4 h-4" />
+                                                თრექინგი
                                             </Link>
                                         </div>
-                                        <Button variant="outline" size="sm" className="w-full justify-between" asChild>
-                                            <Link href="/dealer/add-listing">
-                                                <span className="flex items-center gap-2">
-                                                    <PlusCircle className="w-4 h-4" />
-                                                    განცხადების დამატება
-                                                </span>
-                                                <ChevronRight className="w-4 h-4 opacity-50" />
-                                            </Link>
-                                        </Button>
-                                        <Button className="w-full rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-10 text-base font-bold">
-                                            <LogOut className="w-4 h-4 mr-2" /> გასვლა
-                                        </Button>
-                                    </div>
+                                    )}
                                 </div>
                             </SheetContent>
                         </Sheet>

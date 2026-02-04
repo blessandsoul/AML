@@ -1,14 +1,11 @@
 import { ForbiddenError } from './errors.js';
 
 /**
- * User roles in the system
+ * User roles in the AML system
  */
 export const UserRole = {
   USER: 'USER',
-  COMPANY: 'COMPANY',
   ADMIN: 'ADMIN',
-  GUIDE: 'GUIDE',
-  DRIVER: 'DRIVER',
 } as const;
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
@@ -18,10 +15,7 @@ export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
  */
 const roleHierarchy: Record<UserRoleType, number> = {
   USER: 1,
-  GUIDE: 2,
-  DRIVER: 2,
-  COMPANY: 3,
-  ADMIN: 4,
+  ADMIN: 2,
 };
 
 /**
@@ -45,13 +39,6 @@ export function hasMinimumRole(userRole: string, minimumRole: UserRoleType): boo
  */
 export function isAdmin(userRole: string): boolean {
   return userRole === UserRole.ADMIN;
-}
-
-/**
- * Check if user is company owner
- */
-export function isCompany(userRole: string): boolean {
-  return userRole === UserRole.COMPANY;
 }
 
 /**

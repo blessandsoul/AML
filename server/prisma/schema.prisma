@@ -17,20 +17,18 @@ datasource db {
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
-  passwordHash  String    @map("password_hash")
-  firstName     String    @map("first_name")
-  lastName      String    @map("last_name")
+  password      String
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
   role          UserRole  @default(USER)
   isActive      Boolean   @default(true) @map("is_active")
-  emailVerified Boolean   @default(false) @map("email_verified")
-  avatarUrl     String?   @map("avatar_url")
-  phone         String?
+  lastLoginAt   DateTime? @map("last_login_at")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
-  deletedAt     DateTime? @map("deleted_at")
 
   // Relations
   refreshTokens RefreshToken[]
+  blogPosts     BlogPost[]
 
   @@index([email])
   @@index([role])
@@ -40,8 +38,8 @@ model User {
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  userId    String   @map("user_id")
   token     String   @unique @db.VarChar(500)
+  userId    String   @map("user_id")
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -49,7 +47,6 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([token])
   @@index([expiresAt])
   @@map("refresh_tokens")
 }
@@ -60,18 +57,256 @@ model RefreshToken {
 
 enum UserRole {
   USER
-  COMPANY
   ADMIN
-  GUIDE
-  DRIVER
+}
+
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BlogReactionType {
+  LIKE
+  LOVE
+  HELPFUL
+}
+
+enum OrderStatus {
+  WON
+  PAID
+  SHIPPING
+  PORT
+  DELIVERED
+}
+
+enum CompletedDealPhotoType {
+  BEFORE
+  AFTER
 }
 
 // ============================================
-// FUTURE MODELS (placeholders)
+// BLOG
 // ============================================
 
-// TODO: Add Company model
-// TODO: Add Tour model
-// TODO: Add Booking model
-// TODO: Add Location model
-// TODO: Add Media model
+model BlogCategory {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  color       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  posts BlogPost[]
+
+  @@map("blog_categories")
+}
+
+model BlogTag {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  posts BlogPostTag[]
+
+  @@map("blog_tags")
+}
+
+model BlogPost {
+  id            String         @id @default(uuid())
+  title         String
+  slug          String         @unique
+  content       String         @db.LongText
+  excerpt       String?        @db.Text
+  featuredImage String?        @map("featured_image")
+  images        Json?          // Array of image URLs
+  status        BlogPostStatus @default(DRAFT)
+  authorName    String         @map("author_name")
+  authorBio     String?        @db.Text @map("author_bio")
+  authorAvatar  String?        @map("author_avatar")
+  publishedAt   DateTime?      @map("published_at")
+  viewCount     Int            @default(0) @map("view_count")
+  readingTime   Int?           @map("reading_time") // in minutes
+  categoryId    String?        @map("category_id")
+  authorId      String?        @map("author_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  category  BlogCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  author    User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  tags      BlogPostTag[]
+  reactions BlogReaction[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([publishedAt])
+  @@index([slug])
+  @@map("blog_posts")
+}
+
+model BlogPostTag {
+  postId String @map("post_id")
+  tagId  String @map("tag_id")
+
+  // Relations
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("blog_post_tags")
+}
+
+model BlogReaction {
+  id        String           @id @default(uuid())
+  type      BlogReactionType
+  sessionId String           @map("session_id") // Anonymous user session
+  postId    String           @map("post_id")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, sessionId, type])
+  @@index([postId])
+  @@map("blog_reactions")
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique @map("order_number")
+  trackingCode    String      @unique @map("tracking_code")
+  carMake         String      @map("car_make")
+  carModel        String      @map("car_model")
+  carYear         Int         @map("car_year")
+  carVin          String?     @map("car_vin")
+  carColor        String?     @map("car_color")
+  carImage        String?     @map("car_image")
+  auctionPrice    Decimal?    @db.Decimal(12, 2) @map("auction_price")
+  shippingCost    Decimal?    @db.Decimal(12, 2) @map("shipping_cost")
+  totalPrice      Decimal?    @db.Decimal(12, 2) @map("total_price")
+  customerName    String      @map("customer_name")
+  customerPhone   String?     @map("customer_phone")
+  customerEmail   String?     @map("customer_email")
+  status          OrderStatus @default(WON)
+  currentStage    Int         @default(1) @map("current_stage")
+  auctionSource   String?     @map("auction_source")
+  lotNumber       String?     @map("lot_number")
+  originPort      String?     @map("origin_port")
+  destinationPort String?     @map("destination_port")
+  vesselName      String?     @map("vessel_name")
+  estimatedArrival DateTime?  @map("estimated_arrival")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  statusHistory OrderStatusHistory[]
+
+  @@index([status])
+  @@index([trackingCode])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(uuid())
+  status    OrderStatus
+  stage     Int
+  note      String?     @db.Text
+  location  String?
+  changedBy String?     @map("changed_by")
+  orderId   String      @map("order_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_status_history")
+}
+
+// ============================================
+// REVIEWS
+// ============================================
+
+model Review {
+  id             String   @id @default(uuid())
+  customerName   String   @map("customer_name")
+  customerCity   String?  @map("customer_city")
+  customerAvatar String?  @map("customer_avatar")
+  rating         Int      // 1-5
+  text           String   @db.Text
+  carMake        String?  @map("car_make")
+  carModel       String?  @map("car_model")
+  carYear        Int?     @map("car_year")
+  isVerified     Boolean  @default(false) @map("is_verified")
+  isPublished    Boolean  @default(true) @map("is_published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  photos ReviewPhoto[]
+
+  @@index([isPublished])
+  @@index([rating])
+  @@map("reviews")
+}
+
+model ReviewPhoto {
+  id        String @id @default(uuid())
+  url       String
+  altText   String? @map("alt_text")
+  sortOrder Int    @default(0) @map("sort_order")
+  reviewId  String @map("review_id")
+
+  // Relations
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_photos")
+}
+
+model CompletedDeal {
+  id           String   @id @default(uuid())
+  carMake      String   @map("car_make")
+  carModel     String   @map("car_model")
+  carYear      Int      @map("car_year")
+  carVin       String?  @map("car_vin")
+  auctionPrice Decimal  @db.Decimal(12, 2) @map("auction_price")
+  marketPrice  Decimal  @db.Decimal(12, 2) @map("market_price")
+  savings      Decimal  @db.Decimal(12, 2)
+  deliveryCity String?  @map("delivery_city")
+  description  String?  @db.Text
+  isPublished  Boolean  @default(true) @map("is_published")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  photos CompletedDealPhoto[]
+
+  @@index([isPublished])
+  @@map("completed_deals")
+}
+
+model CompletedDealPhoto {
+  id              String                 @id @default(uuid())
+  url             String
+  altText         String?                @map("alt_text")
+  photoType       CompletedDealPhotoType @default(AFTER) @map("photo_type")
+  sortOrder       Int                    @default(0) @map("sort_order")
+  completedDealId String                 @map("completed_deal_id")
+
+  // Relations
+  completedDeal CompletedDeal @relation(fields: [completedDealId], references: [id], onDelete: Cascade)
+
+  @@index([completedDealId])
+  @@map("completed_deal_photos")
+}

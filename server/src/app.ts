@@ -7,16 +7,24 @@ import fastifyStatic from '@fastify/static';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyWebsocket from '@fastify/websocket';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { join } from 'node:path';
 
-import { env, corsOrigins, isProd } from './config/env.js';
+import { env, isProd } from './config/env.js';
+import { CORS_CONFIG } from './config/cors.js';
 import { defaultRateLimit } from './config/rateLimit.js';
+import { swaggerConfig, swaggerUiConfig } from './config/swagger.js';
 import { logger } from './libs/logger.js';
 import { isAppError, ValidationError } from './libs/errors.js';
 import { errorResponse } from './libs/response.js';
 
 // Import route modules
 import { healthRoutes } from './modules/health/health.routes.js';
+import { authRoutes } from './modules/auth/index.js';
+import { blogRoutes } from './modules/blog/index.js';
+import { orderRoutes } from './modules/orders/index.js';
+import { reviewRoutes } from './modules/reviews/index.js';
 
 /**
  * Build and configure Fastify application
@@ -31,13 +39,8 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // ===== REGISTER PLUGINS =====
 
-  // CORS
-  await app.register(fastifyCors, {
-    origin: corsOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  });
+  // CORS - using centralized configuration
+  await app.register(fastifyCors, CORS_CONFIG);
 
   // Cookie
   await app.register(fastifyCookie, {
@@ -87,6 +90,11 @@ export async function buildApp(): Promise<FastifyInstance> {
       maxPayload: 1048576, // 1MB
     },
   });
+
+  // ===== API DOCUMENTATION =====
+  // Swagger/OpenAPI documentation (available at /docs)
+  await app.register(fastifySwagger, swaggerConfig);
+  await app.register(fastifySwaggerUi, swaggerUiConfig);
 
   // ===== GLOBAL ERROR HANDLER =====
   app.setErrorHandler((error: FastifyError, request, reply) => {
@@ -151,11 +159,10 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // ===== REGISTER ROUTES =====
   await app.register(healthRoutes, { prefix: '/api/v1' });
-
-  // Future route registrations:
-  // await app.register(authRoutes, { prefix: '/api/v1' });
-  // await app.register(userRoutes, { prefix: '/api/v1' });
-  // await app.register(tourRoutes, { prefix: '/api/v1' });
+  await app.register(authRoutes, { prefix: '/api/v1' });
+  await app.register(blogRoutes, { prefix: '/api/v1' });
+  await app.register(orderRoutes, { prefix: '/api/v1' });
+  await app.register(reviewRoutes, { prefix: '/api/v1' });
 
   return app;
 }

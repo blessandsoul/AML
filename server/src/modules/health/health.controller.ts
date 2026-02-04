@@ -57,8 +57,43 @@ export async function getHealth(
 }
 
 /**
+ * Readiness probe endpoint
+ * Returns 200 only if critical services (DB) are available
+ * Used by Kubernetes/load balancers to determine if the service can accept traffic
+ */
+export async function getReady(
+  _request: FastifyRequest,
+  reply: FastifyReply
+): Promise<void> {
+  const dbConnected = await testDbConnection();
+  const redisConnected = isRedisConnected();
+
+  // Database is critical - must be connected
+  if (!dbConnected) {
+    return reply.status(503).send({
+      success: false,
+      error: {
+        code: 'SERVICE_UNAVAILABLE',
+        message: 'Database is not available',
+      },
+    });
+  }
+
+  return reply.send(
+    successResponse('Service is ready', {
+      ready: true,
+      timestamp: new Date().toISOString(),
+      services: {
+        database: 'connected',
+        redis: redisConnected ? 'connected' : 'disconnected',
+      },
+    })
+  );
+}
+
+/**
  * Simple ping endpoint
- * Returns minimal response for quick health checks
+ * Returns minimal response for quick health checks (liveness probe)
  */
 export async function getPing(
   _request: FastifyRequest,

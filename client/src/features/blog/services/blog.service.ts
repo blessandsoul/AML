@@ -12,7 +12,7 @@ import type {
   AddReactionRequest,
 } from '../types';
 
-const BASE_URL = '/api/v1/blog';
+const BASE_URL = '/blog';
 
 class BlogService {
   // ===== PUBLIC =====

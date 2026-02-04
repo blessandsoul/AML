@@ -5,7 +5,8 @@ import { orderService } from '../services/order.service';
 import { orderKeys } from '../utils/order.keys';
 import type { OrderFilters, Order } from '../types';
 
-const USE_MOCK_DATA = true;
+// Use environment variable to toggle mock data
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 const MOCK_ORDERS: Order[] = [
   {

@@ -15,11 +15,11 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
-  const initials = review.customer_name.charAt(0).toUpperCase();
+  const initials = review.customerName.charAt(0).toUpperCase();
 
   const carLabel =
-    review.car_make && review.car_model
-      ? `${review.car_year ?? ''} ${review.car_make} ${review.car_model}`.trim()
+    review.car?.make && review.car?.model
+      ? `${review.car.year ?? ''} ${review.car.make} ${review.car.model}`.trim()
       : null;
 
   return (
@@ -34,10 +34,10 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
           {/* Header: Avatar + Name + City */}
           <div className="flex items-center gap-2.5">
             <Avatar size="lg">
-              {review.customer_avatar && (
+              {review.customerAvatar && (
                 <AvatarImage
-                  src={review.customer_avatar}
-                  alt={review.customer_name}
+                  src={review.customerAvatar}
+                  alt={review.customerName}
                 />
               )}
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -48,15 +48,15 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-foreground truncate">
-                  {review.customer_name}
+                  {review.customerName}
                 </p>
-                {review.is_verified && (
+                {review.isVerified && (
                   <BadgeCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 )}
               </div>
-              {review.customer_city && (
+              {review.customerCity && (
                 <p className="text-xs text-muted-foreground">
-                  {review.customer_city}
+                  {review.customerCity}
                 </p>
               )}
             </div>
@@ -87,7 +87,7 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
                 >
                   <Image
                     src={photo.url}
-                    alt={photo.alt_text ?? 'Review photo'}
+                    alt={photo.altText ?? 'Review photo'}
                     fill
                     className="object-cover"
                     sizes="64px"

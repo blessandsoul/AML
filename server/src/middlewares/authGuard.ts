@@ -11,7 +11,6 @@ export interface JwtPayload {
   userId: string;
   email: string;
   role: UserRoleType;
-  emailVerified: boolean;
   iat?: number;
   exp?: number;
 }
@@ -120,7 +119,7 @@ export function requireRoles(...roles: UserRoleType[]) {
  */
 export function generateAccessToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
   return jwt.sign(payload, env.ACCESS_TOKEN_SECRET, {
-    expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
+    expiresIn: env.ACCESS_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn'],
   });
 }
 
@@ -129,7 +128,7 @@ export function generateAccessToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): s
  */
 export function generateRefreshToken(userId: string): string {
   return jwt.sign({ userId }, env.REFRESH_TOKEN_SECRET, {
-    expiresIn: env.REFRESH_TOKEN_EXPIRES_IN,
+    expiresIn: env.REFRESH_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn'],
   });
 }
 

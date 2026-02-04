@@ -8,7 +8,7 @@ import type {
   DealFilters,
 } from '../types';
 
-const BASE_URL = '/api/v1/reviews';
+const BASE_URL = '/reviews';
 
 class ReviewService {
   // ===== PUBLIC =====

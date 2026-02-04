@@ -28,8 +28,8 @@ function formatGeorgianDate(dateStr: string): string {
 }
 
 export function BlogCard({ post, index, priority = false }: BlogCardProps) {
-  const formattedDate = post.published_at
-    ? formatGeorgianDate(post.published_at)
+  const formattedDate = post.publishedAt
+    ? formatGeorgianDate(post.publishedAt)
     : null;
 
   return (
@@ -42,9 +42,9 @@ export function BlogCard({ post, index, priority = false }: BlogCardProps) {
     >
       {/* Image Container */}
       <Link href={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-muted">
-        {post.featured_image ? (
+        {post.featuredImage ? (
           <Image
-            src={post.featured_image}
+            src={post.featuredImage}
             alt={post.title}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -83,7 +83,7 @@ export function BlogCard({ post, index, priority = false }: BlogCardProps) {
             )}
             <div className="flex items-center gap-1">
               <span className="bg-white/20 p-1 rounded-sm"><Eye className="w-3 h-3" /></span>
-              <span>{post.view_count.toLocaleString()}</span>
+              <span>{(post.viewCount ?? 0).toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function BlogCard({ post, index, priority = false }: BlogCardProps) {
         <div className="mt-auto pt-3 border-t border-border border-dashed flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <User className="w-4 h-4" />
-            <span className="font-medium">{post.author_name}</span>
+            <span className="font-medium">{post.author?.name || 'Unknown'}</span>
           </div>
 
           <Button

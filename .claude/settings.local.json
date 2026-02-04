@@ -63,7 +63,18 @@
       "Bash(git push)",
       "Bash(dir:*)",
       "Bash(git push:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(npm run prisma:reset:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"Yes, reset the database\" npm run prisma:reset)",
+      "Bash(npm run prisma:seed:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"Yes, reset the database\" npx prisma migrate:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"Yes\" npx prisma db push:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"Yes\" npx prisma migrate reset:*)",
+      "Bash(netstat:*)",
+      "Bash(ping:*)",
+      "Bash(taskkill //F //PID 44808)",
+      "Bash(ls:*)"
     ]
   }
 }
