@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import {
     Menu,
-    Phone,
     User,
     Check,
     LogOut,
@@ -384,11 +383,6 @@ export function Header() {
                                 </Button>
                             </div>
                         )}
-
-                        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-bold px-3 sm:px-6 shadow-lg shadow-primary/20">
-                            <Phone className="w-4 h-4 sm:mr-2" />
-                            <span className="text-xs sm:text-sm font-bold ml-2 sm:ml-0">599 00 00 00</span>
-                        </Button>
 
                         {/* Mobile Menu */}
                         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
