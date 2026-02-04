@@ -22,7 +22,7 @@ function BlogPageContent() {
   const { data, isLoading, error, refetch } = usePosts({
     page,
     limit: 9,
-    category_id: categoryId,
+    categoryId,
     search,
   });
 

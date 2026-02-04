@@ -76,8 +76,8 @@ export default function BlogPostPage() {
   // Prepare gallery images
   const galleryImages = post.images && post.images.length > 0
     ? post.images
-    : post.featured_image
-    ? [post.featured_image]
+    : post.featuredImage
+    ? [post.featuredImage]
     : [];
 
   // Article schema.org structured data
@@ -86,12 +86,12 @@ export default function BlogPostPage() {
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt || post.title,
-    image: post.featured_image || undefined,
-    datePublished: post.published_at,
-    dateModified: post.updated_at,
+    image: post.featuredImage || undefined,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
     author: {
       '@type': 'Person',
-      name: post.author_name,
+      name: post.author?.name,
     },
     publisher: {
       '@type': 'Organization',

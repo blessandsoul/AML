@@ -5,36 +5,7 @@ import { reviewService } from '../services/review.service';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/api/api.types';
 import { reviewKeys } from '../utils/review.keys';
-import type { Review, ReviewPhoto } from '../types';
-
-// ===== Types =====
-
-export interface CreateReviewData {
-  customer_name: string;
-  customer_city?: string | null;
-  customer_avatar?: string | null;
-  rating: number;
-  text: string;
-  car_make?: string | null;
-  car_model?: string | null;
-  car_year?: number | null;
-  is_verified?: boolean;
-  is_published?: boolean;
-  photos?: Omit<ReviewPhoto, 'id'>[];
-}
-
-export interface UpdateReviewData {
-  customer_name?: string;
-  customer_city?: string | null;
-  customer_avatar?: string | null;
-  rating?: number;
-  text?: string;
-  car_make?: string | null;
-  car_model?: string | null;
-  car_year?: number | null;
-  is_verified?: boolean;
-  is_published?: boolean;
-}
+import type { Review, CreateReviewData, UpdateReviewData } from '../types';
 
 // ===== Hooks =====
 
@@ -42,7 +13,23 @@ export const useCreateReview = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateReviewData) => reviewService.createReview(data),
+    mutationFn: (data: CreateReviewData) => {
+      // Transform flat CreateReviewData to Review structure
+      const reviewData: Partial<Review> = {
+        customerName: data.customerName,
+        customerCity: data.customerCity || null,
+        customerAvatar: null,
+        rating: data.rating,
+        text: data.text,
+        car: data.carMake && data.carModel && data.carYear
+          ? { make: data.carMake, model: data.carModel, year: data.carYear }
+          : null,
+        isVerified: false,
+        isPublished: false,
+        photos: [],
+      };
+      return reviewService.createReview(reviewData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.all });
       toast.success('მიმოხილვა წარმატებით დაემატა');
@@ -57,8 +44,18 @@ export const useUpdateReview = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateReviewData }) =>
-      reviewService.updateReview(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateReviewData }) => {
+      // Transform flat UpdateReviewData to Review structure
+      const reviewData: Partial<Review> = {};
+
+      if (data.customerName !== undefined) reviewData.customerName = data.customerName;
+      if (data.customerCity !== undefined) reviewData.customerCity = data.customerCity;
+      if (data.rating !== undefined) reviewData.rating = data.rating;
+      if (data.text !== undefined) reviewData.text = data.text;
+      if (data.isPublished !== undefined) reviewData.isPublished = data.isPublished;
+
+      return reviewService.updateReview(id, reviewData);
+    },
     onSuccess: (updatedReview: Review) => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.detail(updatedReview.id) });
       queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
@@ -90,12 +87,12 @@ export const useToggleReviewPublished = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, is_published }: { id: string; is_published: boolean }) =>
-      reviewService.updateReview(id, { is_published }),
+    mutationFn: ({ id, isPublished }: { id: string; isPublished: boolean }) =>
+      reviewService.updateReview(id, { isPublished }),
     onSuccess: (updatedReview: Review) => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.detail(updatedReview.id) });
       queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
-      const message = updatedReview.is_published
+      const message = updatedReview.isPublished
         ? 'მიმოხილვა გამოქვეყნდა'
         : 'მიმოხილვა დაიმალა';
       toast.success(message);

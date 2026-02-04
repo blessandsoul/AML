@@ -13,8 +13,8 @@ interface BlogPostContentProps {
 }
 
 export function BlogPostContent({ post }: BlogPostContentProps) {
-  const formattedDate = post.published_at
-    ? new Date(post.published_at).toLocaleDateString('ka-GE', {
+  const formattedDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('ka-GE', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -23,7 +23,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
 
   // Sanitize HTML content
   const sanitizedContent =
-    typeof window !== 'undefined'
+    typeof window !== 'undefined' && post.content
       ? DOMPurify.sanitize(post.content, {
           ALLOWED_TAGS: [
             'p',
@@ -49,7 +49,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
           ],
           ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel'],
         })
-      : post.content;
+      : (post.content || '');
 
   return (
     <article className="max-w-4xl mx-auto">
@@ -73,7 +73,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <User className="w-4 h-4" />
-            <span>{post.author_name}</span>
+            <span>{post.author?.name}</span>
           </div>
 
           {formattedDate && (
@@ -85,16 +85,16 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
 
           <div className="flex items-center gap-1.5">
             <Eye className="w-4 h-4" />
-            <span>{post.view_count} ნახვა</span>
+            <span>{post.viewCount} ნახვა</span>
           </div>
         </div>
 
         {post.tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <Tag className="w-4 h-4 text-muted-foreground" />
-            {post.tags.map((postTag) => (
-              <Badge key={postTag.tag.id} variant="secondary" className="text-xs">
-                {postTag.tag.name}
+            {post.tags.map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="text-xs">
+                {tag.name}
               </Badge>
             ))}
           </div>
@@ -102,10 +102,10 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
       </header>
 
       {/* Featured Image */}
-      {post.featured_image && (
+      {post.featuredImage && (
         <div className="relative aspect-video mb-8 rounded-lg overflow-hidden">
           <Image
-            src={post.featured_image}
+            src={post.featuredImage}
             alt={post.title}
             fill
             className="object-cover"

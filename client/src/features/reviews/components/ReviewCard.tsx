@@ -33,7 +33,7 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
         <div className="block relative aspect-[4/3] overflow-hidden bg-muted">
           <Image
             src={review.photos[0].url}
-            alt={review.photos[0].alt_text ?? 'Review car photo'}
+            alt={review.photos[0].altText ?? 'Review car photo'}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -50,7 +50,7 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
           </div>
 
           {/* Verified Badge - Top Right */}
-          {review.is_verified && (
+          {review.isVerified && (
             <div className="absolute top-3 right-3 bg-emerald-500 text-white px-2 py-1 rounded-md flex items-center gap-1 shadow-lg">
               <BadgeCheck className="w-3.5 h-3.5" />
               <span className="text-[10px] uppercase font-bold tracking-wide">
@@ -80,10 +80,10 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
         {/* Customer Info */}
         <div className="flex items-center gap-3">
           <Avatar className="w-10 h-10">
-            {review.customer_avatar && (
+            {review.customerAvatar && (
               <AvatarImage
-                src={review.customer_avatar}
-                alt={review.customer_name}
+                src={review.customerAvatar}
+                alt={review.customerName}
               />
             )}
             <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
@@ -93,12 +93,12 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
 
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-base leading-tight text-foreground line-clamp-1">
-              {review.customer_name}
+              {review.customerName}
             </h3>
-            {review.customer_city && (
+            {review.customerCity && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground/80">
                 <MapPin className="w-3 h-3" />
-                <span className="truncate">{review.customer_city}</span>
+                <span className="truncate">{review.customerCity}</span>
               </div>
             )}
           </div>

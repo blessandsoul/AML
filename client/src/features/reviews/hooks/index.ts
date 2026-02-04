@@ -5,15 +5,12 @@ export {
   useUpdateReview,
   useDeleteReview,
   useToggleReviewPublished,
-  type CreateReviewData,
-  type UpdateReviewData,
 } from './useReviewMutations';
+// CreateReviewData, UpdateReviewData are exported from '../types'
 export {
   useCreateDeal,
   useUpdateDeal,
   useDeleteDeal,
   useToggleDealPublished,
-  type CreateDealData,
-  type UpdateDealData,
-  type AddDealPhotoData,
 } from './useDealMutations';
+// CreateDealData, UpdateDealData are exported from '../types'

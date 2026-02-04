@@ -19,13 +19,13 @@ export function RelatedPosts({ currentPost, allPosts }: RelatedPostsProps) {
       let score = 0;
 
       // Same category: +10 points
-      if (post.category_id === currentPost.category_id) {
+      if (post.categoryId === currentPost.categoryId) {
         score += 10;
       }
 
       // Matching tags: +2 points per tag
-      const currentTags = currentPost.tags.map((t) => t.tag_id);
-      const matchingTags = post.tags.filter((t) => currentTags.includes(t.tag_id)).length;
+      const currentTags = currentPost.tags.map((t) => t.id);
+      const matchingTags = post.tags.filter((t) => currentTags.includes(t.id)).length;
       score += matchingTags * 2;
 
       return { post, score };

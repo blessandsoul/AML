@@ -5,43 +5,7 @@ import { reviewService } from '../services/review.service';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/api/api.types';
 import { reviewKeys } from '../utils/review.keys';
-import type { CompletedDeal, CompletedDealPhoto, DealPhotoType } from '../types';
-
-// ===== Types =====
-
-export interface CreateDealData {
-  car_make: string;
-  car_model: string;
-  car_year: number;
-  car_vin?: string | null;
-  auction_price: number;
-  market_price: number;
-  savings: number;
-  delivery_city?: string | null;
-  description?: string | null;
-  is_published?: boolean;
-  photos?: Omit<CompletedDealPhoto, 'id'>[];
-}
-
-export interface UpdateDealData {
-  car_make?: string;
-  car_model?: string;
-  car_year?: number;
-  car_vin?: string | null;
-  auction_price?: number;
-  market_price?: number;
-  savings?: number;
-  delivery_city?: string | null;
-  description?: string | null;
-  is_published?: boolean;
-}
-
-export interface AddDealPhotoData {
-  url: string;
-  alt_text?: string | null;
-  photo_type: DealPhotoType;
-  sort_order?: number;
-}
+import type { CompletedDeal, CreateDealData, UpdateDealData } from '../types';
 
 // ===== Hooks =====
 
@@ -49,7 +13,26 @@ export const useCreateDeal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateDealData) => reviewService.createDeal(data),
+    mutationFn: (data: CreateDealData) => {
+      // Transform flat CreateDealData to CompletedDeal structure
+      const dealData: Partial<CompletedDeal> = {
+        car: {
+          make: data.carMake,
+          model: data.carModel,
+          year: data.carYear,
+        },
+        pricing: {
+          auctionPrice: data.auctionPrice,
+          marketPrice: data.marketPrice,
+          savings: data.marketPrice - data.auctionPrice,
+        },
+        deliveryCity: data.deliveryCity || null,
+        description: data.description || null,
+        isPublished: false,
+        photos: [],
+      };
+      return reviewService.createDeal(dealData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.deals() });
       toast.success('გარიგება წარმატებით დაემატა');
@@ -64,8 +47,32 @@ export const useUpdateDeal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateDealData }) =>
-      reviewService.updateDeal(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateDealData }) => {
+      // Transform flat UpdateDealData to CompletedDeal structure
+      const dealData: Partial<CompletedDeal> = {};
+
+      if (data.carMake || data.carModel || data.carYear) {
+        dealData.car = {
+          make: data.carMake || '',
+          model: data.carModel || '',
+          year: data.carYear || 0,
+        };
+      }
+
+      if (data.auctionPrice !== undefined || data.marketPrice !== undefined) {
+        dealData.pricing = {
+          auctionPrice: data.auctionPrice || 0,
+          marketPrice: data.marketPrice || 0,
+          savings: (data.marketPrice || 0) - (data.auctionPrice || 0),
+        };
+      }
+
+      if (data.deliveryCity !== undefined) dealData.deliveryCity = data.deliveryCity;
+      if (data.description !== undefined) dealData.description = data.description;
+      if (data.isPublished !== undefined) dealData.isPublished = data.isPublished;
+
+      return reviewService.updateDeal(id, dealData);
+    },
     onSuccess: (updatedDeal: CompletedDeal) => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.dealDetail(updatedDeal.id) });
       queryClient.invalidateQueries({ queryKey: reviewKeys.deals() });
@@ -96,12 +103,12 @@ export const useToggleDealPublished = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, is_published }: { id: string; is_published: boolean }) =>
-      reviewService.updateDeal(id, { is_published }),
+    mutationFn: ({ id, isPublished }: { id: string; isPublished: boolean }) =>
+      reviewService.updateDeal(id, { isPublished }),
     onSuccess: (updatedDeal: CompletedDeal) => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.dealDetail(updatedDeal.id) });
       queryClient.invalidateQueries({ queryKey: reviewKeys.deals() });
-      const message = updatedDeal.is_published
+      const message = updatedDeal.isPublished
         ? 'გარიგება გამოქვეყნდა'
         : 'გარიგება დაიმალა';
       toast.success(message);

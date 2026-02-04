@@ -33,7 +33,7 @@ export function BlogContentBody({ post }: BlogContentBodyProps) {
 
   // Process content: sanitize + add heading IDs + inject car cards
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !post.content) return;
 
     const withHeadingIds = processContentWithHeadingIds(post.content);
     const sanitized = DOMPurify.sanitize(withHeadingIds, {

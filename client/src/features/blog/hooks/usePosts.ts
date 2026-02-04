@@ -19,7 +19,7 @@ export function usePosts(filters: PostFilters = {}) {
         return getMockPosts({
           page: filters.page,
           limit: filters.limit,
-          category_id: filters.category_id,
+          categoryId: filters.categoryId,
           search: filters.search,
         });
       }
@@ -37,7 +37,7 @@ export function useAdminPosts(filters: PostFilters = {}) {
         return getMockPosts({
           page: filters.page,
           limit: filters.limit,
-          category_id: filters.category_id,
+          categoryId: filters.categoryId,
           search: filters.search,
         });
       }

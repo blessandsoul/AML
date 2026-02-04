@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { LoginForm } from '@/features/auth';
 import {
   Card,
@@ -6,11 +7,22 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata = {
   title: 'შესვლა | AML',
   description: 'შედით თქვენს AML ანგარიშზე',
 };
+
+function LoginFormSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </div>
+  );
+}
 
 export default function LoginPage() {
   return (
@@ -23,7 +35,9 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <Suspense fallback={<LoginFormSkeleton />}>
+            <LoginForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

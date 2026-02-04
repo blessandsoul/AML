@@ -29,7 +29,7 @@ export function BlogPostInfo({ post }: BlogPostInfoProps) {
     return `${day} ${month}, ${year}`;
   };
 
-  const formattedDate = formatGeorgianDate(post.published_at);
+  const formattedDate = formatGeorgianDate(post.publishedAt);
 
   const metadata = [
     {
@@ -41,7 +41,7 @@ export function BlogPostInfo({ post }: BlogPostInfoProps) {
     {
       icon: User,
       label: 'ავტორი',
-      value: post.author_name,
+      value: post.author?.name || 'უცნობი',
     },
     {
       icon: Calendar,
@@ -51,7 +51,7 @@ export function BlogPostInfo({ post }: BlogPostInfoProps) {
     {
       icon: Eye,
       label: 'ნახვები',
-      value: `${post.view_count} ნახვა`,
+      value: `${post.viewCount} ნახვა`,
     },
   ];
 
@@ -112,9 +112,9 @@ export function BlogPostInfo({ post }: BlogPostInfoProps) {
               თეგები
             </h3>
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((postTag) => (
-                <Badge key={postTag.tag.id} variant="secondary" className="text-xs">
-                  {postTag.tag.name}
+              {post.tags.map((tag) => (
+                <Badge key={tag.id} variant="secondary" className="text-xs">
+                  {tag.name}
                 </Badge>
               ))}
             </div>

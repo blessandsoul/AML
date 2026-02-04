@@ -103,7 +103,7 @@ export default function AdminBlogPage() {
                     <TableCell>
                       <div>
                         <p className="font-medium line-clamp-1">{post.title}</p>
-                        <p className="text-sm text-muted-foreground">{post.author_name}</p>
+                        <p className="text-sm text-muted-foreground">{post.author?.name}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -114,9 +114,9 @@ export default function AdminBlogPage() {
                       )}
                     </TableCell>
                     <TableCell>{getStatusBadge(post.status)}</TableCell>
-                    <TableCell>{post.view_count}</TableCell>
+                    <TableCell>{post.viewCount}</TableCell>
                     <TableCell>
-                      {new Date(post.created_at).toLocaleDateString('ka-GE')}
+                      {new Date(post.createdAt).toLocaleDateString('ka-GE')}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

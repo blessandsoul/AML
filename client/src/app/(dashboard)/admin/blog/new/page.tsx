@@ -29,14 +29,14 @@ export default function NewPostPage() {
     title: '',
     content: '',
     excerpt: '',
-    featured_image: '',
-    author_name: '',
-    category_id: undefined,
+    featuredImage: '',
+    authorName: '',
+    categoryId: undefined,
     status: 'DRAFT',
   });
 
   const handleSubmit = (status: PostStatus) => {
-    if (!formData.title || !formData.content || !formData.author_name) {
+    if (!formData.title || !formData.content || !formData.authorName) {
       return;
     }
 
@@ -129,8 +129,8 @@ export default function NewPostPage() {
                 <Label htmlFor="author">ავტორი *</Label>
                 <Input
                   id="author"
-                  value={formData.author_name}
-                  onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
+                  value={formData.authorName}
+                  onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
                   placeholder="ავტორის სახელი"
                 />
               </div>
@@ -138,9 +138,9 @@ export default function NewPostPage() {
               <div className="space-y-2">
                 <Label htmlFor="category">კატეგორია</Label>
                 <Select
-                  value={formData.category_id || ''}
+                  value={formData.categoryId || ''}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, category_id: value || undefined })
+                    setFormData({ ...formData, categoryId: value || undefined })
                   }
                 >
                   <SelectTrigger>
@@ -158,12 +158,12 @@ export default function NewPostPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="featured_image">მთავარი სურათი (URL)</Label>
+                <Label htmlFor="featuredImage">მთავარი სურათი (URL)</Label>
                 <Input
-                  id="featured_image"
+                  id="featuredImage"
                   type="url"
-                  value={formData.featured_image || ''}
-                  onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+                  value={formData.featuredImage || ''}
+                  onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
                   placeholder="https://example.com/image.jpg"
                 />
               </div>

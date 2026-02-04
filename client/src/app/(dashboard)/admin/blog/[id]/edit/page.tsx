@@ -34,8 +34,8 @@ export default function EditPostPage() {
     title: '',
     content: '',
     excerpt: '',
-    featured_image: '',
-    category_id: undefined,
+    featuredImage: '',
+    categoryId: undefined,
   });
 
   useEffect(() => {
@@ -44,8 +44,8 @@ export default function EditPostPage() {
         title: post.title,
         content: post.content,
         excerpt: post.excerpt || '',
-        featured_image: post.featured_image || '',
-        category_id: post.category_id || undefined,
+        featuredImage: post.featuredImage || '',
+        categoryId: post.categoryId || undefined,
       });
     }
   }, [post]);
@@ -166,15 +166,15 @@ export default function EditPostPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>ავტორი</Label>
-                <Input value={post.author_name} disabled className="bg-muted" />
+                <Input value={post.author?.name || ''} disabled className="bg-muted" />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="category">კატეგორია</Label>
                 <Select
-                  value={formData.category_id || ''}
+                  value={formData.categoryId || ''}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, category_id: value || undefined })
+                    setFormData({ ...formData, categoryId: value || undefined })
                   }
                 >
                   <SelectTrigger>
@@ -192,12 +192,12 @@ export default function EditPostPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="featured_image">მთავარი სურათი (URL)</Label>
+                <Label htmlFor="featuredImage">მთავარი სურათი (URL)</Label>
                 <Input
-                  id="featured_image"
+                  id="featuredImage"
                   type="url"
-                  value={formData.featured_image || ''}
-                  onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+                  value={formData.featuredImage || ''}
+                  onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
@@ -211,14 +211,14 @@ export default function EditPostPage() {
             <CardContent className="space-y-2 text-sm text-muted-foreground">
               <p>
                 <span className="font-medium">შექმნილია:</span>{' '}
-                {new Date(post.created_at).toLocaleString('ka-GE')}
+                {new Date(post.createdAt).toLocaleString('ka-GE')}
               </p>
               <p>
                 <span className="font-medium">განახლებულია:</span>{' '}
-                {new Date(post.updated_at).toLocaleString('ka-GE')}
+                {new Date(post.updatedAt).toLocaleString('ka-GE')}
               </p>
               <p>
-                <span className="font-medium">ნახვები:</span> {post.view_count}
+                <span className="font-medium">ნახვები:</span> {post.viewCount}
               </p>
             </CardContent>
           </Card>

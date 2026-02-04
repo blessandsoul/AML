@@ -23,7 +23,7 @@ export function ReactionButtons({
 
   // Check if current user has reacted
   const sessionId = typeof window !== 'undefined' ? getSessionId() : '';
-  const userReaction = reactions.find((r) => r.session_id === sessionId);
+  const userReaction = reactions.find((r) => r.sessionId === sessionId);
 
   const handleReaction = (type: ReactionType) => {
     if (isPending) return;

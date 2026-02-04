@@ -23,7 +23,7 @@ export function useReaction(postId: string, slug: string) {
   return useMutation({
     mutationFn: (type: ReactionType) => {
       const sessionId = getSessionId();
-      return blogService.addReaction(postId, { type, session_id: sessionId });
+      return blogService.addReaction(postId, { type, sessionId });
     },
     onSuccess: () => {
       // Invalidate the post detail to refresh reaction counts
