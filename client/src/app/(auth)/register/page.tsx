@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/50">
+    <div className="min-h-[calc(100vh-3.25rem)] md:min-h-[calc(100vh-5rem)] flex items-center justify-center p-4 bg-muted/50">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">რეგისტრაცია</CardTitle>
