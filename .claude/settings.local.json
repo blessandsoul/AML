@@ -74,7 +74,9 @@
       "Bash(netstat:*)",
       "Bash(ping:*)",
       "Bash(taskkill //F //PID 44808)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(copy:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

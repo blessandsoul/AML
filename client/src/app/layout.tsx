@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/sonner"
 import { QueryProvider } from '@/providers/query-provider';
 import { ReduxProvider } from '@/providers/redux-provider';
+import { ColorPaletteProvider } from '@/providers/color-palette-provider';
 
 // Only import Agentation in development
 const Agentation = process.env.NODE_ENV === 'development'
@@ -136,8 +137,10 @@ export default function RootLayout({
         />
         <ReduxProvider>
           <QueryProvider>
-            <MainLayout>{children}</MainLayout>
-            <Toaster />
+            <ColorPaletteProvider>
+              <MainLayout>{children}</MainLayout>
+              <Toaster />
+            </ColorPaletteProvider>
           </QueryProvider>
         </ReduxProvider>
         <Agentation />

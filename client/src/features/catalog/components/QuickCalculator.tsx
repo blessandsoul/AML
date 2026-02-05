@@ -3,11 +3,7 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Gavel,
-    Ship,
-    FileText,
     ArrowRight,
-    CheckCircle2,
     Calculator,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -119,14 +115,11 @@ export function QuickCalculator() {
     const AuctionColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
         <div className="space-y-2 md:space-y-3">
             {/* Header - Hidden on Mobile if requested */}
-            <div className={cn("flex items-center justify-center gap-2 md:gap-2.5 text-primary mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <div className="p-1.5 md:p-2 rounded-lg bg-orange-500/10 text-orange-600 shadow-sm border border-orange-500/20">
-                    <Gavel className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                </div>
+            <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
                 <h3 className="font-bold text-sm md:text-base text-foreground text-center">აუქციონის საკომისიო</h3>
             </div>
 
-            <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
+            <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
                     <Select value={auctionType} onValueChange={setAuctionType}>
@@ -181,14 +174,11 @@ export function QuickCalculator() {
 
     const LogisticsColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
         <div className="space-y-2 md:space-y-3">
-            <div className={cn("flex items-center justify-center gap-2 md:gap-2.5 text-primary mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <div className="p-1.5 md:p-2 rounded-lg bg-blue-500/10 text-blue-600 shadow-sm border border-blue-500/20">
-                    <Ship className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                </div>
+            <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
                 <h3 className="font-bold text-sm md:text-base text-foreground text-center">ლოჯისტიკის საფასური</h3>
             </div>
 
-            <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
+            <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
                     <Select value={logisticsAuction} onValueChange={setLogisticsAuction}>
@@ -236,14 +226,11 @@ export function QuickCalculator() {
 
     const DetailsColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
         <div className="space-y-2 md:space-y-3">
-            <div className={cn("flex items-center justify-center gap-2 md:gap-2.5 text-primary mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <div className="p-1.5 md:p-2 rounded-lg bg-purple-500/10 text-purple-600 shadow-sm border border-purple-500/20">
-                    <FileText className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                </div>
+            <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
                 <h3 className="font-bold text-sm md:text-base text-foreground text-center">დამატებითი დეტალები</h3>
             </div>
 
-            <div className={cn("grid gap-2 md:gap-2.5", isMobile ? "grid-cols-3" : "grid-cols-1")}>
+            <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
                     <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ტრანსპორტი</Label>
                     <Select value={vehicleCategory} onValueChange={setVehicleCategory}>
@@ -295,12 +282,12 @@ export function QuickCalculator() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="w-full relative bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl overflow-hidden"
+            className="w-full relative bg-background/80 backdrop-blur-xl border border-border/50 shadow-2xl rounded-3xl overflow-hidden"
             suppressHydrationWarning
             style={{ opacity: 0 }}
         >
             {/* Glass Shine Effect */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent pointer-events-none" />
 
             <div className="p-3 md:p-4">
                 {/* Mobile Tabs */}
@@ -478,40 +465,6 @@ export function QuickCalculator() {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* Carfax & CTA Section */}
-                <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-border/50 relative">
-                    <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-2 flex flex-col md:flex-row items-center gap-2 border border-blue-100 dark:border-blue-900/50">
-                        <div className="flex-1 w-full text-center md:text-left">
-                            <span className="text-[9px] md:text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-0 block">
-                                Carfax რეპორტი
-                            </span>
-                            <div className="relative">
-                                <Input
-                                    placeholder="შეიყვანეთ VIN კოდი"
-                                    className="border-0 bg-transparent shadow-none px-0 text-sm md:text-base font-mono placeholder:text-muted-foreground/50 focus-visible:ring-0 h-auto py-0 text-center md:text-left"
-                                />
-                            </div>
-                        </div>
-                        <Button
-                            size="sm"
-                            className="w-full md:w-auto h-8 md:h-9 px-4 text-xs font-bold rounded-md shadow-sm"
-                        >
-                            <div className="flex items-center gap-2">
-                                <span>შემოწმება</span>
-                                <ArrowRight className="w-3 h-3" />
-                            </div>
-                        </Button>
-                    </div>
-
-                    {/* Security Badge - Minimized */}
-                    <div className="flex justify-center mt-1">
-                        <div className="inline-flex items-center gap-1 text-[9px] text-emerald-600/80 px-2 py-0.5">
-                            <CheckCircle2 className="w-2.5 h-2.5" />
-                            <span>მონაცემები განახლებულია</span>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </motion.div>

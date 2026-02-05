@@ -19,7 +19,8 @@ import { useAggregateRating, useReviews } from '../hooks';
 import { StarRating } from './StarRating';
 import { ReviewCard } from './ReviewCard';
 
-const REVIEWS_LIMIT = { limit: 6 };
+// Fetch more reviews to ensure we have enough with photos after filtering
+const REVIEWS_LIMIT = { limit: 12 };
 
 export function ReviewsSection() {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -27,7 +28,11 @@ export function ReviewsSection() {
     useAggregateRating();
   const { data: reviewsData, isLoading: isReviewsLoading } = useReviews(REVIEWS_LIMIT);
 
-  const reviews = reviewsData?.items ?? [];
+  // Only show reviews with photos for consistent carousel display
+  // Limit to 6 items for the homepage carousel
+  const reviews = (reviewsData?.items ?? [])
+    .filter((review) => review.photos.length > 0)
+    .slice(0, 6);
 
   React.useEffect(() => {
     if (!api) return;

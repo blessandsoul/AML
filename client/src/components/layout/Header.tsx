@@ -30,6 +30,7 @@ import {
     Info,
     Mail,
     LogIn,
+    Palette,
 } from 'lucide-react';
 import {
     Sheet,
@@ -47,6 +48,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FlagGE, FlagUS, FlagRU, FlagUA, FlagSA } from "@/components/ui/flags";
+import { ColorPaletteSelector } from "@/components/common/ColorPaletteSelector";
+import { useColorPalette } from "@/providers/color-palette-provider";
 
 const NAV_ITEMS = [
     { label: 'მთავარი', href: '/' },
@@ -73,11 +76,18 @@ const LANGUAGES = [
 export function Header() {
     const [scrolled, setScrolled] = React.useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+    const [mounted, setMounted] = React.useState(false);
     const { scrollY } = useScroll();
     const pathname = usePathname();
     const [viewMode, setViewMode] = React.useState<'user' | 'dealer'>('user');
     const [language, setLanguage] = React.useState('GE');
     const { user, isAuthenticated, logout } = useAuth();
+    const { palette, setPalette, palettes, mounted: paletteMounted } = useColorPalette();
+
+    // Track client-side mounting to prevent hydration mismatch
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Get user initials for avatar fallback
     const userInitials = React.useMemo(() => {
@@ -103,6 +113,12 @@ export function Header() {
 
     const SelectedFlag = LANGUAGES.find(l => l.code === language)?.icon || FlagGE;
 
+    // Transparent header on all pages when not scrolled
+    // White text only on home page (for dark hero background)
+    const isHomePage = pathname === '/';
+    const useTransparentHeader = !scrolled;
+    const useWhiteText = isHomePage && !scrolled;
+
     return (
         <motion.header
             className={cn(
@@ -114,17 +130,17 @@ export function Header() {
                 <div
                     className={cn(
                         "relative flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-500",
-                        scrolled
-                            ? "bg-background/80 backdrop-blur-xl border border-border shadow-sm"
-                            : "bg-transparent border border-transparent"
+                        useTransparentHeader
+                            ? "bg-transparent border border-transparent"
+                            : "bg-background/80 backdrop-blur-xl border border-border shadow-sm"
                     )}
                 >
-                    {/* Logo - Minimalist */}
-                    <Link href="/" className="flex items-center gap-2 z-20 group">
-                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-black text-sm shadow-lg group-hover:scale-105 transition-transform duration-300">
-                            AML
-                        </div>
-                        <span className="text-xl font-bold text-foreground tracking-tight hidden md:block group-hover:text-primary transition-colors">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-3 z-20 group">
+                        <span className={cn(
+                            "text-xl font-bold tracking-tight transition-colors",
+                            useWhiteText ? "text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] group-hover:text-white/90" : "text-foreground group-hover:text-primary"
+                        )}>
                             Auto Market Logistic
                         </span>
                     </Link>
@@ -139,13 +155,18 @@ export function Header() {
                                     href={item.href}
                                     className={cn(
                                         "relative px-5 py-2 text-sm font-bold transition-colors duration-300",
-                                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                        isActive
+                                            ? (useWhiteText ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" : "text-primary")
+                                            : (useWhiteText ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] hover:text-white" : "text-muted-foreground hover:text-foreground")
                                     )}
                                 >
                                     {isActive && (
                                         <motion.div
                                             layoutId="nav-pill"
-                                            className="absolute inset-0 bg-primary/5 rounded-full"
+                                            className={cn(
+                                                "absolute inset-0 rounded-full",
+                                                useWhiteText ? "bg-white/15" : "bg-primary/5"
+                                            )}
                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                     )}
@@ -161,14 +182,17 @@ export function Header() {
                                     className={cn(
                                         "relative px-5 py-2 text-sm font-bold transition-colors duration-300 flex items-center gap-1 outline-none",
                                         MORE_ITEMS.some(i => pathname === i.href)
-                                            ? "text-primary"
-                                            : "text-muted-foreground hover:text-foreground"
+                                            ? (useWhiteText ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" : "text-primary")
+                                            : (useWhiteText ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] hover:text-white" : "text-muted-foreground hover:text-foreground")
                                     )}
                                 >
                                     {MORE_ITEMS.some(i => pathname === i.href) && (
                                         <motion.div
                                             layoutId="nav-pill"
-                                            className="absolute inset-0 bg-primary/5 rounded-full"
+                                            className={cn(
+                                                "absolute inset-0 rounded-full",
+                                                useWhiteText ? "bg-white/15" : "bg-primary/5"
+                                            )}
                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                     )}
@@ -194,10 +218,20 @@ export function Header() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 z-20">
+                        {/* Color Palette Selector (Testing) */}
+                        <div className="hidden sm:flex">
+                            <ColorPaletteSelector />
+                        </div>
+
                         {/* Language Switcher */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
+                                <Button variant="ghost" size="icon" className={cn(
+                                    "rounded-full hidden sm:flex",
+                                    useWhiteText
+                                        ? "text-white/80 hover:text-white hover:bg-white/10"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                )}>
                                     <SelectedFlag className="w-5 h-5 rounded-full object-cover" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -219,10 +253,15 @@ export function Header() {
                         </DropdownMenu>
 
                         {/* User Profile Menu */}
-                        {isAuthenticated && user ? (
+                        {mounted && isAuthenticated && user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full hidden sm:flex">
+                                    <Button variant="ghost" size="icon" className={cn(
+                                        "rounded-full hidden sm:flex",
+                                        useWhiteText
+                                            ? "text-white/80 hover:text-white hover:bg-white/10"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                    )}>
                                         <Avatar className="w-8 h-8">
                                             <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
                                         </Avatar>
@@ -370,13 +409,19 @@ export function Header() {
                             </DropdownMenu>
                         ) : (
                             <div className="hidden sm:flex items-center gap-2">
-                                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
+                                <Button variant="ghost" size="sm" asChild className={cn(
+                                    useWhiteText
+                                        ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] hover:text-white hover:bg-white/10"
+                                        : "text-muted-foreground hover:text-foreground"
+                                )}>
                                     <Link href="/login">
                                         <LogIn className="w-4 h-4 mr-2" />
                                         შესვლა
                                     </Link>
                                 </Button>
-                                <Button size="sm" asChild>
+                                <Button size="sm" asChild className={cn(
+                                    useWhiteText && "bg-white text-[#1C2331] hover:bg-white/90 shadow-lg"
+                                )}>
                                     <Link href="/register">
                                         რეგისტრაცია
                                     </Link>
@@ -387,7 +432,10 @@ export function Header() {
                         {/* Mobile Menu */}
                         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                             <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="md:hidden text-foreground">
+                                <Button variant="ghost" size="icon" className={cn(
+                                    "md:hidden",
+                                    useWhiteText ? "text-white" : "text-foreground"
+                                )}>
                                     <Menu className="w-6 h-6" />
                                 </Button>
                             </SheetTrigger>
@@ -399,7 +447,7 @@ export function Header() {
                                     {/* Logo removed to save space */}
 
                                     {/* User Info (Mobile) */}
-                                    {isAuthenticated && user ? (
+                                    {mounted && isAuthenticated && user ? (
                                         <div className="mb-3 bg-muted/50 p-3 rounded-xl flex items-center gap-2">
                                             <Avatar className="w-8 h-8">
                                                 <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
@@ -450,10 +498,36 @@ export function Header() {
                                                 </Link>
                                             );
                                         })}
+
+                                        {/* Color Palette Selector (Mobile - Testing) */}
+                                        {paletteMounted && (
+                                            <>
+                                                <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-4 mb-2">
+                                                    Color Theme (Testing)
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    {palettes.map((p) => (
+                                                        <button
+                                                            key={p.value}
+                                                            onClick={() => setPalette(p.value)}
+                                                            className={cn(
+                                                                "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all",
+                                                                palette === p.value
+                                                                    ? "bg-primary text-primary-foreground"
+                                                                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                                                            )}
+                                                        >
+                                                            <Palette className="w-3.5 h-3.5 mx-auto mb-1" />
+                                                            {p.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
                                     </nav>
 
                                     {/* Dashboard Links + Logout (Mobile) - pushed to bottom */}
-                                    {isAuthenticated && user ? (
+                                    {mounted && isAuthenticated && user ? (
                                         <div className="mt-auto pt-3 space-y-3">
                                             <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">კაბინეტი</div>
                                             <div className="grid grid-cols-3 gap-1.5">

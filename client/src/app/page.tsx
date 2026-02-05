@@ -4,7 +4,6 @@ import { ProcessSteps } from '@/features/catalog/components/ProcessSteps';
 import { BrandMarquee } from '@/features/catalog/components/BrandMarquee';
 import { Benefits } from '@/features/catalog/components/Benefits';
 import { ReviewsSection } from '@/features/reviews/components';
-import { ValueComparison } from '@/features/catalog/components/ValueComparison';
 import { MinimalFAQ } from '@/features/catalog/components/MinimalFAQ';
 import { TeamTrust } from '@/features/catalog/components/TeamTrust';
 import { BlogPreview } from '@/features/blog/components';
@@ -16,9 +15,8 @@ export default function Home() {
         <Hero />
       </div>
       <BrandMarquee />
-      <FeaturedCars />
-      <ValueComparison />
       <ProcessSteps />
+      <FeaturedCars />
       <ReviewsSection />
       <MinimalFAQ /> {/* Reassurance Anchor */}
       <TeamTrust /> {/* Human Anchor */}

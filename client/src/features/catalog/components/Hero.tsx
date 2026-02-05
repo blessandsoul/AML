@@ -1,16 +1,36 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { HeroTitle } from './HeroTitle';
 import { QuickCalculator } from './QuickCalculator';
+import { CarfaxReport } from './CarfaxReport';
 
 export function Hero() {
     return (
-        <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center bg-background">
+        <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center -mt-13 md:-mt-20 pt-13 md:pt-20">
+            {/* Background Image - Full bleed including behind header */}
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src="/hero-bg/aml.jpeg"
+                    alt="AML Hero Background"
+                    fill
+                    priority
+                    quality={90}
+                    className="object-cover object-center"
+                    sizes="100vw"
+                />
+                {/* Darker overlay for better text contrast while showing image */}
+                <div className="absolute inset-0 bg-[#1C2331]/55" />
+            </div>
+
             {/* Main Content */}
             <div className="container relative z-10 px-4 flex flex-col items-center justify-center max-w-5xl mx-auto flex-1 gap-1 md:gap-2 pt-4 md:pt-6 pb-2 md:pb-3 h-full">
                 <HeroTitle />
-                <QuickCalculator />
+                <div className="w-full flex flex-col gap-2">
+                    <QuickCalculator />
+                    <CarfaxReport />
+                </div>
             </div>
         </section>
     );

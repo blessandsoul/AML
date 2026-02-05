@@ -11,22 +11,51 @@ export function SniperSearch() {
 
     return (
         <>
-            <section className="py-8 md:py-12 bg-black text-white relative overflow-hidden border-y border-white/10">
-                {/* Tech background grid */}
-                <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+            <section className="py-8 md:py-12 text-white relative overflow-hidden border-y border-white/10">
+                {/* AML Brand Gradient Background */}
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        background: `
+                            linear-gradient(135deg,
+                                #1C2331 0%,
+                                #0076BA 50%,
+                                #1C2331 100%
+                            )
+                        `,
+                    }}
+                />
+
+                {/* Turquoise glow accent - top right */}
+                <div
+                    className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-20 blur-3xl"
+                    style={{ background: '#8ED3E0' }}
+                />
+
+                {/* Navy Blue glow accent - bottom left */}
+                <div
+                    className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full opacity-15 blur-3xl"
+                    style={{ background: '#3498DB' }}
+                />
+
+                {/* Tech grid overlay */}
+                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#8ED3E015_1px,transparent_1px),linear-gradient(to_bottom,#8ED3E015_1px,transparent_1px)] bg-[size:32px_32px]" />
+
+                {/* Subtle shimmer line */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
 
                 <div className="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12">
                     <div className="flex items-start gap-4 md:gap-6">
-                        <div className="p-3 bg-primary/20 rounded-xl animate-pulse-slow shrink-0 hidden md:block">
-                            <Bot className="w-8 h-8 text-primary" />
+                        <div className="p-3 rounded-xl shrink-0 hidden md:block" style={{ background: 'rgba(142, 211, 224, 0.2)' }}>
+                            <Bot className="w-8 h-8" style={{ color: '#8ED3E0' }} />
                         </div>
                         <div className="space-y-2 text-center md:text-left">
                             <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center justify-center md:justify-start gap-2">
-                                <Crosshair className="w-6 h-6 text-primary md:hidden" />
+                                <Crosshair className="w-6 h-6 md:hidden" style={{ color: '#8ED3E0' }} />
                                 დაიღალეთ ძებნით?
                             </h3>
-                            <p className="text-muted-foreground max-w-md mx-auto md:mx-0 font-medium">
-                                გაააქტიურეთ ჩვენი <span className="text-primary font-bold">სნაიპერ ბოტი</span>. მიუთითეთ ბიუჯეტი და მოდელი, და ის იპოვის 24/7.
+                            <p className="text-white/70 max-w-md mx-auto md:mx-0 font-medium">
+                                გაააქტიურეთ ჩვენი <span className="font-bold" style={{ color: '#8ED3E0' }}>სნაიპერ ბოტი</span>. მიუთითეთ ბიუჯეტი და მოდელი, და ის იპოვის 24/7.
                             </p>
                         </div>
                     </div>
@@ -38,7 +67,12 @@ export function SniperSearch() {
                         <Button
                             onClick={() => setShowModal(true)}
                             size="lg"
-                            className="h-16 px-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-lg shadow-[0_0_30px_-5px_hsl(var(--primary))]"
+                            className="h-16 px-8 rounded-full font-black uppercase tracking-widest text-lg transition-all duration-300 hover:scale-105"
+                            style={{
+                                background: 'linear-gradient(135deg, #0076BA 0%, #3498DB 50%, #8ED3E0 100%)',
+                                color: '#FFFFFF',
+                                boxShadow: '0 0 40px -5px rgba(142, 211, 224, 0.5), 0 0 80px -10px rgba(0, 118, 186, 0.3)',
+                            }}
                         >
                             <Zap className="w-5 h-5 mr-3 fill-current" />
                             ბოტის გააქტიურება
