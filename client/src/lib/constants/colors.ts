@@ -13,11 +13,11 @@ export const BRAND_COLORS = {
   /** Dark blue - Footer and calculator section background */
   darkNavy: '#1C2331',
 
-  /** Saturated blue - Navigation menu primary color */
-  navyBlue: '#0076BA',
+  /** Cerulean blue - Navigation menu primary color */
+  navyBlue: '#2D88C4',
 
-  /** Light blue/Turquoise - Logo wings and decorative elements */
-  turquoise: '#8ED3E0',
+  /** Teal - Logo wings and decorative elements */
+  turquoise: '#55A8B9',
 
   /** Bright blue - Primary buttons and accent elements */
   brightBlue: '#3498DB',
@@ -88,8 +88,8 @@ export const SEMANTIC_COLORS = {
 
 export const BRAND_COLORS_HSL = {
   darkNavy: '218 28% 15%',
-  navyBlue: '199 100% 36%',
-  turquoise: '190 56% 72%',
+  navyBlue: '204 63% 47%',
+  turquoise: '190 42% 53%',
   brightBlue: '204 70% 53%',
   white: '0 0% 100%',
 } as const;
@@ -112,8 +112,8 @@ export const AUXILIARY_COLORS_HSL = {
 
 export const BRAND_COLORS_RGB = {
   darkNavy: '28, 35, 49',
-  navyBlue: '0, 118, 186',
-  turquoise: '142, 211, 224',
+  navyBlue: '45, 136, 196',
+  turquoise: '85, 168, 185',
   brightBlue: '52, 152, 219',
   white: '255, 255, 255',
 } as const;

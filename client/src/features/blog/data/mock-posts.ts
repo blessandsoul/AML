@@ -1,7 +1,7 @@
 import type { BlogPost, BlogCategory, BlogTag } from '../types';
 
 export const MOCK_CATEGORIES: BlogCategory[] = [
-  { id: '1', name: 'აუქციონები', slug: 'auctions', description: 'ინფორმაცია აუქციონების შესახებ', color: '#3B82F6', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', _count: { posts: 3 } },
+  { id: '1', name: 'აუქციონები', slug: 'auctions', description: 'ინფორმაცია აუქციონების შესახებ', color: '#2D88C4', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', _count: { posts: 3 } },
   { id: '2', name: 'რჩევები', slug: 'tips', description: 'სასარგებლო რჩევები მყიდველებისთვის', color: '#10B981', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', _count: { posts: 3 } },
   { id: '3', name: 'სიახლეები', slug: 'news', description: 'კომპანიის სიახლეები', color: '#F59E0B', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', _count: { posts: 1 } },
   { id: '4', name: 'მიმოხილვები', slug: 'reviews', description: 'ავტომობილების მიმოხილვები', color: '#8B5CF6', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', _count: { posts: 2 } },

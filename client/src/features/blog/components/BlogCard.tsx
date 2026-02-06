@@ -62,7 +62,7 @@ export function BlogCard({ post, index, priority = false }: BlogCardProps) {
           <div className="absolute top-3 left-3 z-10">
             <div
               className="px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-lg text-white text-xs font-bold"
-              style={{ backgroundColor: post.category.color || '#3B82F6' }}
+              style={{ backgroundColor: post.category.color || '#2D88C4' }}
             >
               {post.category.name}
             </div>

@@ -138,7 +138,7 @@ export function CarCharacter({ state, size = 48, className }: CarCharacterProps)
             {/* Car Body - Main shape */}
             <motion.path
                 d="M15 48 Q15 35 30 32 L70 32 Q85 35 85 48 L85 54 Q85 58 80 58 L20 58 Q15 58 15 54 Z"
-                fill="#3B82F6"
+                fill="#2D88C4"
                 stroke="#2563EB"
                 strokeWidth="1.5"
             />
@@ -146,7 +146,7 @@ export function CarCharacter({ state, size = 48, className }: CarCharacterProps)
             {/* Car Body - Roof */}
             <motion.path
                 d="M28 32 Q32 18 50 18 Q68 18 72 32"
-                fill="#3B82F6"
+                fill="#2D88C4"
                 stroke="#2563EB"
                 strokeWidth="1.5"
             />

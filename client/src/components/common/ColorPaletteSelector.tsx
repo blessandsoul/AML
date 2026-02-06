@@ -16,13 +16,13 @@ import { cn } from '@/lib/utils';
 
 // Color swatches for each palette
 const PALETTE_SWATCHES: Record<ColorPalette, string[]> = {
-  default: ['#3B82F6', '#6366F1', '#8B5CF6', '#FFFFFF'], // Electric blue theme
-  aml: ['#0076BA', '#8ED3E0', '#3498DB', '#1C2331'], // AML brand colors
+  default: ['#2D88C4', '#55A8B9', '#8B5CF6', '#FFFFFF'], // Cerulean & teal theme
+  aml: ['#2D88C4', '#55A8B9', '#3498DB', '#1C2331'], // AML brand colors
 };
 
 const PALETTE_DESCRIPTIONS: Record<ColorPalette, string> = {
-  default: 'Electric blue & purple tones',
-  aml: 'Navy, turquoise & bright blue',
+  default: 'Cerulean blue & teal tones',
+  aml: 'Cerulean, teal & bright blue',
 };
 
 export function ColorPaletteSelector() {

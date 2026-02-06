@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Noto_Sans_Georgian } from 'next/font/google';
+import { Noto_Sans_Georgian, Montserrat } from 'next/font/google';
 import './globals.css';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { cn } from '@/lib/utils';
@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { QueryProvider } from '@/providers/query-provider';
 import { ReduxProvider } from '@/providers/redux-provider';
 import { ColorPaletteProvider } from '@/providers/color-palette-provider';
+import { HeaderVariantProvider } from '@/providers/header-variant-provider';
 
 // Only import Agentation in development
 const Agentation = process.env.NODE_ENV === 'development'
@@ -14,6 +15,7 @@ const Agentation = process.env.NODE_ENV === 'development'
   : () => null;
 
 const notoSansGeorgian = Noto_Sans_Georgian({ subsets: ['georgian'], variable: '--font-sans' });
+const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-display', weight: ['800', '900'] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://automarket.ge'),
@@ -128,7 +130,8 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          notoSansGeorgian.variable
+          notoSansGeorgian.variable,
+          montserrat.variable
         )}
       >
         <script
@@ -138,7 +141,9 @@ export default function RootLayout({
         <ReduxProvider>
           <QueryProvider>
             <ColorPaletteProvider>
-              <MainLayout>{children}</MainLayout>
+              <HeaderVariantProvider>
+                <MainLayout>{children}</MainLayout>
+              </HeaderVariantProvider>
               <Toaster />
             </ColorPaletteProvider>
           </QueryProvider>

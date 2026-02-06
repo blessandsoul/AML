@@ -8,7 +8,7 @@ import { CarfaxReport } from './CarfaxReport';
 
 export function Hero() {
     return (
-        <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center -mt-13 md:-mt-20 pt-13 md:pt-20">
+        <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center mt-0 md:-mt-20 pt-0 md:pt-20">
             {/* Background Image - Full bleed including behind header */}
             <div className="absolute inset-0 z-0">
                 <Image

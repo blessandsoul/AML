@@ -10,10 +10,29 @@ const MARQUEE_ITEMS = [...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS];
 
 export function BrandMarquee() {
     return (
-        <section className="bg-background border-y border-border overflow-hidden py-10 relative z-20">
-            {/* Side Fades - Light mode compatible */}
-            <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+        <section className="relative overflow-hidden py-10 border-y border-border z-20">
+            {/* Light noise background */}
+            <div
+                className="absolute inset-0 -z-10"
+                style={{
+                    background: '#F8F9FA',
+                    backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.05\'/%3E%3C/svg%3E")'
+                }}
+            />
+
+            {/* Side Fades */}
+            <div
+                className="absolute top-0 left-0 w-32 h-full z-10 pointer-events-none"
+                style={{
+                    background: 'linear-gradient(to right, #F8F9FA, transparent)'
+                }}
+            />
+            <div
+                className="absolute top-0 right-0 w-32 h-full z-10 pointer-events-none"
+                style={{
+                    background: 'linear-gradient(to left, #F8F9FA, transparent)'
+                }}
+            />
 
             <div className="flex select-none">
                 {[0, 1].map((copy) => (

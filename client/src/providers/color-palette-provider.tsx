@@ -36,16 +36,18 @@ const colorPaletteScript = `
 (function() {
   try {
     var palette = localStorage.getItem('${PALETTE_STORAGE_KEY}');
-    if (palette === 'aml') {
+    if (palette !== 'default') {
       document.documentElement.classList.add('palette-aml');
     }
-  } catch (e) {}
+  } catch (e) {
+    document.documentElement.classList.add('palette-aml');
+  }
 })();
 `;
 
 export function ColorPaletteProvider({
   children,
-  defaultPalette = 'default',
+  defaultPalette = 'aml',
 }: ColorPaletteProviderProps) {
   const [palette, setPaletteState] = React.useState<ColorPalette>(defaultPalette);
   const [mounted, setMounted] = React.useState(false);

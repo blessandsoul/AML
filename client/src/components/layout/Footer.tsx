@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Car, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Footer() {
@@ -14,8 +14,8 @@ export function Footer() {
                     {/* Brand & Socials (Col 1-4) */}
                     <div className="md:col-span-2 lg:col-span-4 space-y-6">
                         <Link href="/" className="inline-flex items-center gap-3 group">
-                            <div className="bg-primary text-primary-foreground p-2.5 rounded-xl shadow-lg shadow-primary/20 transition-transform group-hover:scale-105" suppressHydrationWarning>
-                                <Car className="w-6 h-6" />
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 shadow-lg shadow-primary/20 transition-transform group-hover:scale-105 shrink-0">
+                                <img src="/logo.png" alt="AML Logo" className="w-full h-full object-cover" />
                             </div>
                             <span className="text-2xl font-black tracking-tight text-foreground">Auto Market Logistic</span>
                         </Link>

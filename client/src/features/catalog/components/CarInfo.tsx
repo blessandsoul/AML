@@ -85,7 +85,7 @@ export function CarInfo({ car }: CarInfoProps) {
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-muted-foreground">სრული ფასი ფოთამდე</span>
                         <Badge variant="outline" className="bg-background text-[10px] uppercase">
-                            Approximate
+                            სავარაუდო
                         </Badge>
                     </div>
 
@@ -173,7 +173,7 @@ export function CarInfo({ car }: CarInfoProps) {
                         <span>სულ (ფოთამდე)</span>
                         <div className="flex items-center gap-2 text-primary cursor-pointer hover:underline" onClick={handleUnlockPrice}>
                             <Lock className="w-3.5 h-3.5" />
-                            <span>Unlock Breakdown</span>
+                            <span>დეტალების ნახვა</span>
                         </div>
                     </div>
                 </div>

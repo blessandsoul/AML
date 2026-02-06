@@ -2,31 +2,8 @@
 
 import * as React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { MousePointerClick, Gavel, Ship, Key } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const STEPS = [
-    {
-        icon: MousePointerClick,
-        title: "შერჩევა",
-        desc: "უფასო წვდომა დახურულ აუქციონებზე (Manheim, Adesa).",
-    },
-    {
-        icon: Gavel,
-        title: "ვაჭრობა",
-        desc: "პროფესიონალური სტრატეგია საუკეთესო ფასად მოსაგებად.",
-    },
-    {
-        icon: Ship,
-        title: "ლოჯისტიკა",
-        desc: "დაზღვეული ტრანსპორტირება სრული ფოტო რეპორტით.",
-    },
-    {
-        icon: Key,
-        title: "ჩაბარება",
-        desc: "განბაჟება და გასაღების გადმოცემა.",
-    }
-];
+import { PROCESS_STEPS, PROCESS_STEPS_HEADING } from '@/features/catalog/constants/copywriting';
 
 export function ProcessSteps() {
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -38,18 +15,14 @@ export function ProcessSteps() {
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
     return (
-        <section ref={containerRef} className="bg-muted/30 py-14 md:py-32 relative overflow-hidden">
+        <section ref={containerRef} className="bg-muted/30 py-8 md:py-14 relative overflow-hidden">
 
             <div className="container mx-auto px-4 relative z-10 w-full max-w-7xl">
-                <motion.div style={{ y }} className="text-center mb-10 md:mb-24 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-border text-xs font-bold uppercase tracking-widest text-muted-foreground shadow-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        როგორ მუშაობს
-                    </div>
+                <motion.div style={{ y }} className="text-center mb-6 md:mb-10">
                     <h3 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
-                        მარტივი გზა <br className="md:hidden" />
+                        {PROCESS_STEPS_HEADING.main} <br className="md:hidden" />
                         <span className="text-primary">
-                            თქვენს საოცნებო მანქანამდე
+                            {PROCESS_STEPS_HEADING.highlight}
                         </span>
                     </h3>
                 </motion.div>
@@ -58,8 +31,8 @@ export function ProcessSteps() {
                     {/* Connecting Line (Desktop) */}
 
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
-                        {STEPS.map((step, i) => (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+                        {PROCESS_STEPS.map((step, i) => (
                             <div key={i} className="group relative flex flex-col items-center text-center">
                                 <div className="relative z-10 flex flex-col items-center w-full">
                                     {/* Icon Bubble - Minimalist */}
@@ -71,7 +44,7 @@ export function ProcessSteps() {
                                         {step.title}
                                     </h4>
                                     <p className="text-muted-foreground font-medium leading-relaxed text-base max-w-[240px]">
-                                        {step.desc}
+                                        {step.description}
                                     </p>
                                 </div>
                             </div>

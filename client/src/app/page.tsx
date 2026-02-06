@@ -1,4 +1,5 @@
 import { Hero } from '@/features/catalog/components/Hero';
+import { CustomsCalculator } from '@/features/catalog/components/CustomsCalculator';
 import { FeaturedCars } from '@/features/catalog/components/FeaturedCars';
 import { ProcessSteps } from '@/features/catalog/components/ProcessSteps';
 import { BrandMarquee } from '@/features/catalog/components/BrandMarquee';
@@ -11,9 +12,10 @@ import { BlogPreview } from '@/features/blog/components';
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background relative">
-      <div className="flex flex-col min-h-[calc(100dvh-3.25rem)] md:min-h-[calc(100dvh-5rem)]">
+      <div className="flex flex-col min-h-dvh md:min-h-[calc(100dvh-5rem)]">
         <Hero />
       </div>
+      <CustomsCalculator />
       <BrandMarquee />
       <ProcessSteps />
       <FeaturedCars />

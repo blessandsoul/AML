@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, TrendingUp, Users, PiggyBank } from 'lucide-react';
 import Link from 'next/link';
 import Autoplay from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
@@ -18,12 +18,12 @@ import {
 import { useAggregateRating, useReviews } from '../hooks';
 import { StarRating } from './StarRating';
 import { ReviewCard } from './ReviewCard';
+import { COMPANY_STATS } from '@/features/catalog/constants/copywriting';
 
 // Fetch more reviews to ensure we have enough with photos after filtering
 const REVIEWS_LIMIT = { limit: 12 };
 
 export function ReviewsSection() {
-  const [api, setApi] = React.useState<CarouselApi>();
   const { data: aggregate, isLoading: isAggregateLoading } =
     useAggregateRating();
   const { data: reviewsData, isLoading: isReviewsLoading } = useReviews(REVIEWS_LIMIT);
@@ -34,10 +34,6 @@ export function ReviewsSection() {
     .filter((review) => review.photos.length > 0)
     .slice(0, 6);
 
-  React.useEffect(() => {
-    if (!api) return;
-    api.plugins().autoplay?.play();
-  }, [api]);
 
   return (
     <section className="bg-background py-12 md:py-20 border-t border-border overflow-hidden">
@@ -50,7 +46,6 @@ export function ReviewsSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-8 md:mb-12"
           suppressHydrationWarning
-          style={{ opacity: 0 }}
         >
           <div
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest mb-4"
@@ -75,7 +70,6 @@ export function ReviewsSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
           suppressHydrationWarning
-          style={{ opacity: 0 }}
         >
           {isAggregateLoading ? (
             <div className="flex items-center gap-4">
@@ -98,6 +92,37 @@ export function ReviewsSection() {
               </div>
             </div>
           ) : null}
+        </motion.div>
+
+        {/* Company Statistics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-12 max-w-4xl mx-auto"
+          suppressHydrationWarning
+        >
+          {COMPANY_STATS.map((stat, index) => {
+            // Icon mapping for each stat
+            const icons = [Users, TrendingUp, PiggyBank];
+            const Icon = icons[index] || TrendingUp;
+
+            return (
+              <div
+                key={index}
+                className="flex flex-col items-center gap-2 p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-colors"
+              >
+                <Icon className="w-6 h-6 text-primary mb-1" />
+                <span className="text-3xl md:text-4xl font-black text-foreground">
+                  {stat.value}
+                </span>
+                <span className="text-sm md:text-base text-muted-foreground font-medium text-center">
+                  {stat.label}
+                </span>
+              </div>
+            );
+          })}
         </motion.div>
 
         {/* Auto-scrolling Reviews Carousel */}
@@ -124,7 +149,7 @@ export function ReviewsSection() {
           <Carousel
             opts={{ loop: true, align: 'start' }}
             plugins={[Autoplay({ delay: 4000 })]}
-            setApi={setApi}
+
             className="w-full"
           >
             <CarouselContent className="-ml-4">
@@ -150,7 +175,6 @@ export function ReviewsSection() {
           transition={{ duration: 0.4, delay: 0.3 }}
           className="text-center mt-10"
           suppressHydrationWarning
-          style={{ opacity: 0 }}
         >
           <Button
             variant="outline"
