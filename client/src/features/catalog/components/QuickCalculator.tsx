@@ -47,15 +47,17 @@ function ResultItem({ label, value, currency, highlight = false }: {
         <div className={cn(
             "rounded-xl p-2 md:p-2.5 text-center",
             highlight
-                ? "bg-emerald-500/10 border border-emerald-500/20"
-                : "bg-white/5 border border-white/10"
-        )}>
-            <p className="text-[9px] md:text-[10px] font-bold uppercase text-muted-foreground truncate">
+                ? "border border-emerald-500/25"
+                : "border border-white/[0.06]"
+        )} style={{
+            background: highlight ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+        }}>
+            <p className="text-[9px] md:text-[10px] font-bold uppercase text-white/60! truncate">
                 {label}
             </p>
             <p className={cn(
                 "text-sm md:text-base font-bold font-mono mt-0.5",
-                highlight ? "text-emerald-500" : "text-foreground"
+                highlight ? "text-emerald-500!" : "text-white!"
             )}>
                 {symbol}{fmt(displayValue)}
             </p>
@@ -63,21 +65,22 @@ function ResultItem({ label, value, currency, highlight = false }: {
     );
 }
 
+
 export function QuickCalculator() {
     const [isCalculating, setIsCalculating] = React.useState(false);
     const [activeTab, setActiveTab] = React.useState<'auction' | 'logistics' | 'details'>('auction');
 
     // Form state
-    const [auctionType, setAuctionType] = React.useState('');
-    const [vehicleType, setVehicleType] = React.useState('');
+    const [auctionType, setAuctionType] = React.useState('Copart');
+    const [vehicleType, setVehicleType] = React.useState('standard');
     const [price, setPrice] = React.useState('');
     const [currency, setCurrency] = React.useState<Currency>('USD');
-    const [logisticsAuction, setLogisticsAuction] = React.useState('');
-    const [usaCity, setUsaCity] = React.useState('');
-    const [destinationPort, setDestinationPort] = React.useState('');
-    const [vehicleCategory, setVehicleCategory] = React.useState('');
-    const [fuelType, setFuelType] = React.useState('');
-    const [insurance, setInsurance] = React.useState('');
+    const [logisticsAuction, setLogisticsAuction] = React.useState('Copart');
+    const [usaCity, setUsaCity] = React.useState('CA-LOS ANGELES');
+    const [destinationPort, setDestinationPort] = React.useState('POTI');
+    const [vehicleCategory, setVehicleCategory] = React.useState('Sedan');
+    const [fuelType, setFuelType] = React.useState('Gasoline');
+    const [insurance, setInsurance] = React.useState('No');
 
     // Results state
     const [result, setResult] = React.useState<CalcResult | null>(null);
@@ -116,14 +119,14 @@ export function QuickCalculator() {
         <div className="space-y-2 md:space-y-3">
             {/* Header - Hidden on Mobile if requested */}
             <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <h3 className="font-bold text-sm md:text-base text-foreground text-center">აუქციონის საკომისიო</h3>
+                <h3 className="font-bold text-sm md:text-base text-white! text-center">აუქციონის საკომისიო</h3>
             </div>
 
             <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">აუქციონი</Label>
                     <Select value={auctionType} onValueChange={setAuctionType}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -135,9 +138,9 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ტიპი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">ტიპი</Label>
                     <Select value={vehicleType} onValueChange={setVehicleType}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -149,12 +152,12 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ფასი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">ფასი</Label>
                     <div className="relative w-full flex">
                         <button
                             type="button"
                             onClick={() => setCurrency(prev => prev === 'USD' ? 'GEL' : 'USD')}
-                            className="flex items-center justify-center h-9 md:h-10 w-9 md:w-11 shrink-0 rounded-l-md border border-r-0 border-input/50 bg-primary/10 hover:bg-primary/20 transition-colors text-sm md:text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            className="flex items-center justify-center h-9 md:h-10 w-9 md:w-11 shrink-0 rounded-l-md border border-r-0 border-white/[0.08] bg-primary/15 hover:bg-primary/25 transition-colors text-sm md:text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                             title="ვალუტის შეცვლა"
                         >
                             {currencySymbol}
@@ -164,7 +167,7 @@ export function QuickCalculator() {
                             placeholder="0"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
-                            className="w-full rounded-l-none h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 font-mono font-bold text-center md:text-left px-3"
+                            className="w-full rounded-l-none h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:border-primary/30 font-mono font-bold text-center md:text-left px-3 text-white! placeholder:text-white/40! [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
                         />
                     </div>
                 </div>
@@ -175,14 +178,14 @@ export function QuickCalculator() {
     const LogisticsColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
         <div className="space-y-2 md:space-y-3">
             <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <h3 className="font-bold text-sm md:text-base text-foreground text-center">ლოჯისტიკის საფასური</h3>
+                <h3 className="font-bold text-sm md:text-base text-white! text-center">ლოჯისტიკის საფასური</h3>
             </div>
 
             <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">აუქციონი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">აუქციონი</Label>
                     <Select value={logisticsAuction} onValueChange={setLogisticsAuction}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -194,9 +197,9 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ქალაქი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">ქალაქი</Label>
                     <Select value={usaCity} onValueChange={setUsaCity}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
@@ -208,9 +211,9 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">პორტი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">პორტი</Label>
                     <Select value={destinationPort} onValueChange={setDestinationPort}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -227,14 +230,14 @@ export function QuickCalculator() {
     const DetailsColumn = ({ isMobile = false }: { isMobile?: boolean }) => (
         <div className="space-y-2 md:space-y-3">
             <div className={cn("flex items-center justify-center mb-1 md:mb-2 -mt-1 md:-mt-2", isMobile ? "hidden" : "flex")}>
-                <h3 className="font-bold text-sm md:text-base text-foreground text-center">დამატებითი დეტალები</h3>
+                <h3 className="font-bold text-sm md:text-base text-white! text-center">დამატებითი დეტალები</h3>
             </div>
 
             <div className={cn("grid gap-2 md:gap-2.5", "grid-cols-1")}>
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ტრანსპორტი</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">ტრანსპორტი</Label>
                     <Select value={vehicleCategory} onValueChange={setVehicleCategory}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -246,9 +249,9 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">ძრავა</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">ძრავა</Label>
                     <Select value={fuelType} onValueChange={setFuelType}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -260,9 +263,9 @@ export function QuickCalculator() {
                 </div>
 
                 <div className="space-y-0.5 md:space-y-1 text-center md:text-left min-w-0">
-                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-muted-foreground w-full block">დაზღვევა</Label>
+                    <Label className="text-[10px] md:text-[11px] font-bold uppercase text-white/60! w-full block">დაზღვევა</Label>
                     <Select value={insurance} onValueChange={setInsurance}>
-                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-background/50 border-input/50 focus:ring-primary/20 px-3 text-center md:text-left">
+                        <SelectTrigger className="w-full h-9 md:h-10 text-xs md:text-sm bg-white/[0.05] border-white/[0.08] focus:ring-primary/20 focus:border-primary/30 px-3 text-center md:text-left text-white!">
                             <SelectValue placeholder="-" />
                         </SelectTrigger>
                         <SelectContent>
@@ -282,16 +285,13 @@ export function QuickCalculator() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="w-full relative bg-background/80 backdrop-blur-xl border border-border/50 shadow-2xl rounded-3xl overflow-hidden"
+            className="w-full dark overflow-hidden relative liquid-glass rounded-2xl"
             suppressHydrationWarning
-            style={{ opacity: 0 }}
         >
-            {/* Glass Shine Effect */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent pointer-events-none" />
 
-            <div className="p-3 md:p-4">
+            <div className="p-3 md:p-5" style={{ color: '#fff' }}>
                 {/* Mobile Tabs */}
-                <div className="flex md:hidden items-center justify-between bg-white/5 rounded-xl p-1 mb-6 border border-white/10">
+                <div className="flex md:hidden items-center justify-between rounded-xl p-1 mb-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     {[
                         { id: 'auction', label: 'აუქციონი' },
                         { id: 'logistics', label: 'ლოჯისტიკა' },
@@ -303,8 +303,8 @@ export function QuickCalculator() {
                             className={cn(
                                 "flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-bold transition-all w-full justify-center relative",
                                 activeTab === tab.id
-                                    ? "text-primary-foreground"
-                                    : "text-muted-foreground hover:bg-white/5"
+                                    ? "text-white"
+                                    : "text-white/60 hover:bg-white/5"
                             )}
                         >
                             {activeTab === tab.id && (
@@ -363,9 +363,9 @@ export function QuickCalculator() {
 
                 {/* Desktop View (Grid) */}
                 <div className="hidden md:grid grid-cols-3 gap-4 md:gap-6 relative items-start">
-                    {/* Vertical Dividers for Desktop */}
-                    <div className="absolute top-2 bottom-2 left-1/3 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
-                    <div className="absolute top-2 bottom-2 right-1/3 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+                    {/* Vertical Dividers - subtle glass edge lines */}
+                    <div className="absolute top-2 bottom-2 left-1/3 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+                    <div className="absolute top-2 bottom-2 right-1/3 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
 
                     <AuctionColumn />
                     <LogisticsColumn />
@@ -376,8 +376,9 @@ export function QuickCalculator() {
                 <div className="mt-3 md:mt-4">
                     <Button
                         onClick={handleCalculate}
-                        disabled={isCalculating || !price}
+                        disabled={isCalculating}
                         className="w-full h-10 md:h-12 text-sm md:text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+                        style={{ color: '#fff' }}
                         size="lg"
                     >
                         {isCalculating ? (
@@ -409,10 +410,10 @@ export function QuickCalculator() {
                             transition={{ duration: 0.4, ease: 'easeInOut' }}
                             className="mt-3 overflow-hidden"
                         >
-                            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-3 md:p-4 space-y-3">
+                            <div className="rounded-xl p-3 md:p-4 space-y-3 border border-white/[0.06]" style={{ background: 'rgba(255, 255, 255, 0.03)' }}>
                                 {/* Total - Hero number */}
                                 <div className="text-center py-2">
-                                    <p className="text-[10px] md:text-xs font-bold uppercase text-muted-foreground tracking-wider mb-1">
+                                    <p className="text-[10px] md:text-xs font-bold uppercase text-white/60! tracking-wider mb-1">
                                         სულ საქართველოში
                                     </p>
                                     <motion.p

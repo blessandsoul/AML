@@ -33,7 +33,7 @@ export function Benefits() {
     const ActiveIcon = benefits[active].icon;
 
     return (
-        <section className="bg-background py-14 md:py-32 border-t border-border relative">
+        <section className="bg-background/90 dark:bg-background/80 py-14 md:py-32 border-t border-white/8 dark:border-white/5 relative">
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="text-center mb-10 md:mb-20 space-y-4">
                     <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">

@@ -11,7 +11,7 @@ import { BlogPreview } from '@/features/blog/components';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background relative">
+    <div className="flex min-h-screen flex-col bg-background bg-mesh relative">
       <div className="flex flex-col min-h-dvh md:min-h-[calc(100dvh-5rem)]">
         <Hero />
       </div>

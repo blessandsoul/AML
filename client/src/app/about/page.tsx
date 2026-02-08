@@ -13,8 +13,8 @@ import { motion } from "framer-motion";
 
 export default function AboutPage() {
     const stats = [
-        { value: "13+", label: "წელი ბაზარზე", icon: <Building2 className="w-5 h-5" /> },
-        { value: "10,000+", label: "იმპორტირებული ავტო", icon: <Car className="w-5 h-5" /> },
+        { value: "14+", label: "წელი ბაზარზე", icon: <Building2 className="w-5 h-5" /> },
+        { value: "100,000+", label: "იმპორტირებული ავტო", icon: <Car className="w-5 h-5" /> },
         { value: "11", label: "ფილიალი მსოფლიოში", icon: <Globe className="w-5 h-5" /> },
         { value: "100+", label: "თანამშრომელი", icon: <Users className="w-5 h-5" /> },
     ];
@@ -66,7 +66,7 @@ export default function AboutPage() {
             year: "2020",
             title: "ამერიკული ლიცენზია",
             description: "Auto Market Logistic (USA) იღებს ოფიციალურ საექსპორტო ლიცენზიას, რაც საშუალებას გვაძლევს ვიმოქმედოთ შუამავლების გარეშე და გავზარდოთ ეფექტურობა.",
-            icon: <Briefcase className="w-6 h-6 text-purple-500" />,
+            icon: <Briefcase className="w-6 h-6 text-primary" />,
         },
         {
             year: "2022",
@@ -96,14 +96,14 @@ export default function AboutPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-background text-foreground pt-40 pb-16 px-4 md:px-8 overflow-hidden">
+        <div className="min-h-screen bg-background bg-mesh text-foreground pt-40 pb-16 px-4 md:px-8 overflow-hidden">
             {/* Hero Section */}
-            <div className="max-w-4xl mx-auto text-center mb-20 relative">
+            <div className="max-w-4xl mx-auto text-center mb-16 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/20 blur-[120px] rounded-full -z-10" />
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent uppercase tracking-wide py-2 leading-normal"
+                    className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-[#2D88C4] to-[#55A8B9] bg-clip-text text-transparent uppercase tracking-wide py-2 leading-normal"
                 >
                     ჩვენი ისტორია
                 </motion.h1>
@@ -156,12 +156,12 @@ export default function AboutPage() {
             </motion.div>
 
             {/* Why Us / Values (New) */}
-            <div className="max-w-6xl mx-auto mb-32">
-                <div className="text-center mb-12">
+            <div className="max-w-6xl mx-auto mb-20">
+                <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold mb-4">რატომ Auto Market Logistic?</h2>
                     <p className="text-muted-foreground">ჩვენ ვქმნით სანდოობისა და ხარისხის ახალ სტანდარტს</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-3 gap-6">
                     {values.map((val, i) => (
                         <motion.div
                             key={i}
@@ -181,15 +181,15 @@ export default function AboutPage() {
             </div>
 
             {/* Timeline Section */}
-            <div className="relative max-w-5xl mx-auto mb-32">
-                <div className="text-center mb-16">
+            <div className="relative max-w-5xl mx-auto mb-20">
+                <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4">განვითარების გზა</h2>
                     <p className="text-muted-foreground">ნაბიჯ-ნაბიჯ წარმატებისკენ</p>
                 </div>
 
                 <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/0 via-primary/50 to-primary/0 md:-translate-x-1/2" />
 
-                <div className="flex flex-col gap-12 md:gap-24 relative">
+                <div className="flex flex-col relative">
                     {timeline.map((item, index) => {
                         const isEven = index % 2 === 0;
                         return (
@@ -199,24 +199,24 @@ export default function AboutPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-100px" }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className={`relative flex flex-col md:flex-row items-start ${isEven ? 'md:flex-row-reverse' : ''} gap-8 group`}
+                                className={`relative flex flex-col md:flex-row items-start ${isEven ? 'md:flex-row-reverse' : ''} gap-8 group ${index > 0 ? '-mt-14' : ''}`}
                             >
                                 <div className="hidden md:flex flex-1" />
                                 <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-background border-[3px] border-primary z-10 mt-6 md:-translate-x-1/2 shadow-[0_0_15px_rgba(var(--primary),0.5)] group-hover:scale-125 transition-transform duration-300" />
                                 <div className="flex-1 ml-12 md:ml-0">
                                     <div className={`
-                                        relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm p-6 hover:bg-card/60 transition-colors duration-300
+                                        relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm p-4 hover:bg-card/60 transition-colors duration-300
                                         ${item.highlight ? 'border-primary/50 bg-primary/5 shadow-[0_0_30px_rgba(var(--primary),0.1)]' : ''}
                                     `}>
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className="p-3 rounded-xl bg-background/50 border border-border shadow-sm text-primary">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className="p-2.5 rounded-xl bg-background/50 border border-border shadow-sm text-primary">
                                                 {item.icon}
                                             </div>
                                             <Badge variant="outline" className="text-lg font-bold border-primary/30 text-primary px-3 py-1">
                                                 {item.year}
                                             </Badge>
                                         </div>
-                                        <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
+                                        <h3 className="text-xl font-bold mb-2">{item.title}</h3>
                                         <p className="text-muted-foreground leading-relaxed">
                                             {item.description}
                                         </p>
@@ -234,8 +234,8 @@ export default function AboutPage() {
             </div>
 
             {/* Partners Section (New) */}
-            <div className="max-w-5xl mx-auto mb-32">
-                <div className="text-center mb-10">
+            <div className="max-w-5xl mx-auto mb-20">
+                <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold opacity-80 uppercase tracking-widest">ჩვენი ოფიციალური პარტნიორები</h2>
                 </div>
                 <div className="flex flex-wrap justify-center items-end gap-x-12 gap-y-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
@@ -255,11 +255,11 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 className="max-w-4xl mx-auto relative group"
             >
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-[2.5rem] blur opacity-30 group-hover:opacity-60 transition duration-500" />
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#2D88C4] to-[#55A8B9] rounded-[2.5rem] blur opacity-30 group-hover:opacity-60 transition duration-500" />
                 <div className="relative bg-card border border-border p-8 md:p-12 rounded-[2.5rem] overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32" />
 
-                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                         <div className="flex-1 text-center md:text-left">
                             <h2 className="text-3xl md:text-4xl font-bold mb-4">დაიწყეთ დღესვე!</h2>
                             <p className="text-muted-foreground text-lg mb-6">

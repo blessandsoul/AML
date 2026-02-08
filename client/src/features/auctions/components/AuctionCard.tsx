@@ -73,7 +73,7 @@ export function AuctionCard({ car, index }: AuctionCardProps) {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
-            className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full"
+            className="rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full group relative glass-2 glass-tint glass-hover"
         >
             {/* Image Section */}
             <Link href={`/auctions/${car.id}`} className="block relative aspect-[4/3] overflow-hidden bg-muted">
@@ -153,7 +153,7 @@ export function AuctionCard({ car, index }: AuctionCardProps) {
                 </div>
 
                 {/* Bidding Info Grid */}
-                <div className="grid grid-cols-2 gap-3 bg-muted/40 p-3 rounded-xl border border-border/50">
+                <div className="grid grid-cols-2 gap-3 bg-white/5 dark:bg-white/3 border border-white/10 p-3 rounded-xl">
                     <div className="space-y-1">
                         <div className="text-[10px] uppercase text-muted-foreground font-semibold flex items-center gap-1">
                             <Gavel className="w-3 h-3" />
@@ -169,7 +169,7 @@ export function AuctionCard({ car, index }: AuctionCardProps) {
                         </div>
                     </div>
 
-                    <div className="space-y-1 pl-3 border-l border-border/50">
+                    <div className="space-y-1 pl-3 border-l border-white/10">
                         <div className="text-[10px] uppercase text-muted-foreground font-semibold flex items-center gap-1">
                             <Trophy className="w-3 h-3" />
                             მოგება (სავარაუდო)

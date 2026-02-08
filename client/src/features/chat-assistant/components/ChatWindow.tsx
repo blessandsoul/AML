@@ -54,10 +54,10 @@ export function ChatWindow({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] md:w-95 max-w-sm h-100 md:h-130 bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] md:w-95 max-w-sm h-100 md:h-130 glass-3 glass-tint glass-noise rounded-2xl flex flex-col overflow-hidden"
         >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-blue-500 to-blue-600">
+            <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary/80 to-primary/60 backdrop-blur-xl border-b border-white/15">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                         <CarCharacter state={characterState} size={28} />

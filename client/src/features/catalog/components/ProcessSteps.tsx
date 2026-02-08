@@ -15,7 +15,7 @@ export function ProcessSteps() {
     const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
     return (
-        <section ref={containerRef} className="bg-muted/30 py-8 md:py-14 relative overflow-hidden">
+        <section ref={containerRef} className="bg-white/3 dark:bg-white/2 backdrop-blur-sm py-8 md:py-14 relative overflow-hidden">
 
             <div className="container mx-auto px-4 relative z-10 w-full max-w-7xl">
                 <motion.div style={{ y }} className="text-center mb-6 md:mb-10">

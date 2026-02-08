@@ -35,7 +35,7 @@ export default async function CarDetailsPage({ params }: PageProps) {
     ];
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="min-h-screen pt-10 md:pt-8 pb-16 container mx-auto px-4">
             <div className="mb-6">
                 <Button variant="ghost" asChild className="pl-0 hover:pl-2 transition-all">
                     <Link href="/catalog">

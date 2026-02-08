@@ -124,11 +124,11 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(0.97 0.005 240);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: oklch(0.97 0.005 240);
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.98 0.003 240);
   --popover-foreground: oklch(0.145 0 0);
   /* Primary: Cerulean Blue #2D88C4 */
   --primary: oklch(0.6018 0.1239 242.355);
@@ -157,6 +157,25 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* ═══ GLASSMORPHISM SYSTEM ═══ */
+  --glass-bg-1: oklch(1 0 0 / 45%);
+  --glass-bg-2: oklch(1 0 0 / 55%);
+  --glass-bg-3: oklch(1 0 0 / 68%);
+  --glass-blur-1: 16px;
+  --glass-blur-2: 24px;
+  --glass-blur-3: 32px;
+  --glass-border-t: oklch(1 0 0 / 70%);
+  --glass-border-l: oklch(1 0 0 / 50%);
+  --glass-border-b: oklch(0 0 0 / 6%);
+  --glass-border-r: oklch(0 0 0 / 4%);
+  --glass-tint: oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-tint-hover: oklch(0.6018 0.1239 242.355 / 12%);
+  --glass-shadow-sm: 0 4px 16px oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-shadow: 0 8px 32px oklch(0.6018 0.1239 242.355 / 8%);
+  --glass-shadow-lg: 0 16px 48px oklch(0.6018 0.1239 242.355 / 12%);
+  --glass-inner-glow: inset 0 1px 0 0 oklch(1 0 0 / 50%);
+  --glass-noise-opacity: 0.03;
 }
 
 .dark {
@@ -202,6 +221,22 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.7518 0.1239 242.355);
+
+  /* ═══ GLASSMORPHISM SYSTEM — DARK ═══ */
+  --glass-bg-1: oklch(1 0 0 / 4%);
+  --glass-bg-2: oklch(1 0 0 / 7%);
+  --glass-bg-3: oklch(1 0 0 / 10%);
+  --glass-border-t: oklch(1 0 0 / 15%);
+  --glass-border-l: oklch(1 0 0 / 10%);
+  --glass-border-b: oklch(1 0 0 / 4%);
+  --glass-border-r: oklch(1 0 0 / 4%);
+  --glass-tint: oklch(0.7518 0.1239 242.355 / 4%);
+  --glass-tint-hover: oklch(0.7518 0.1239 242.355 / 8%);
+  --glass-shadow-sm: 0 4px 16px oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-shadow: 0 8px 32px oklch(0.6018 0.1239 242.355 / 10%);
+  --glass-shadow-lg: 0 16px 48px oklch(0.6018 0.1239 242.355 / 15%);
+  --glass-inner-glow: inset 0 1px 0 0 oklch(1 0 0 / 10%);
+  --glass-noise-opacity: 0.035;
 }
 
 /* ============================================================================
@@ -228,10 +263,10 @@
   --aml-link: #007AFF;
 
   /* Override semantic colors with AML palette */
-  --background: oklch(1 0 0);
+  --background: oklch(0.97 0.005 240);
   --foreground: oklch(0.25 0.02 250);
 
-  --card: oklch(1 0 0);
+  --card: oklch(0.97 0.005 240);
   --card-foreground: oklch(0.25 0.02 250);
 
   --popover: oklch(1 0 0);
@@ -277,6 +312,25 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.85 0 0);
   --sidebar-ring: oklch(0.6018 0.1239 242.355);
+
+  /* ═══ GLASSMORPHISM SYSTEM ═══ */
+  --glass-bg-1: oklch(1 0 0 / 45%);
+  --glass-bg-2: oklch(1 0 0 / 55%);
+  --glass-bg-3: oklch(1 0 0 / 68%);
+  --glass-blur-1: 16px;
+  --glass-blur-2: 24px;
+  --glass-blur-3: 32px;
+  --glass-border-t: oklch(1 0 0 / 70%);
+  --glass-border-l: oklch(1 0 0 / 50%);
+  --glass-border-b: oklch(0 0 0 / 6%);
+  --glass-border-r: oklch(0 0 0 / 4%);
+  --glass-tint: oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-tint-hover: oklch(0.6018 0.1239 242.355 / 12%);
+  --glass-shadow-sm: 0 4px 16px oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-shadow: 0 8px 32px oklch(0.6018 0.1239 242.355 / 8%);
+  --glass-shadow-lg: 0 16px 48px oklch(0.6018 0.1239 242.355 / 12%);
+  --glass-inner-glow: inset 0 1px 0 0 oklch(1 0 0 / 50%);
+  --glass-noise-opacity: 0.03;
 }
 
 /* AML Dark Mode */
@@ -324,6 +378,22 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.7518 0.1239 242.355);
+
+  /* ═══ GLASSMORPHISM SYSTEM — DARK ═══ */
+  --glass-bg-1: oklch(1 0 0 / 4%);
+  --glass-bg-2: oklch(1 0 0 / 7%);
+  --glass-bg-3: oklch(1 0 0 / 10%);
+  --glass-border-t: oklch(1 0 0 / 15%);
+  --glass-border-l: oklch(1 0 0 / 10%);
+  --glass-border-b: oklch(1 0 0 / 4%);
+  --glass-border-r: oklch(1 0 0 / 4%);
+  --glass-tint: oklch(0.7518 0.1239 242.355 / 4%);
+  --glass-tint-hover: oklch(0.7518 0.1239 242.355 / 8%);
+  --glass-shadow-sm: 0 4px 16px oklch(0.6018 0.1239 242.355 / 6%);
+  --glass-shadow: 0 8px 32px oklch(0.6018 0.1239 242.355 / 10%);
+  --glass-shadow-lg: 0 16px 48px oklch(0.6018 0.1239 242.355 / 15%);
+  --glass-inner-glow: inset 0 1px 0 0 oklch(1 0 0 / 10%);
+  --glass-noise-opacity: 0.035;
 }
 
 @layer base {
@@ -333,6 +403,22 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Noise grain texture for glass surfaces */
+  .glass-noise {
+    position: relative;
+  }
+  .glass-noise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: var(--glass-noise-opacity);
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
   }
 
   /* Hide Scrollbar Globally (Neuro-Minimalism) */
@@ -346,5 +432,178 @@
   ::-webkit-scrollbar {
     display: none;
     /* Chrome/Safari/Webkit */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASSMORPHISM UTILITIES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* Level 1: Sections, backgrounds */
+  .glass-1 {
+    background: var(--glass-bg-1);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid;
+    border-top-color: var(--glass-border-t);
+    border-left-color: var(--glass-border-l);
+    border-bottom-color: var(--glass-border-b);
+    border-right-color: var(--glass-border-r);
+    box-shadow: var(--glass-shadow-sm), var(--glass-inner-glow);
+  }
+
+  /* Level 2: Cards, panels */
+  .glass-2 {
+    background: var(--glass-bg-2);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border: 1px solid;
+    border-top-color: var(--glass-border-t);
+    border-left-color: var(--glass-border-l);
+    border-bottom-color: var(--glass-border-b);
+    border-right-color: var(--glass-border-r);
+    box-shadow: var(--glass-shadow), var(--glass-inner-glow);
+  }
+
+  /* Level 3: Dialogs, popovers, dropdowns */
+  .glass-3 {
+    background: var(--glass-bg-3);
+    -webkit-backdrop-filter: blur(32px);
+    backdrop-filter: blur(32px);
+    border: 1px solid;
+    border-top-color: var(--glass-border-t);
+    border-left-color: var(--glass-border-l);
+    border-bottom-color: var(--glass-border-b);
+    border-right-color: var(--glass-border-r);
+    box-shadow: var(--glass-shadow-lg), var(--glass-inner-glow);
+  }
+
+  /* ═══ LIQUID GLASS (Apple iOS 26 style) ═══ */
+  .liquid-glass {
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    background:
+      linear-gradient(
+        135deg,
+        oklch(1 0 0 / 20%) 0%,
+        oklch(1 0 0 / 6%) 30%,
+        transparent 55%,
+        oklch(1 0 0 / 4%) 80%,
+        oklch(1 0 0 / 12%) 100%
+      ),
+      oklch(1 0 0 / 12%);
+    border: 1px solid;
+    border-top-color: oklch(1 0 0 / 45%);
+    border-left-color: oklch(1 0 0 / 25%);
+    border-bottom-color: oklch(0 0 0 / 5%);
+    border-right-color: oklch(0 0 0 / 3%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 35%),
+      inset 0 0 20px 0 oklch(1 0 0 / 6%),
+      0 4px 24px oklch(0 0 0 / 8%),
+      0 1px 2px oklch(0 0 0 / 4%);
+  }
+  :is(.dark *).liquid-glass {
+    background:
+      linear-gradient(
+        135deg,
+        oklch(1 0 0 / 10%) 0%,
+        oklch(1 0 0 / 3%) 30%,
+        transparent 55%,
+        oklch(1 0 0 / 2%) 80%,
+        oklch(1 0 0 / 7%) 100%
+      ),
+      oklch(1 0 0 / 5%);
+    border-top-color: oklch(1 0 0 / 20%);
+    border-left-color: oklch(1 0 0 / 12%);
+    border-bottom-color: oklch(1 0 0 / 3%);
+    border-right-color: oklch(1 0 0 / 3%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 15%),
+      inset 0 0 20px 0 oklch(1 0 0 / 3%),
+      0 8px 32px oklch(0 0 0 / 25%),
+      0 1px 2px oklch(0 0 0 / 12%);
+  }
+
+  /* Liquid glass solid — scrolled state (over light content) */
+  .liquid-glass-solid {
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    background:
+      linear-gradient(
+        135deg,
+        oklch(1 0 0 / 15%) 0%,
+        oklch(1 0 0 / 5%) 30%,
+        transparent 55%,
+        oklch(1 0 0 / 3%) 80%,
+        oklch(1 0 0 / 8%) 100%
+      ),
+      oklch(1 0 0 / 72%);
+    border: 1px solid;
+    border-top-color: oklch(1 0 0 / 60%);
+    border-left-color: oklch(1 0 0 / 40%);
+    border-bottom-color: oklch(0 0 0 / 6%);
+    border-right-color: oklch(0 0 0 / 4%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 45%),
+      inset 0 0 20px 0 oklch(1 0 0 / 5%),
+      0 4px 24px oklch(0 0 0 / 8%),
+      0 1px 2px oklch(0 0 0 / 4%);
+  }
+  :is(.dark *).liquid-glass-solid {
+    background:
+      linear-gradient(
+        135deg,
+        oklch(1 0 0 / 8%) 0%,
+        oklch(1 0 0 / 2%) 30%,
+        transparent 55%,
+        oklch(1 0 0 / 1%) 80%,
+        oklch(1 0 0 / 5%) 100%
+      ),
+      oklch(0.15 0.02 260 / 75%);
+    border-top-color: oklch(1 0 0 / 15%);
+    border-left-color: oklch(1 0 0 / 10%);
+    border-bottom-color: oklch(1 0 0 / 3%);
+    border-right-color: oklch(1 0 0 / 3%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 12%),
+      inset 0 0 20px 0 oklch(1 0 0 / 2%),
+      0 8px 32px oklch(0 0 0 / 30%),
+      0 1px 2px oklch(0 0 0 / 15%);
+  }
+
+  /* Glass tint overlay (diagonal brand color gradient) */
+  .glass-tint {
+    background-image: linear-gradient(
+      135deg,
+      var(--glass-tint) 0%,
+      transparent 50%,
+      var(--glass-tint) 100%
+    );
+  }
+
+  /* Glass hover enhancement */
+  .glass-hover {
+    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .glass-hover:hover {
+    box-shadow: var(--glass-shadow-lg), var(--glass-inner-glow);
+  }
+
+  /* ═══ GRADIENT MESH BACKGROUNDS ═══ */
+  .bg-mesh {
+    background-image:
+      radial-gradient(ellipse at 15% 50%, oklch(0.6018 0.1239 242.355 / 18%) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, oklch(0.6861 0.0842 212.769 / 14%) 0%, transparent 50%),
+      radial-gradient(ellipse at 55% 85%, oklch(0.65 0.15 240 / 12%) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 0%, oklch(0.7 0.08 250 / 8%) 0%, transparent 40%);
+  }
+
+  .dark .bg-mesh {
+    background-image:
+      radial-gradient(ellipse at 15% 50%, oklch(0.6018 0.1239 242.355 / 15%) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 15%, oklch(0.6861 0.0842 212.769 / 12%) 0%, transparent 50%),
+      radial-gradient(ellipse at 55% 85%, oklch(0.65 0.15 240 / 10%) 0%, transparent 50%);
   }
 }

@@ -37,10 +37,7 @@ export function HeroTitle() {
                 suppressHydrationWarning
                 style={{ opacity: 0 }}
             >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#55A8B9] via-[#3498DB] to-[#55A8B9]">
-                    {HERO_COPY.mainTitle}
-                </span>
-                <span className="text-white/90 font-bold tracking-tight text-sm md:text-lg lg:text-xl mt-2 max-w-2xl mx-auto drop-shadow-sm">
+                <span className="text-white/90 font-bold tracking-tight text-sm md:text-lg lg:text-xl max-w-2xl mx-auto drop-shadow-sm">
                     {HERO_COPY.description}
                 </span>
             </motion.h1>

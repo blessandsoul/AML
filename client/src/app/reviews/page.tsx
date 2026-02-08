@@ -31,7 +31,7 @@ export default function ReviewsPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background pt-10 md:pt-8 pb-12">
+    <div className="min-h-screen bg-background bg-mesh pt-10 md:pt-8 pb-12">
       <div className="container mx-auto px-4">
         <Breadcrumbs
           items={[

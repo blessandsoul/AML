@@ -3,8 +3,9 @@ import { FlagGE, FlagUS, FlagRU, FlagUA, FlagSA } from '@/components/ui/flags';
 
 export const NAV_ITEMS = [
     { label: 'მთავარი', href: '/' },
-    { label: 'ლოჯისტიკა', href: '/calculator' },
+    { label: 'მთვლელი', href: '/calculator' },
     { label: 'ავტომობილები', href: '/catalog' },
+    { label: 'ტეხასი', href: '/texas' },
     { label: 'ჩვენს შესახებ', href: '/about' },
     { label: 'კონტაქტი', href: '/contact' },
 ];

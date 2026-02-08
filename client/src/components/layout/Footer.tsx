@@ -4,10 +4,9 @@ import { cn } from '@/lib/utils';
 
 export function Footer() {
     return (
-        <footer className="bg-background border-t border-border/40 relative overflow-hidden">
+        <footer className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border-t border-white/10 dark:border-white/8 relative overflow-hidden">
             {/* Decorational background elements */}
-            <div className="absolute inset-0 bg-grid-slate-50/[0.04] -z-10" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-background via-muted/20 to-muted/50 -z-10" />
+            <div className="absolute inset-0 bg-mesh -z-10" />
 
             <div className="container mx-auto px-4 pt-16 pb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
@@ -108,7 +107,7 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="border-t border-border pt-8 mt-8 flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 text-center md:text-left">
+                <div className="border-t border-white/10 dark:border-white/8 pt-8 mt-8 flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 text-center md:text-left">
                     <p className="text-sm font-medium text-muted-foreground" suppressHydrationWarning>
                         &copy; {new Date().getFullYear()} Auto Market Logistic. ყველა უფლება დაცულია.
                     </p>
@@ -126,7 +125,7 @@ function SocialButton({ href, icon: Icon, label }: { href: string; icon: any; la
     return (
         <a
             href={href}
-            className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/5 transition-all duration-300"
+            className="w-10 h-10 rounded-full bg-white/8 dark:bg-white/5 backdrop-blur-md border border-white/15 dark:border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
             aria-label={label}
         >
             <Icon className="w-5 h-5" />
@@ -150,7 +149,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 
 function AddressItem({ flag, text }: { flag: React.ReactNode; text: string }) {
     return (
-        <li className="flex items-start gap-3 p-3 rounded-2xl bg-muted/40 hover:bg-muted/70 transition-colors border border-transparent hover:border-border/50">
+        <li className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 dark:bg-white/3 backdrop-blur-sm border border-white/8 dark:border-white/5 hover:bg-white/10 dark:hover:bg-white/8 hover:border-white/15 dark:hover:border-white/10 transition-all duration-300">
             <div className="w-6 h-4.5 mt-0.5 rounded-sm overflow-hidden relative shadow-sm shrink-0">
                 {flag}
             </div>

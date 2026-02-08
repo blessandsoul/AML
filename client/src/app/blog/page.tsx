@@ -59,8 +59,9 @@ function BlogPageContent() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <Breadcrumbs
+    <div className="min-h-screen bg-background bg-mesh">
+      <div className="container mx-auto px-4 py-12">
+        <Breadcrumbs
         items={[
           { label: 'მთავარი', href: '/' },
           { label: 'ბლოგი' },
@@ -106,6 +107,7 @@ function BlogPageContent() {
             onPageChange={handlePageChange}
           />
         </main>
+      </div>
       </div>
     </div>
   );

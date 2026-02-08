@@ -23,7 +23,7 @@ export default function TrackPage() {
 
   return (
     <MainLayout>
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4">
+      <div className="min-h-[calc(100vh-200px)] bg-background bg-mesh flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

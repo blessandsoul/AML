@@ -26,7 +26,7 @@ export function ReviewCard({ review, index = 0 }: ReviewCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-full"
+      className="rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full group relative glass-2 glass-tint glass-hover"
     >
       {/* Car Image Container */}
       {review.photos.length > 0 && (

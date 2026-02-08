@@ -29,7 +29,7 @@ const FAQS = [
 
 export function MinimalFAQ() {
     return (
-        <section className="bg-muted/30 py-12 md:py-24 border-t border-border">
+        <section className="bg-white/3 dark:bg-white/2 backdrop-blur-sm py-12 md:py-24 border-t border-white/8 dark:border-white/5">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h3 className="text-3xl font-black text-foreground tracking-tight mb-4">
@@ -42,7 +42,7 @@ export function MinimalFAQ() {
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {FAQS.map((faq, i) => (
-                        <AccordionItem key={i} value={`item-${i}`} className="bg-background border border-border rounded-xl px-4 overflow-hidden shadow-sm">
+                        <AccordionItem key={i} value={`item-${i}`} className="bg-background/90 dark:bg-background/80 border border-white/8 dark:border-white/5 rounded-xl px-4 overflow-hidden shadow-sm">
                             <AccordionTrigger className="hover:text-primary text-left font-bold text-foreground py-4">
                                 {faq.q}
                             </AccordionTrigger>

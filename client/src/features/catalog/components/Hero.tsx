@@ -1,7 +1,5 @@
 'use client';
 
-import * as React from 'react';
-import Image from 'next/image';
 import { HeroTitle } from './HeroTitle';
 import { QuickCalculator } from './QuickCalculator';
 import { CarfaxReport } from './CarfaxReport';
@@ -9,19 +7,20 @@ import { CarfaxReport } from './CarfaxReport';
 export function Hero() {
     return (
         <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center mt-0 md:-mt-20 pt-0 md:pt-20">
-            {/* Background Image - Full bleed including behind header */}
+            {/* Background Video */}
             <div className="absolute inset-0 z-0">
-                <Image
-                    src="/hero-bg/aml.jpeg"
-                    alt="AML Hero Background"
-                    fill
-                    priority
-                    quality={90}
-                    className="object-cover object-center"
-                    sizes="100vw"
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster="/hero-bg/aml.jpeg"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
+                    src="/hero-bg/long.mp4"
                 />
-                {/* Darker overlay for better text contrast while showing image */}
-                <div className="absolute inset-0 bg-[#1C2331]/55" />
+                {/* Brand-tinted overlay */}
+                <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(145deg, rgba(45,136,196,0.22) 0%, rgba(85,168,185,0.15) 35%, rgba(45,136,196,0.10) 65%, rgba(12,24,48,0.18) 100%)' }} />
             </div>
 
             {/* Main Content */}

@@ -13,8 +13,10 @@ import {
     Linkedin,
     Clock,
     MessageCircle,
-    MessageSquare
+    MessageSquare,
+    Building2
 } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -24,6 +26,67 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+
+interface OfficeLocation {
+    id: string;
+    city: string;
+    label?: string;
+    country: string;
+    address: string;
+    phone: string;
+    mapQuery: string;
+    photo: string | null;
+}
+
+const officeLocations: OfficeLocation[] = [
+    {
+        id: "tbilisi-uznadze",
+        city: "თბილისი",
+        label: "საათავო",
+        country: "საქართველო",
+        address: "დიმიტრი უზნაძის ქ. 2",
+        phone: "+995 32 205 42 44",
+        mapQuery: "2%20Dimitri%20Uznadze%20St%2C%20Tbilisi%2C%20GE",
+        photo: "/offices/Tbilisi-Uznadze-Str.jpg",
+    },
+    {
+        id: "tbilisi-dadiani",
+        city: "თბილისი",
+        label: "კარაველა",
+        country: "საქართველო",
+        address: "7 ცოტნე დადიანის ქ.",
+        phone: "+995 32 205 42 44",
+        mapQuery: "7%20Tsotne%20Dadiani%20St%2C%20Tbilisi%2C%20GE",
+        photo: "/offices/Tbilisi-Tsotne-Dadiani-Str.jpg",
+    },
+    {
+        id: "batumi",
+        city: "ბათუმი",
+        country: "საქართველო",
+        address: "ჩოლოყაშვილის ქ.",
+        phone: "+995 32 205 42 44",
+        mapQuery: "Cholokashvili%20St%2C%20Batumi%2C%20GE",
+        photo: "/offices/Batumi.jpg",
+    },
+    {
+        id: "odesa",
+        city: "ოდესა",
+        country: "უკრაინა",
+        address: "სპარტაკოვსკას ქ. 48ა",
+        phone: "+380 95 777 00 46",
+        mapQuery: "48a%20Spartakivska%20St%2C%20Odesa%2C%20UA",
+        photo: "/offices/Odesa.jpg",
+    },
+    {
+        id: "houston",
+        city: "ჰიუსტონი, ტეხასი",
+        country: "აშშ",
+        address: "3635 Trailmobile Rd",
+        phone: "+1 201 600 2192",
+        mapQuery: "3635%20Trailmobile%20Rd%2C%20Houston%2C%20TX",
+        photo: null,
+    },
+];
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +101,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background pt-10 md:pt-8 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background bg-mesh pt-10 md:pt-8 pb-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto space-y-16">
                 <Breadcrumbs
                     items={[
@@ -87,7 +150,7 @@ export default function ContactPage() {
                         </div>
 
                         {/* Working Hours using a Card style */}
-                        <div className="bg-muted/30 rounded-2xl p-6 border border-border/50 space-y-4">
+                        <div className="glass-1 rounded-2xl p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Clock className="size-6 text-primary" />
                                 <h3 className="text-xl font-semibold text-foreground">სამუშაო საათები</h3>
@@ -149,7 +212,7 @@ export default function ContactPage() {
                     {/* Right Column: Form + FAQ */}
                     <div className="space-y-12 animate-in fade-in slide-in-from-right-8 duration-700 delay-300">
                         {/* Contact Form */}
-                        <div className="bg-card border border-border/50 rounded-2xl p-6 md:p-8 shadow-sm backdrop-blur-sm">
+                        <div className="glass-2 glass-tint rounded-2xl p-6 md:p-8">
                             <h2 className="text-2xl font-semibold text-foreground mb-6">
                                 მოგვწერეთ
                             </h2>
@@ -213,18 +276,21 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                {/* Map Section - Full Width */}
-                <div className="rounded-3xl overflow-hidden border border-border/50 h-[450px] w-full animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500 bg-muted relative shadow-xl">
-                    <iframe
-                        src="https://maps.google.com/maps?width=100%&height=100%&hl=en&q=2%20Dimitri%20Uznadze%20St%2C%20Tbilisi%2C%20GE&t=&z=15&ie=UTF8&iwloc=B&output=embed"
-                        className="w-full h-full grayscale-[100%] invert-[90%] opacity-80 hover:grayscale-0 hover:invert-0 hover:opacity-100 transition-all duration-700 ease-in-out"
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                    ></iframe>
+                {/* Office Locations Section */}
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div className="text-center space-y-3">
+                        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                            ჩვენი ოფისები
+                        </h2>
+                        <p className="text-muted-foreground max-w-xl mx-auto">
+                            ჩვენი ფილიალები მოქმედებს საქართველოში, უკრაინასა და ამერიკის შეერთებულ შტატებში
+                        </p>
+                    </div>
 
-                    {/* Overlay hint that disappears on hover/interaction */}
-                    <div className="absolute top-4 right-4 bg-background/90 backdrop-blur text-foreground px-4 py-2 rounded-xl border border-border shadow-lg text-sm font-medium pointer-events-none opacity-80">
-                        📍 თბილისი, დ. უზნაძის ქ. 2
+                    <div className="space-y-6">
+                        {officeLocations.map((office, index) => (
+                            <OfficeCard key={office.id} office={office} index={index} />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -284,5 +350,80 @@ function SocialButton({ icon, href, label }: { icon: React.ReactNode; href: stri
         >
             {icon}
         </a>
+    );
+}
+
+function OfficeCard({ office, index }: { office: OfficeLocation; index: number }) {
+    return (
+        <div
+            className={cn(
+                "glass-2 glass-tint glass-hover rounded-2xl overflow-hidden",
+                "animate-in fade-in slide-in-from-bottom-6 duration-700"
+            )}
+            style={{ animationDelay: `${index * 100}ms` }}
+        >
+            <div className="grid grid-cols-1 md:grid-cols-3">
+                {/* Info */}
+                <div className="p-6 flex flex-col justify-center space-y-4">
+                    <div>
+                        <h3 className="text-xl font-bold text-foreground">
+                            {office.city}
+                        </h3>
+                        {office.label && (
+                            <p className="text-sm text-primary font-medium mt-0.5">
+                                &ldquo;{office.label}&rdquo;
+                            </p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+                            {office.country}
+                        </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                        <MapPin className="size-5 text-primary mt-0.5 shrink-0" />
+                        <span className="text-sm text-foreground font-medium">
+                            {office.address}
+                        </span>
+                    </div>
+                    <a
+                        href={`tel:${office.phone.replace(/\s/g, "")}`}
+                        className="flex items-center gap-3 group"
+                    >
+                        <Phone className="size-5 text-primary shrink-0" />
+                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                            {office.phone}
+                        </span>
+                    </a>
+                </div>
+
+                {/* Map */}
+                <div className="h-55 md:h-auto md:min-h-60 relative bg-muted">
+                    <iframe
+                        src={`https://maps.google.com/maps?width=100%25&height=100%25&hl=en&q=${office.mapQuery}&t=&z=15&ie=UTF8&iwloc=B&output=embed`}
+                        className="w-full h-full grayscale-100 invert-90 opacity-80 hover:grayscale-0 hover:invert-0 hover:opacity-100 transition-all duration-700 ease-in-out"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={`${office.city} - რუკა`}
+                    />
+                </div>
+
+                {/* Photo */}
+                <div className="h-55 md:h-auto md:min-h-60 relative bg-muted">
+                    {office.photo ? (
+                        <Image
+                            src={office.photo}
+                            alt={`${office.city} ოფისი`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted/50">
+                            <Building2 className="size-12 text-muted-foreground/30" />
+                            <span className="text-xs text-muted-foreground/50">ფოტო მალე</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 }

@@ -44,7 +44,7 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-full"
+                className="rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full group relative glass-2 glass-tint glass-hover"
                 suppressHydrationWarning
             >
                 {/* Image Container */}
@@ -118,13 +118,13 @@ export function CarCard({ car, index, priority = false }: CarCardProps) {
                         </div>
 
                         <div className="flex flex-wrap gap-2 pt-1">
-                            <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
+                            <span className="bg-white/8 dark:bg-white/5 border border-white/10 text-zinc-600 dark:text-zinc-400 px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
                                 Run & Drive
                             </span>
-                            <span className="bg-muted text-muted-foreground border border-border px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
+                            <span className="bg-white/5 dark:bg-white/3 border border-white/10 text-muted-foreground px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
                                 გასაღები: კი
                             </span>
-                            <span className="bg-muted text-muted-foreground border border-border px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
+                            <span className="bg-white/5 dark:bg-white/3 border border-white/10 text-muted-foreground px-2 py-0.5 rounded-[4px] text-[9px] font-bold uppercase tracking-wide">
                                 {car.auction || 'IAAI'}
                             </span>
                         </div>

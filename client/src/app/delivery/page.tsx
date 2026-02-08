@@ -78,7 +78,7 @@ export default function DeliveryPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-background text-foreground pt-40 pb-16 px-4 md:px-8">
+        <div className="min-h-screen bg-background bg-mesh text-foreground pt-40 pb-16 px-4 md:px-8">
             {/* Hero Section */}
             <div className="max-w-4xl mx-auto text-center mb-20">
                 <motion.h1

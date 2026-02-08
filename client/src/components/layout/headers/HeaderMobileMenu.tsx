@@ -18,7 +18,6 @@ import {
     Package,
     Wallet,
     Mail,
-    Palette,
     FileText,
 } from 'lucide-react';
 import {
@@ -41,10 +40,6 @@ interface HeaderMobileMenuProps {
     user: SharedHeaderProps['user'];
     userInitials: string;
     handleLogout: () => Promise<void>;
-    palette: SharedHeaderProps['palette'];
-    setPalette: SharedHeaderProps['setPalette'];
-    palettes: SharedHeaderProps['palettes'];
-    paletteMounted: boolean;
 }
 
 export function HeaderMobileMenu({
@@ -56,10 +51,6 @@ export function HeaderMobileMenu({
     user,
     userInitials,
     handleLogout,
-    palette,
-    setPalette,
-    palettes,
-    paletteMounted,
 }: HeaderMobileMenuProps) {
     return (
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -129,31 +120,6 @@ export function HeaderMobileMenu({
                             );
                         })}
 
-                        {/* Color Palette Selector (Mobile - Testing) */}
-                        {paletteMounted && (
-                            <>
-                                <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-4 mb-2">
-                                    Color Theme (Testing)
-                                </div>
-                                <div className="flex gap-2">
-                                    {palettes.map((p) => (
-                                        <button
-                                            key={p.value}
-                                            onClick={() => setPalette(p.value)}
-                                            className={cn(
-                                                "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all",
-                                                palette === p.value
-                                                    ? "bg-primary text-primary-foreground"
-                                                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                                            )}
-                                        >
-                                            <Palette className="w-3.5 h-3.5 mx-auto mb-1" />
-                                            {p.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        )}
                     </nav>
 
                     {/* Dashboard Links + Logout (Mobile) */}

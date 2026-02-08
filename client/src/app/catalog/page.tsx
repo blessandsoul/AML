@@ -27,7 +27,7 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export default function CatalogPage() {
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="min-h-screen bg-background bg-mesh text-foreground">
             <div className="container mx-auto px-4 pb-8 pt-10 md:pt-8">
                 <Breadcrumbs
                     items={[

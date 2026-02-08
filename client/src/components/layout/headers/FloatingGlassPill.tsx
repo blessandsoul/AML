@@ -15,7 +15,6 @@ import {
     DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ColorPaletteSelector } from "@/components/common/ColorPaletteSelector";
 import { NAV_ITEMS, MORE_ITEMS, LANGUAGES } from './header-constants';
 import { HeaderMobileMenu } from './HeaderMobileMenu';
 import type { SharedHeaderProps } from './header-types';
@@ -169,7 +168,7 @@ function MobileBar({ props }: { props: SharedHeaderProps }) {
     const mobileProps = {
         useWhiteText: true, mobileMenuOpen: props.mobileMenuOpen, setMobileMenuOpen: props.setMobileMenuOpen,
         mounted: props.mounted, isAuthenticated: props.isAuthenticated, user: props.user, userInitials: props.userInitials,
-        handleLogout: props.handleLogout, palette: props.palette, setPalette: props.setPalette, palettes: props.palettes, paletteMounted: props.paletteMounted,
+        handleLogout: props.handleLogout,
     };
     return (
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 px-4 pt-3">
@@ -189,7 +188,18 @@ function MobileBar({ props }: { props: SharedHeaderProps }) {
 // VARIANT A: Floating Dock
 // ================================================================
 function FloatingDock({ props }: { props: SharedHeaderProps }) {
-    const glass = "bg-black/40 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.2)]";
+    // White text only on home page hero (dark video bg). Everywhere else → dark text in light mode.
+    const isHero = !props.scrolled && props.pathname === '/';
+    const glass = cn(
+        "transition-all duration-300",
+        isHero ? "liquid-glass" : "liquid-glass-solid",
+    );
+
+    const textActive = isHero ? "text-white" : "text-foreground dark:text-white";
+    const textMuted = isHero ? "text-white/55 hover:text-white/90" : "text-foreground/50 dark:text-white/55 hover:text-foreground/80 dark:hover:text-white/90";
+    const textIcon = isHero ? "text-white/70 hover:text-white hover:bg-white/10" : "text-foreground/60 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10";
+    const activeBg = isHero ? "bg-white/15" : "bg-black/10 dark:bg-white/15";
+
     return (
         <div className="hidden md:block fixed top-0 left-0 right-0 z-50 py-3 px-6">
             <div className="relative flex items-center justify-center">
@@ -198,7 +208,7 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
                     <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
                         <img src="/logo.png" alt="AML" className="w-full h-full object-cover" />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900 }} className="text-xs tracking-[0.15em] text-white/90 group-hover:text-white whitespace-nowrap uppercase">Auto Market Logistic</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900 }} className={cn("text-xs tracking-[0.15em] whitespace-nowrap uppercase transition-colors duration-300", isHero ? "text-white/90 group-hover:text-white" : "text-foreground/80 dark:text-white/90 group-hover:text-foreground dark:group-hover:text-white")}>Auto Market Logistic</span>
                 </Link>
 
                 {/* Center nav dock — truly centered */}
@@ -214,27 +224,26 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
                                 <Link
                                     href={item.href}
                                     className={cn(
-                                        "relative block px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors duration-200",
-                                        isActive ? "text-white" : "text-white/55 hover:text-white/90"
+                                        "relative block px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
+                                        isActive ? textActive : textMuted
                                     )}
                                 >
                                     {isActive && (
-                                        <motion.div layoutId="dock-active" className="absolute inset-0 rounded-xl bg-white/15" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />
+                                        <motion.div layoutId="dock-active" className={cn("absolute inset-0 rounded-xl", activeBg)} transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />
                                     )}
                                     <span className="relative z-10">{item.label}</span>
                                 </Link>
                             </motion.div>
                         );
                     })}
-                    <MoreNav props={props} layoutId="dock-active" triggerClass="px-2.5 py-2 text-white/55 hover:text-white/90" activeClass="text-white" />
+                    <MoreNav props={props} layoutId="dock-active" triggerClass={cn("px-2.5 py-2", textMuted)} activeClass={textActive} />
 
                 </motion.nav>
 
                 {/* Actions pill — absolute right */}
                 <div className={cn("absolute right-0 flex items-center gap-0.5 rounded-full px-1.5 py-1", glass)}>
-                    <div className="hidden lg:flex"><ColorPaletteSelector /></div>
-                    <LangSwitcher props={props} className="text-white/70 hover:text-white hover:bg-white/10" />
-                    <AuthSection props={props} btnClass="text-white/70 hover:text-white hover:bg-white/10" loginClass="text-white/70 hover:text-white hover:bg-white/10" />
+                    <LangSwitcher props={props} className={textIcon} />
+                    <AuthSection props={props} btnClass={textIcon} loginClass={textIcon} />
                 </div>
             </div>
         </div>
