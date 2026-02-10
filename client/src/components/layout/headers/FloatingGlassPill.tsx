@@ -200,8 +200,9 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
         isHero ? "liquid-glass" : "liquid-glass-solid",
     );
 
+    const heroTextShadow = isHero ? '0 1px 3px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)' : undefined;
     const textActive = isHero ? "text-white" : "text-foreground dark:text-white";
-    const textMuted = isHero ? "text-white/55 hover:text-white/90" : "text-foreground/50 dark:text-white/55 hover:text-foreground/80 dark:hover:text-white/90";
+    const textMuted = isHero ? "text-white/90 hover:text-white" : "text-foreground/50 dark:text-white/55 hover:text-foreground/80 dark:hover:text-white/90";
     const textIcon = isHero ? "text-white/70 hover:text-white hover:bg-white/10" : "text-foreground/60 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10";
     const activeBg = isHero ? "bg-white/15" : "bg-black/10 dark:bg-white/15";
 
@@ -213,7 +214,7 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
                     <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
                         <img src="/logo.png" alt="AML" className="w-full h-full object-cover" />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900 }} className={cn("text-xs tracking-[0.15em] whitespace-nowrap uppercase transition-colors duration-300", isHero ? "text-white/90 group-hover:text-white" : "text-foreground/80 dark:text-white/90 group-hover:text-foreground dark:group-hover:text-white")}>Auto Market Logistic</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textShadow: heroTextShadow }} className={cn("text-xs tracking-[0.15em] whitespace-nowrap uppercase transition-colors duration-300", isHero ? "text-white/90 group-hover:text-white" : "text-foreground/80 dark:text-white/90 group-hover:text-foreground dark:group-hover:text-white")}>Auto Market Logistic</span>
                 </Link>
 
                 {/* Center nav dock — truly centered */}
@@ -221,6 +222,7 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={cn("relative flex items-center gap-0.5 rounded-2xl px-2 py-1.5", glass)}
+                    style={{ textShadow: heroTextShadow }}
                 >
                     {NAV_ITEMS.map((item) => {
                         const isActive = props.pathname === item.href;

@@ -1,12 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useRef } from 'react';
 import { HeroTitle } from './HeroTitle';
 import { QuickCalculator } from './QuickCalculator';
 import { CarfaxReport } from './CarfaxReport';
-
-const Prism = dynamic(() => import('@/components/ui/Prism'), { ssr: false });
 
 const HERO_VIDEOS = [
     { src: '/hero-bg/1.mp4', label: '1' },
@@ -18,103 +15,84 @@ const HERO_VIDEOS = [
 const OVERLAY_GRADIENT = 'linear-gradient(145deg, rgba(45,136,196,0.45) 0%, rgba(85,168,185,0.32) 35%, rgba(45,136,196,0.25) 65%, rgba(12,24,48,0.40) 100%)';
 
 export function Hero() {
-    // Two-layer crossfade: layer A and layer B alternate
-    const [layerA, setLayerA] = useState(0);
-    const [layerB, setLayerB] = useState(0);
-    const [showA, setShowA] = useState(true);
+    const [overlayOn, setOverlayOn] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
-    const videoARef = useRef<HTMLVideoElement>(null);
-    const videoBRef = useRef<HTMLVideoElement>(null);
-    const isTransitioning = useRef(false);
+    const [frontIndex, setFrontIndex] = useState(0);
+    const [backIndex, setBackIndex] = useState(0);
+    const [frontVisible, setFrontVisible] = useState(true);
+    const frontRef = useRef<HTMLVideoElement>(null);
+    const backRef = useRef<HTMLVideoElement>(null);
+    const busy = useRef(false);
 
-    // TEMP: Prism tuning controls
-    const [prismOpen, setPrismOpen] = useState(false);
-    const [glow, setGlow] = useState(2.2);
-    const [bloom, setBloom] = useState(1.4);
-    const [opacity, setOpacity] = useState(70);
-    const [tintR, setTintR] = useState(0.55);
-    const [tintG, setTintG] = useState(0.85);
-    const [tintB, setTintB] = useState(0.92);
-    const [colorFreq, setColorFreq] = useState(0.4);
-    const [timeScale, setTimeScale] = useState(0.4);
-    const [prismScale, setPrismScale] = useState(3.6);
-    const [noiseVal, setNoiseVal] = useState(0.15);
-
-    const switchTo = useCallback((index: number) => {
-        if (index === activeIndex || isTransitioning.current) return;
-        isTransitioning.current = true;
+    const switchTo = (index: number) => {
+        if (index === activeIndex || busy.current) return;
+        busy.current = true;
         setActiveIndex(index);
 
-        if (showA) {
-            setLayerB(index);
-        } else {
-            setLayerA(index);
-        }
-    }, [activeIndex, showA]);
+        // Load new video into the hidden layer
+        const hiddenRef = frontVisible ? backRef : frontRef;
+        const setHidden = frontVisible ? setBackIndex : setFrontIndex;
+        setHidden(index);
 
-    useEffect(() => {
-        const hiddenRef = showA ? videoBRef : videoARef;
-        const hiddenVideo = hiddenRef.current;
-        if (!hiddenVideo) return;
+        const video = hiddenRef.current;
+        if (!video) { busy.current = false; return; }
 
-        const onCanPlay = () => {
-            hiddenVideo.play().catch(() => {});
-            requestAnimationFrame(() => {
-                setShowA(prev => !prev);
-                setTimeout(() => {
-                    isTransitioning.current = false;
-                }, 700);
-            });
+        // Wait for the new src to be ready, then crossfade
+        const go = () => {
+            video.play().catch(() => {});
+            setFrontVisible(v => !v);
+            setTimeout(() => { busy.current = false; }, 800);
         };
 
-        if (hiddenVideo.readyState >= 3) {
-            onCanPlay();
-        } else {
-            hiddenVideo.addEventListener('canplay', onCanPlay, { once: true });
-            return () => hiddenVideo.removeEventListener('canplay', onCanPlay);
-        }
-    }, [layerA, layerB]); // eslint-disable-line react-hooks/exhaustive-deps
+        // Need a small delay for React to update the src
+        requestAnimationFrame(() => {
+            video.load();
+            if (video.readyState >= 3) {
+                go();
+            } else {
+                video.addEventListener('canplay', go, { once: true });
+            }
+        });
+    };
 
     return (
         <section className="relative w-full flex-1 overflow-hidden flex flex-col items-center mt-0 md:-mt-20 pt-0 md:pt-20">
             {/* Background Videos — two layers for crossfade */}
             <div className="absolute inset-0 z-0">
                 <video
-                    ref={videoARef}
+                    ref={frontRef}
                     autoPlay muted loop playsInline preload="auto"
                     poster="/hero-bg/aml.jpeg"
                     className="absolute inset-0 w-full h-full object-cover object-center"
-                    style={{ opacity: showA ? 1 : 0, transition: 'opacity 0.7s ease-in-out' }}
-                    src={HERO_VIDEOS[layerA].src}
+                    style={{ opacity: frontVisible ? 1 : 0, transition: 'opacity 0.7s ease-in-out' }}
+                    src={HERO_VIDEOS[frontIndex].src}
                 />
                 <video
-                    ref={videoBRef}
-                    autoPlay muted loop playsInline preload="auto"
+                    ref={backRef}
+                    muted loop playsInline preload="auto"
                     poster="/hero-bg/aml.jpeg"
                     className="absolute inset-0 w-full h-full object-cover object-center"
-                    style={{ opacity: showA ? 0 : 1, transition: 'opacity 0.7s ease-in-out' }}
-                    src={HERO_VIDEOS[layerB].src}
+                    style={{ opacity: frontVisible ? 0 : 1, transition: 'opacity 0.7s ease-in-out' }}
+                    src={HERO_VIDEOS[backIndex].src}
                 />
-                <div className="absolute inset-0 z-10" style={{ background: OVERLAY_GRADIENT }} />
-            </div>
-
-            {/* Prism WebGL Background */}
-            <div className="absolute inset-0 z-[5] pointer-events-none" style={{ opacity: opacity / 100 }}>
-                <Prism
-                    animationType="rotate"
-                    glow={glow}
-                    noise={noiseVal}
-                    bloom={bloom}
-                    scale={prismScale}
-                    timeScale={timeScale}
-                    transparent={true}
-                    colorFrequency={colorFreq}
-                    suspendWhenOffscreen={true}
-                    tintColor={[tintR, tintG, tintB]}
+                <div
+                    className="absolute inset-0 z-10 transition-opacity duration-500"
+                    style={{
+                        background: OVERLAY_GRADIENT,
+                        opacity: overlayOn ? 1 : 0,
+                    }}
                 />
             </div>
 
-            {/* TEMP: Video Selector */}
+            {/* TEMP: Overlay toggle — left */}
+            <button
+                onClick={() => setOverlayOn(v => !v)}
+                className="fixed bottom-6 left-6 z-[9999] px-4 py-2 rounded-xl text-xs font-bold bg-black/80 backdrop-blur-sm text-white border border-white/20 shadow-2xl hover:bg-black/90 transition-colors"
+            >
+                {overlayOn ? 'Overlay: ON' : 'Overlay: OFF'}
+            </button>
+
+            {/* TEMP: Video Selector — right */}
             <div className="fixed bottom-6 right-6 z-[9999] flex gap-2 bg-black/80 backdrop-blur-sm rounded-xl p-3 shadow-2xl border border-white/20">
                 {HERO_VIDEOS.map((video, i) => (
                     <button
@@ -133,47 +111,6 @@ export function Hero() {
                 ))}
             </div>
 
-            {/* TEMP: Prism Tuning Panel */}
-            <div className="fixed bottom-6 left-6 z-[9999]">
-                <button
-                    onClick={() => setPrismOpen(v => !v)}
-                    className="bg-black/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-2 rounded-lg border border-white/20 shadow-2xl"
-                >
-                    {prismOpen ? '✕ Prism' : '◆ Prism'}
-                </button>
-                {prismOpen && (
-                    <div className="mt-2 bg-black/85 backdrop-blur-sm rounded-xl p-4 shadow-2xl border border-white/20 w-72 max-h-[70vh] overflow-y-auto">
-                        <div className="text-white/50 text-[10px] font-mono mb-3 uppercase tracking-wider">Prism Controls</div>
-                        <PrismSlider label="Opacity" value={opacity} min={0} max={100} step={1} onChange={setOpacity} display={`${opacity}%`} />
-                        <PrismSlider label="Glow" value={glow} min={0} max={5} step={0.1} onChange={setGlow} />
-                        <PrismSlider label="Bloom" value={bloom} min={0} max={3} step={0.1} onChange={setBloom} />
-                        <PrismSlider label="Scale" value={prismScale} min={0.5} max={10} step={0.1} onChange={setPrismScale} />
-                        <PrismSlider label="Speed" value={timeScale} min={0} max={2} step={0.05} onChange={setTimeScale} />
-                        <PrismSlider label="Color Freq" value={colorFreq} min={0.1} max={3} step={0.1} onChange={setColorFreq} />
-                        <PrismSlider label="Noise" value={noiseVal} min={0} max={1} step={0.05} onChange={setNoiseVal} />
-                        <div className="text-white/50 text-[10px] font-mono mt-3 mb-1 uppercase tracking-wider">Tint Color</div>
-                        <PrismSlider label="R" value={tintR} min={0} max={1} step={0.01} onChange={setTintR} color="#f87171" />
-                        <PrismSlider label="G" value={tintG} min={0} max={1} step={0.01} onChange={setTintG} color="#4ade80" />
-                        <PrismSlider label="B" value={tintB} min={0} max={1} step={0.01} onChange={setTintB} color="#60a5fa" />
-                        <div className="mt-2 flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-md border border-white/20" style={{ background: `rgb(${Math.round(tintR*255)},${Math.round(tintG*255)},${Math.round(tintB*255)})` }} />
-                            <span className="text-white/60 text-xs font-mono">
-                                rgb({Math.round(tintR*255)},{Math.round(tintG*255)},{Math.round(tintB*255)})
-                            </span>
-                        </div>
-                        <button
-                            onClick={() => {
-                                const cfg = `glow={${glow}}\nnoise={${noiseVal}}\nbloom={${bloom}}\nscale={${prismScale}}\ntimeScale={${timeScale}}\ncolorFrequency={${colorFreq}}\nopacity={${opacity}%}\ntintColor={[${tintR}, ${tintG}, ${tintB}]}`;
-                                navigator.clipboard.writeText(cfg);
-                            }}
-                            className="mt-3 w-full text-xs bg-white/10 hover:bg-white/20 text-white/70 py-1.5 rounded-lg transition-colors"
-                        >
-                            Copy Config
-                        </button>
-                    </div>
-                )}
-            </div>
-
             {/* Main Content */}
             <div className="container relative z-10 px-4 flex flex-col items-center justify-center max-w-5xl mx-auto flex-1 gap-1 md:gap-2 pt-4 md:pt-6 pb-2 md:pb-3 h-full">
                 <HeroTitle />
@@ -183,27 +120,5 @@ export function Hero() {
                 </div>
             </div>
         </section>
-    );
-}
-
-function PrismSlider({ label, value, min, max, step, onChange, display, color }: {
-    label: string; value: number; min: number; max: number; step: number;
-    onChange: (v: number) => void; display?: string; color?: string;
-}) {
-    return (
-        <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-white/60 text-[11px] font-mono w-16 shrink-0">{label}</span>
-            <input
-                type="range"
-                min={min} max={max} step={step} value={value}
-                onChange={e => onChange(parseFloat(e.target.value))}
-                className="flex-1 h-1 appearance-none rounded-full cursor-pointer"
-                style={{
-                    accentColor: color || '#6BB8C4',
-                    background: `linear-gradient(to right, ${color || '#6BB8C4'} ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.15) ${((value - min) / (max - min)) * 100}%)`
-                }}
-            />
-            <span className="text-white/50 text-[10px] font-mono w-10 text-right">{display ?? value.toFixed(2)}</span>
-        </div>
     );
 }

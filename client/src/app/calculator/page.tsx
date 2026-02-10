@@ -39,18 +39,6 @@ export default function CalculatorPage() {
             {/* ═══════════════ Calculator Hero ═══════════════ */}
             <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
                 <div className="container mx-auto px-4 max-w-7xl">
-                    {/* Header */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-12 md:mb-16 space-y-4"
-                    >
-                        <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
-                            ავტომობილის{' '}
-                            <span className="text-primary">კალკულატორი</span>
-                        </h1>
-                    </motion.div>
-
                     {/* Tabbed Calculators */}
                     <Tabs defaultValue="logistics" className="w-full">
                         <TabsList className="grid w-full grid-cols-2 mb-8 max-w-md mx-auto h-auto p-1">

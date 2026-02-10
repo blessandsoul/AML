@@ -5,6 +5,9 @@ import { motion } from 'framer-motion';
 import { BadgeCheck } from 'lucide-react';
 import { HERO_COPY } from '@/features/catalog/constants/copywriting';
 
+const heroTextShadow = '0 1px 3px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)';
+const heroTextShadowStrong = '0 1px 4px rgba(0,0,0,0.6), 0 3px 12px rgba(0,0,0,0.4)';
+
 export function HeroTitle() {
     return (
         <div className="flex flex-col items-center max-w-4xl mx-auto text-center z-10 relative">
@@ -17,12 +20,12 @@ export function HeroTitle() {
                 suppressHydrationWarning
                 style={{ opacity: 0 }}
             >
-                <BadgeCheck className="w-4 h-4 text-[#55A8B9]" />
+                <BadgeCheck className="w-4 h-4 text-[#55A8B9]" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))' }} />
                 <div className="flex flex-col items-start gap-0">
-                    <span className="text-white font-bold text-xs md:text-sm">
+                    <span className="text-white font-bold text-xs md:text-sm" style={{ textShadow: heroTextShadow }}>
                         {HERO_COPY.partnershipBadge.text}
                     </span>
-                    <span className="text-white/70 text-[10px] md:text-xs font-medium">
+                    <span className="text-white/70 text-[10px] md:text-xs font-medium" style={{ textShadow: heroTextShadow }}>
                         {HERO_COPY.partnershipBadge.subtext}
                     </span>
                 </div>
@@ -37,7 +40,7 @@ export function HeroTitle() {
                 suppressHydrationWarning
                 style={{ opacity: 0 }}
             >
-                <span className="text-white/90 font-bold tracking-tight text-sm md:text-lg lg:text-xl max-w-2xl mx-auto drop-shadow-sm">
+                <span className="text-white/90 font-bold tracking-tight text-sm md:text-lg lg:text-xl max-w-2xl mx-auto" style={{ textShadow: heroTextShadowStrong }}>
                     {HERO_COPY.description}
                 </span>
             </motion.h1>
