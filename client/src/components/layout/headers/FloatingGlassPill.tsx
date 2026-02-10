@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NAV_ITEMS, MORE_ITEMS, LANGUAGES } from './header-constants';
 import { HeaderMobileMenu } from './HeaderMobileMenu';
 import type { SharedHeaderProps } from './header-types';
+import { useHeroTheme } from '@/providers/hero-theme-provider';
 
 // ================================================================
 // Shared: User Profile Dropdown Content
@@ -193,65 +194,88 @@ function MobileBar({ props }: { props: SharedHeaderProps }) {
 // VARIANT A: Floating Dock
 // ================================================================
 function FloatingDock({ props }: { props: SharedHeaderProps }) {
+    const { theme: heroTheme } = useHeroTheme();
     // White text only on home page hero (dark video bg). Everywhere else → dark text in light mode.
     const isHero = !props.scrolled && props.pathname === '/';
+    const isHeroWhite = isHero && heroTheme === 'white';
+    // For text: white theme on hero → dark text; everything else on hero → white text
+    const useWhiteText = isHero && !isHeroWhite;
+
     const glass = cn(
-        "transition-all duration-300",
-        isHero ? "liquid-glass" : "liquid-glass-solid",
+        "transition-all duration-500",
+        !isHero
+            ? "liquid-glass-solid"
+            : heroTheme === 'original' ? "liquid-glass"
+            : heroTheme === 'white' ? "bg-white/90 backdrop-blur-xl shadow-lg border border-black/5"
+            : "", // blue/dark get inline style
     );
 
-    const heroTextShadow = isHero ? '0 1px 3px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)' : undefined;
-    const textActive = isHero ? "text-white" : "text-foreground dark:text-white";
-    const textMuted = isHero ? "text-white/90 hover:text-white" : "text-foreground/50 dark:text-white/55 hover:text-foreground/80 dark:hover:text-white/90";
-    const textIcon = isHero ? "text-white/70 hover:text-white hover:bg-white/10" : "text-foreground/60 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10";
-    const activeBg = isHero ? "bg-white/15" : "bg-black/10 dark:bg-white/15";
+    const headerStyle = isHero && heroTheme === 'blue'
+        ? { background: 'linear-gradient(135deg, oklch(0.42 0.12 250 / 0.92), oklch(0.35 0.15 260 / 0.92))', backdropFilter: 'blur(16px)' }
+        : isHero && heroTheme === 'dark'
+            ? { background: 'linear-gradient(135deg, oklch(0.2 0.01 250 / 0.92), oklch(0.15 0.015 260 / 0.92))', backdropFilter: 'blur(16px)' }
+            : undefined;
+
+    const heroTextShadow = useWhiteText ? '0 1px 3px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)' : undefined;
+    const textActive = useWhiteText ? "text-white" : isHeroWhite ? "text-gray-900" : "text-foreground dark:text-white";
+    const textMuted = useWhiteText ? "text-white/90 hover:text-white" : isHeroWhite ? "text-gray-500 hover:text-gray-900" : "text-foreground/50 dark:text-white/55 hover:text-foreground/80 dark:hover:text-white/90";
+    const textIcon = useWhiteText ? "text-white/70 hover:text-white hover:bg-white/10" : isHeroWhite ? "text-gray-500 hover:text-gray-900 hover:bg-black/5" : "text-foreground/60 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10";
+    const activeBg = useWhiteText ? "bg-white/15" : isHeroWhite ? "bg-black/8" : "bg-black/10 dark:bg-white/15";
 
     return (
-        <div className="hidden md:block fixed top-0 left-0 right-0 z-50 py-3 px-6">
-            <div className="relative flex items-center justify-center">
-                {/* Logo pill — absolute left */}
-                <Link href="/" className={cn("absolute left-0 flex items-center gap-2.5 rounded-full pl-1.5 pr-5 py-1.5 group", glass)}>
-                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
-                        <img src="/logo.png" alt="AML" className="w-full h-full object-cover" />
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textShadow: heroTextShadow }} className={cn("text-xs tracking-[0.15em] whitespace-nowrap uppercase transition-colors duration-300", isHero ? "text-white/90 group-hover:text-white" : "text-foreground/80 dark:text-white/90 group-hover:text-foreground dark:group-hover:text-white")}>Auto Market Logistic</span>
-                </Link>
-
-                {/* Center nav dock — truly centered */}
-                <motion.nav
+        <div className="hidden md:block fixed top-0 left-0 right-0 z-50 py-3 px-4">
+            <div className="max-w-5xl mx-auto">
+                <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={cn("relative flex items-center gap-0.5 rounded-2xl px-2 py-1.5", glass)}
-                    style={{ textShadow: heroTextShadow }}
+                    className={cn("relative flex items-center justify-between rounded-2xl px-3 py-1.5", glass)}
+                    style={headerStyle}
                 >
-                    {NAV_ITEMS.map((item) => {
-                        const isActive = props.pathname === item.href;
-                        return (
-                            <motion.div key={item.href} whileHover={{ scale: 1.08, y: -1 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
-                                <Link
-                                    href={item.href}
-                                    className={cn(
-                                        "relative block px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
-                                        isActive ? textActive : textMuted
-                                    )}
-                                >
-                                    {isActive && (
-                                        <motion.div layoutId="dock-active" className={cn("absolute inset-0 rounded-xl", activeBg)} transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />
-                                    )}
-                                    <span className="relative z-10">{item.label}</span>
-                                </Link>
-                            </motion.div>
-                        );
-                    })}
-                    <MoreNav props={props} layoutId="dock-active" triggerClass={cn("px-2.5 py-2", textMuted)} activeClass={textActive} />
+                    {/* Dark tint for readability over video — only original glass */}
+                    {isHero && heroTheme === 'original' && (
+                        <div className="absolute inset-0 rounded-2xl bg-[oklch(0.13_0.01_240/0.35)] pointer-events-none" />
+                    )}
 
-                </motion.nav>
+                    {/* Logo — only image */}
+                    <Link href="/" className="relative z-10 flex items-center shrink-0">
+                        <div className="w-9 h-9 rounded-full overflow-hidden">
+                            <img src="/logo.png" alt="AML" className="w-full h-full object-cover" />
+                        </div>
+                    </Link>
 
-                {/* Actions pill — absolute right */}
-                <div className={cn("absolute right-0 flex items-center gap-0.5 rounded-full px-1.5 py-1", glass)}>
-                    <LangSwitcher props={props} className={textIcon} />
-                    <AuthSection props={props} btnClass={textIcon} loginClass={textIcon} isHero={isHero} />
-                </div>
+                    {/* Center nav */}
+                    <nav
+                        className="relative z-10 flex items-center gap-0.5"
+                        style={{ textShadow: heroTextShadow }}
+                    >
+                        {NAV_ITEMS.map((item) => {
+                            const isActive = props.pathname === item.href;
+                            return (
+                                <motion.div key={item.href} whileHover={{ scale: 1.08, y: -1 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+                                    <Link
+                                        href={item.href}
+                                        className={cn(
+                                            "relative block px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
+                                            isActive ? textActive : textMuted
+                                        )}
+                                    >
+                                        {isActive && (
+                                            <motion.div layoutId="dock-active" className={cn("absolute inset-0 rounded-xl", activeBg)} transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />
+                                        )}
+                                        <span className="relative z-10">{item.label}</span>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
+                        <MoreNav props={props} layoutId="dock-active" triggerClass={cn("px-2.5 py-2", textMuted)} activeClass={textActive} />
+                    </nav>
+
+                    {/* Actions */}
+                    <div className="relative z-10 flex items-center gap-0.5 shrink-0">
+                        <LangSwitcher props={props} className={textIcon} />
+                        <AuthSection props={props} btnClass={textIcon} loginClass={textIcon} isHero={useWhiteText} />
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

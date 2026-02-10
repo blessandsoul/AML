@@ -8,6 +8,7 @@ import { QueryProvider } from '@/providers/query-provider';
 import { ReduxProvider } from '@/providers/redux-provider';
 import { ColorPaletteProvider } from '@/providers/color-palette-provider';
 import { HeaderVariantProvider } from '@/providers/header-variant-provider';
+import { HeroThemeProvider } from '@/providers/hero-theme-provider';
 
 // Only import Agentation in development
 const Agentation = process.env.NODE_ENV === 'development'
@@ -142,7 +143,9 @@ export default function RootLayout({
           <QueryProvider>
             <ColorPaletteProvider>
               <HeaderVariantProvider>
-                <MainLayout>{children}</MainLayout>
+                <HeroThemeProvider>
+                  <MainLayout>{children}</MainLayout>
+                </HeroThemeProvider>
               </HeaderVariantProvider>
               <Toaster />
             </ColorPaletteProvider>
