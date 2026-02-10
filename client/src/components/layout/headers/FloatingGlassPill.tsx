@@ -108,7 +108,7 @@ function LangSwitcher({ props, className }: { props: SharedHeaderProps; classNam
 }
 
 // Shared: Auth buttons or User avatar
-function AuthSection({ props, btnClass, loginClass }: { props: SharedHeaderProps; btnClass?: string; loginClass?: string }) {
+function AuthSection({ props, btnClass, loginClass, isHero }: { props: SharedHeaderProps; btnClass?: string; loginClass?: string; isHero?: boolean }) {
     if (props.mounted && props.isAuthenticated && props.user) {
         return (
             <DropdownMenu>
@@ -122,11 +122,16 @@ function AuthSection({ props, btnClass, loginClass }: { props: SharedHeaderProps
         );
     }
     return (
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-1.5">
             <Button variant="ghost" size="sm" asChild className={loginClass}>
-                <Link href="/login"><LogIn className="w-4 h-4 mr-2" />შესვლა</Link>
+                <Link href="/login"><LogIn className="w-4 h-4 mr-1.5" />შესვლა</Link>
             </Button>
-            <Button size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className={cn(
+                "rounded-full px-3.5 font-semibold transition-all duration-300",
+                isHero
+                    ? "border border-white/30 bg-white/12 text-white hover:bg-white/20 hover:border-white/40"
+                    : "border border-foreground/20 dark:border-white/20 bg-foreground/8 dark:bg-white/8 text-foreground dark:text-white hover:bg-foreground/15 dark:hover:bg-white/15 hover:border-foreground/30 dark:hover:border-white/30"
+            )}>
                 <Link href="/register">რეგისტრაცია</Link>
             </Button>
         </div>
@@ -243,7 +248,7 @@ function FloatingDock({ props }: { props: SharedHeaderProps }) {
                 {/* Actions pill — absolute right */}
                 <div className={cn("absolute right-0 flex items-center gap-0.5 rounded-full px-1.5 py-1", glass)}>
                     <LangSwitcher props={props} className={textIcon} />
-                    <AuthSection props={props} btnClass={textIcon} loginClass={textIcon} />
+                    <AuthSection props={props} btnClass={textIcon} loginClass={textIcon} isHero={isHero} />
                 </div>
             </div>
         </div>

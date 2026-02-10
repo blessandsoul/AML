@@ -47,7 +47,7 @@ export default function TexasPage() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent"
+                    className="text-4xl md:text-6xl font-black mb-6 pb-2 bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent leading-normal"
                 >
                     ტეხასის{' '}
                     <span className="text-primary">პარტნიორები</span>
